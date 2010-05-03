@@ -1,0 +1,104 @@
+#!/usr/bin/env ruby
+
+require 'compass'
+
+Compass.configuration.parse('compass_config.rb')
+
+
+### Images
+compile '/images/*/' do
+# No need to run images through a filter. This is just for getting em in right place
+end
+
+route '/images/*/' do
+ item.identifier.chop + '.' + item[:extension]
+end
+
+
+### Javascript
+
+compile '/javascript/*/' do
+# No need to run images through a filter. This is just for getting em in right place
+end
+
+route '/javascript/*/' do
+ item.identifier.chop + '.' + item[:extension]
+end
+
+### Stylesheets
+
+compile '/stylesheets/*/' do
+  case item[:extension]
+    when 'sass'
+      filter :sass, Compass.sass_engine_options
+    when 'css'
+  end
+end
+
+route '/stylesheets/_*/' do
+  # don't output partials, so return nil
+  nil
+end
+
+route '/stylesheets/*/' do
+  # don't generate a directory like we do for HTML files
+  item.identifier.chop + '.css'
+end
+
+### html, md, haml etc
+
+compile '/docs/' do
+  case item[:extension]
+    when 'html'
+      filter :erb
+    when 'html.erb'
+      filter :erb
+    when 'haml'
+      filter :haml
+    when 'html.haml'
+      filter :haml
+    when 'markdown'
+      filter :kramdown
+  end
+  layout 'doc_layout'
+end
+compile '/docs/*/' do
+  case item[:extension]
+    when 'html'
+      filter :erb
+    when 'html.erb'
+      filter :erb
+    when 'haml'
+      filter :haml
+    when 'html.haml'
+      filter :haml
+    when 'markdown'
+      filter :kramdown
+  end
+  layout 'doc_layout'
+end
+
+compile '*' do
+  case item[:extension]
+    when 'html'
+      filter :erb
+    when 'html.erb'
+      filter :erb
+    when 'haml'
+      filter :haml
+    when 'html.haml'
+      filter :haml
+    when 'markdown'
+      filter :kramdown
+  end
+  layout 'default'
+end
+
+route '*' do
+  item.identifier + 'index.html'
+end
+
+### Layout rules - only HAML!
+layout 'default', :erb
+layout '*', :haml, :format => :html5
+

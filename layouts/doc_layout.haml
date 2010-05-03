@@ -1,0 +1,35 @@
+!!!
+%html
+  %head
+    %title Mongoid - #{@item[:title]}
+    %link{ :href => "/stylesheets/application.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
+    %link{ :href => "/stylesheets/home.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
+    %link{ :href => "/stylesheets/docs.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
+  %body
+    .container
+      .header
+        .top_header
+        .header_image
+          %img{ :src => "/images/articles.png" }
+      .clear
+      .main
+        .navigation
+          %ol
+            %li= link_to_unless_current("Home", "/")
+            %li= link_to_unless_current("Docs", "/docs/")
+            %li= link_to_unless_current("Links", "/links/")
+          .clear
+        #nav
+          %ol
+            - home_page = @items.find { |i| i.reps[0].path == '/docs/' }
+            - home_page.children.each do |page|
+              %li= link_to_unless_current(page[:title], page.reps[0])
+        .author
+          - if @item[:author]
+            %p
+              This page was written by
+              = @item[:author]
+        .content= yield
+        .footer
+          .content
+

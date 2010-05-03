@@ -1,0 +1,348 @@
+--- 
+title: Persistance
+---
+
+%h1
+  Docs
+
+#docs
+  #doc
+    .title Persistence
+    .text
+      Mongoid supports all ActiveRecord-style methods for persistence operations on the database.
+      Please note the new persistence strategy section for examples with the corresponding database
+      queries that would be executed.
+      %br
+
+      %br
+    .title Create
+    .text
+      Instantiating a new object and saving it to the database in a single call is handled with
+      <tt>Document.create</tt> or <tt>Document.create!</tt>. Use the latter if you wish an
+      exception to be raise if validation fails.
+
+      %pre
+        :preserve
+          person = Person.create(:first_name => "Syd", :last_name => "Vicious")
+          person = Person.create!(:first_name => "Emmanuel", :last_name => "Zorg")
+
+      %br
+    .title Save
+    .text
+      Saving a document to the database involves using <tt>Document#save</tt> or <tt>Document#save!</tt>.
+      Use the latter if you wish an exception to be raise if validation fails.
+
+      %pre
+        :preserve
+          person = Person.new(:first_name => "Syd", :last_name => "Vicious")
+          person.save # or person.upsert
+
+          person = Person.new(:first_name => "Emmanuel", :last_name => "Zorg")
+          person.save!
+
+      %br
+    .title Updating Attributes
+    .text
+      Writing new attributes to a document and saving it in a single call is handled via
+      <tt>Document#update_attributes</tt> and <tt>Document#update_attributes!</tt>.
+      Use the latter if you wish an exception to be raise if validation fails.
+
+      %pre
+        :preserve
+          person = Person.new(:first_name => "Syd", :last_name => "Vicious")
+          person.update_attributes(:first_name => "Nancy")
+
+          person = Person.new(:first_name => "Emmanuel", :last_name => "Zorg")
+          person.update_attributes!(:first_name => "Nancy")
+
+      %br
+    .title Destroy
+    .text
+      Deleting objects from the database involves calling either <tt>Document#destroy</tt>,
+      <tt>Document#delete</tt>, <tt>Document.destroy_all</tt>, or <tt>Document.delete_all</tt>.
+      The first two will delete a single document, while the second two will delete all
+      documents given a supplied criteria. Note that the delete methods will ignore all defined
+      callbacks. These can also be called on associations.
+
+      %pre
+        :preserve
+          person = Person.create(:first_name => "Syd", :last_name => "Vicious")
+          person.destroy
+
+          person = Person.create(:first_name => "Syd", :last_name => "Vicious")
+          person.delete
+
+          Person.destroy_all(:conditions => { :first_name => "Syd", :last_name => "Vicious" })
+          Person.delete_all(:conditions => { :first_name => "Syd", :last_name => "Vicious" })
+
+          person.addresses.delete_all
+          person.addresses.destroy_all(:conditions => { :street => "Bond St" })
+
+      %br
+    .title Persistence Strategies and Underlying DB Queries
+    .text
+      For all following examples, the following models will be used:
+
+      %pre
+        :preserve
+          class Person
+            include Mongoid::Document
+            field :first_name
+            field :middle_initial
+            field :last_name
+            embeds_one :email
+            embeds_many :addresses
+          end
+
+          class Address
+            include Mongoid::Document
+            field :street
+            field :post_code
+            field :state
+            embedded_in :person, :inverse_of => :addresses
+
+          class Email
+            include Mongoid::Document
+            field :address
+            embedded_in :person, :inverse_of => :email
+
+    %br
+    .title Saving New Records
+    .text
+      <tt>Scenario:</tt> Saving a new root document. This will perform an <tt>insert</tt> on the MongoDB
+      collection with all the fields on the document:
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.new(:first_name => "Dudley")
+          person.save
+
+      <i>The MongoDB query:</i>
+      %pre
+        :preserve
+          db.people.insert({ "first_name" : "Dudley" }, true);
+
+      %br
+      <tt>Scenario:</tt> Saving a new root document with new children. This will perform
+      an <tt>insert</tt> on the MongoDB collection with all the fields on the document and
+      its children, no matter where the save call was executed from:
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.new(:first_name => "Dudley")
+          address = Address.new(:street => "Upper Street")
+          person.addresses << address
+          person.save # or address.save will yield same result.
+
+      <i>The MongoDB query:</i>
+      %pre
+        :preserve
+          db.people.insert(
+            { "first_name" : "Dudley", "addresses" : [ { "street" : "Upper Street" } ] },
+            true
+          );
+
+      %br
+      <tt>Scenario:</tt> Saving a new <tt>embeds_one</tt> on an existing root document. This will
+      perform an atomic update on the root document with the new embedded attributes. The save must
+      be called from the child in this case:
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          email = Email.new(:address => "dudley@moore.com")
+          person.email = email
+          email.save
+
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$set" : { "email" : { "address" : "dudley@moore.com" } } },
+            false,
+            true
+          );
+
+      %br
+      <tt>Scenario:</tt> Saving a new <tt>embeds_many</tt> on an existing root document. This will
+      perform an atomic push on the root document embedded array with the new embedded attributes.
+      The save must be called from the child in this case:
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          address = Address.new(:street => "Upper Street")
+          person.addresses << address
+          address.save
+
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$push" : { "addresses" : { "street" : "Upper Street" } } },
+            false,
+            true
+          );
+
+    %br
+    .title Updating Existing Records
+    .text
+      Updating existing records leverages Mongoid's dirty attributes module to only persist what
+      has changed on the documents. In all cases the save must be called on the document that has
+      been updated. (This will change in subsequent releases to check the entire tree.)
+
+      %br
+      %br
+      <tt>Scenario:</tt> Updating a root document. This will perform an atomic update on the dirty
+      attributes on the model:
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          person.last_name = "Moore"
+          person.save
+
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$set" : { "last_name" : "Moore" } },
+            false,
+            true
+          );
+
+      %br
+      <tt>Scenario:</tt> Updating an existing <tt>embeds_one</tt>. This will perform an atomic
+      update on the existing embedded document.
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          email = person.email
+          email.address = "dudley@moore.org"
+          email.save
+
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$set" : { "email.address" : "dudley@moore.org" } },
+            false,
+            true
+          );
+
+      %br
+      <tt>Scenario:</tt> Updating an existing <tt>embeds_many</tt>. This will perform an atomic
+      update on the existing embedded document based on its position in the array.
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          address = person.addresses.first
+          address.street = "Clerkenwell Road"
+          address.save
+
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$set" : { "addresses.0.street" : "Clerkenwell Road" } },
+            false,
+            true
+          );
+
+    %br
+    .title Deleting Records
+    .text
+      <tt>Scenario:</tt> Deleting an existing root document. This will perform a <tt>remove</tt>
+      on the MongoDB collection with the document's id
+
+      %br
+      %br
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          person.delete # also destroy works here.
+
+      <i>The MongoDB query:</i>
+      %pre
+        :preserve
+          db.people.remove({ "_id" : "4baa56f1230048567300485c" }, true);
+
+      %br
+      <tt>Scenario:</tt> Deleting an existing <tt>embeds_one</tt>. This will perform an atomic
+      unset on the embedded document.
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          email = person.email
+          email.delete # or destroy
+
+      <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$unset" : { "email" : true } },
+            false,
+            true
+          );
+
+      %br
+      <tt>Scenario:</tt> Deleting an existing document in an <tt>embeds_many</tt>. This will
+      perform an atomic pull on the existing embedded document in the array.
+
+      %br
+      %br
+      <i>In Mongoid:</i>
+      %pre
+        :preserve
+          person = Person.where(:first_name => "Dudley").first
+          address = person.addresses.first
+          address.delete # or destroy
+
+      <i>The MongoDB query:</i>
+      %br
+      <i>(Assume person.id = "4baa56f1230048567300485c")</i>
+      %br
+      <i>(Assume address.id = "4baa56f1230048567300485d")</i>
+      %pre
+        :preserve
+          db.people.update(
+            { "_id" : "4baa56f1230048567300485c" },
+            { "$pull" : { "addresses" : { "_id" : "4baa56f1230048567300485d" } } },
+            false,
+            true
+          );
+

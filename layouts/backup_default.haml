@@ -1,0 +1,30 @@
+!!!
+%html
+  %head
+    %title Mongoid - #{@item[:title]}
+
+  %body
+    #container
+      #nav_menu
+        %ul
+          %li= link_to_unless_current("Home", "/")
+          %li= link_to_unless_current("Docs", "/docs/")
+          %li= link_to_unless_current("Links", "/links/")
+      #header
+        #logo &nbsp;
+      #content
+      #main.left
+        #leaf
+        %h1 MONGOID
+        %hr
+        %p
+          Mongoid provides an elegant way to persist and query Ruby objects to documents in MongoDB.
+        .author
+          - if @item[:author]
+            %p
+              This page was written by
+              = @item[:author]
+        .content= yield
+        .footer
+          .content
+

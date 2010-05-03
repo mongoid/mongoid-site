@@ -1,0 +1,6 @@
+log/*
+*.sqlite3
+tmp/*
+.bundle/*
+output/*
+
