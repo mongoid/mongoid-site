@@ -2,11 +2,10 @@
 %html
   %head
     %title Mongoid - #{@item[:title]}
-    %link{ :href => "/stylesheets/application.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
+    %link{ :href => "/stylesheets/style.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
     %link{ :href => "/stylesheets/home.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
-    %link{ :href => "/stylesheets/docs.css", :rel => "stylesheet", :type => "text/css", :media => "screen" }
   %body
-    .container
+    #container
       .header
         .top_header
         .header_image
@@ -21,8 +20,8 @@
           .clear
         #nav
           %ol
-            - home_page = @items.find { |i| i.reps[0].path == '/docs/' }
-            - home_page.children.each do |page|
+            - home_page = @items.find { |p| p.path == '/docs/'}
+            - home_page.children.sort_by { |p| p.path }.each do |page|
               %li= link_to_unless_current(page[:title], page.reps[0])
         .author
           - if @item[:author]
