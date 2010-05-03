@@ -1,0 +1,15 @@
+---
+title: Associations
+---
+%pre
+  %code.language-ruby
+    :preserve
+      person.rb:
+      class Person
+        include Mongoid::Document
+        field :first_name
+        field :last_name
+        embeds_one :address
+        embeds_many :phones
+      end
+
