@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title><%= item[:title] %></title>
+<title>Mongoid - <%= item[:title] %></title>
 <!--Style Sheets -->
 <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
 <!--[if lte IE 7]>
@@ -52,8 +52,10 @@
                     2.0.0.beta4
                   </div>
                   <div class="links">
-                    <%= link_to_unless_current("Documentation(Soon)", "#") %>
-                    <%= link_to_unless_current("Links(Soon)", "#") %>
+                    <ul>
+                      <li><%= link_to("Documentation", "/docs/") %></li>
+                      <li><%= link_to("Links(Soon)", "#") %></li>
+                    </ul>
                   </div>
                 </div>
           </div>
