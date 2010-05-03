@@ -47,21 +47,6 @@ end
 
 ### html, md, haml etc
 
-compile '/docs/' do
-  case item[:extension]
-    when 'html'
-      filter :erb
-    when 'html.erb'
-      filter :erb
-    when 'haml'
-      filter :haml
-    when 'html.haml'
-      filter :haml
-    when 'markdown'
-      filter :kramdown
-  end
-  layout 'doc_layout'
-end
 compile '/docs/*/' do
   case item[:extension]
     when 'html'
