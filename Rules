@@ -78,7 +78,7 @@ compile '*' do
       filter :kramdown
   end
   filter :syntax_colorize
-  layout 'default'
+  layout 'landing'
 end
 
 route '*' do
@@ -86,6 +86,6 @@ route '*' do
 end
 
 ### Layout rules - only HAML!
-layout 'default', :erb
+layout 'landing', :erb
 layout '*', :haml, :format => :html5
 
