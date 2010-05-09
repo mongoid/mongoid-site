@@ -1,5 +1,6 @@
 source :gemcutter
 
+gem "rake"
 gem "kramdown"
 gem "adsf"
 gem "nanoc3", ">= 3.2.0a1"
