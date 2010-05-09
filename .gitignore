@@ -3,5 +3,6 @@ log/*
 tmp/*
 .bundle/*
 output/*
+.rvmrc
 
 .sass-cache
