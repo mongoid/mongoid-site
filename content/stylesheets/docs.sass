@@ -49,10 +49,6 @@ p
   +grid-container
   +text
 
-.roundedbox
-  background: url(../images/docs/black_40.png)
-  +border-radius(5px)
-
 /* Header
 #leaf
   position: absolute
@@ -118,6 +114,12 @@ p
     font-weight: bold
     text-transform: uppercase
 
+    // // maybe?
+    // +border-radius(10px)
+    // background-color: black
+    // color: #FFFFFF
+    // padding: 10px
+
   h1.page_title
     margin-bottom: 0
 
@@ -161,12 +163,6 @@ p
     font-style: italic
     margin: 15px 0 10px 0
   
-  
-.outline
-  li
-    margin-left: 20px
-    margin-bottom: 10px
-
 /*main section
 .main
   +grid(12,16)
@@ -179,13 +175,24 @@ p
 #rightcolumn
   +grid(4, 16)
   margin-top: 0px
+  background-color: rgba(0,0,0,0.4)
+  +border-radius(10px)
   .roundedbox
     padding: 3px 8px 2px 8px
     height: 25px
+    +border-top-radius(10px)
+    background-color: rgba(0,0,0,0.4)
     h3
       line-height: 22px
   .box
     margin: 0 0 10px 0
+  
+  // 
+  .outline
+    li
+      margin-left: 20px
+      margin-bottom: 10px
 
+  
 
   

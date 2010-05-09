@@ -43,10 +43,14 @@
       #rightcolumn
         #search.box
           .roundedbox
-            %h3
-              Contents
+            %h3 Contents
         %ul.outline
-          - home_page = @items.find { |p| p.path == '/docs/'}
-          - home_page.children.sort_by { |p| p.path }.each do |page|
-            %li= link_to_unless_current(page[:title], page.reps[0])
+          %li= link_to_unless_current("Installation", "/docs/installation/")
+          %li= link_to_unless_current("Documents", "/docs/associations/")
+          %li= link_to_unless_current("Persistence", "/docs/persistence/")
+          %li= link_to_unless_current("Querying", "/docs/querying/")
+          %li= link_to_unless_current("Callbacks", "/docs/callbacks/")
+          %li= link_to_unless_current("Validation", "/docs/validation/")
+          %li= link_to_unless_current("Inheritance", "/docs/inheritance/")
+          %li= link_to_unless_current("Extras", "/docs/extras/")
         

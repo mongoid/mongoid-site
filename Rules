@@ -61,6 +61,7 @@ compile '/docs/*/' do
   end
   filter :syntax_colorize
   layout "docs"
+
 end
 
 compile '*' do
