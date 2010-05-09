@@ -2,12 +2,12 @@
 %html{html_attrs}
   %head
     %meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
-	
+
     %title Mongoid Documentation: #{@item[:title]}
-    
+
     %link{:href => "/stylesheets/style.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
     %link{:href => "/stylesheets/docs.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
-          
+
   %body
     #page_container
       #page_menu
@@ -24,12 +24,13 @@
       #header
         %a{:href => "/"}
           %h1.logo MONGOID
-        
+
         %a.docs_header{:href => "../installation/"} Documentation
 
       .main
         .border
           .content_body.colorize
+            %h2= item[:title]
             :preserve
               #{yield}
 
@@ -46,4 +47,4 @@
           %li= link_to_unless_current("Validation", "/docs/validation/")
           %li= link_to_unless_current("Inheritance", "/docs/inheritance/")
           %li= link_to_unless_current("Extras", "/docs/extras/")
-        
+

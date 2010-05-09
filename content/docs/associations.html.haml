@@ -1,8 +1,6 @@
---- 
+---
 title: Associations
 ---
-%h2= item[:title]
-
 .text
   A <tt>Mongoid::Document</tt> can have associations to other documents through 3 traditional
   ActiveRecord-style macros: <tt>embeds_one</tt>, <tt>embeds_many</tt> and <tt>embedded_in</tt>.
@@ -222,3 +220,4 @@ title: Associations
 
         person.policy = policy
         person.prescriptions = [prescription]
+

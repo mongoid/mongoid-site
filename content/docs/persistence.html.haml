@@ -1,8 +1,6 @@
---- 
+---
 title: Persistance
 ---
-%h2= item[:title]
-
 .text
   Mongoid supports all ActiveRecord-style methods for persistence operations on the database.
   Please note the new persistence strategy section for examples with the corresponding database
@@ -17,7 +15,7 @@ title: Persistance
   exception to be raise if validation fails.
 
   %pre
-    %code.language-ruby  
+    %code.language-ruby
       :preserve
         person = Person.create(:first_name => "Syd", :last_name => "Vicious")
         person = Person.create!(:first_name => "Emmanuel", :last_name => "Zorg")
@@ -101,7 +99,7 @@ title: Persistance
           field :state
           embedded_in :person, :inverse_of => :addresses
         end
-        
+
         class Email
           include Mongoid::Document
           field :address

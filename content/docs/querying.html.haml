@@ -1,8 +1,6 @@
---- 
+---
 title: Querying
 ---
-%h2= item[:title]
-
 .text
   Mongoid supports querying the database for documents usings 2 styles. The first is an
   ActiveRecord-like finder/dynamic finder syntax, and the second and preferred method is through Mongoid's
@@ -227,7 +225,7 @@ title: Querying
       Person.only(:first_name).where(:age.gt => 18).aggregate
 
   %br
-  Get groups of documents for supplied fields, this returns an array of hashes with key being the field value, 
+  Get groups of documents for supplied fields, this returns an array of hashes with key being the field value,
   and value being an array of documents. The entire result set must fit in memory.
   %pre
     :preserve

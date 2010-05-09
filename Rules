@@ -54,14 +54,11 @@ compile '/docs/*/' do
       filter :haml
     when 'html.haml'
       filter :haml
-    when 'md'
-      filter :kramdown
     when 'markdown'
       filter :kramdown
   end
   filter :syntax_colorize
-  layout "docs"
-
+  layout 'docs'
 end
 
 compile '*' do
