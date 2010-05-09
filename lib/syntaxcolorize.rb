@@ -6,10 +6,10 @@ module Nanoc3::Filters
       require 'coderay'
       require 'nokogiri'
       doc = Nokogiri::HTML(content)
-      doc.css('pre code[@class*=language-]').each do |e|
+      doc.css('pre code').each do |e|
         # Get text and language
         code = e.inner_text
-        lang = /language-([a-z0-9\-_]+)/.match(e['class'])[1]
+        lang = /language-([a-z0-9\-_]+)/.match(e['class']) || "ruby"
         # Process
         e.inner_html = ::CodeRay.scan(code, lang).html(params)
       end
