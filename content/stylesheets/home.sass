@@ -73,7 +73,8 @@ body
     background-repeat: no-repeat
     position: relative
     
-    h1.logo
+    a.logo
+      display: block
       width: 426px
       height: 94px
       text-indent: -9999px
@@ -117,9 +118,10 @@ body
       line-height: 30px
       margin-bottom: 23px
 
+  
   #sidebar
-    width: 278px
-    height: 335px
+    width: 356px
+    margin-right: 12px
     overflow: hidden
     p
       font-family: Arial, Helvetica, sans-serif
@@ -128,25 +130,32 @@ body
       color: #bfbfbf
       line-height: 17px
 
-    .links
-      a
-        &:link
-          padding: 5px
-          text-decoration: none
-          font-weight: bold
-          color: #666666
-        &:visited
-          padding: 5px
-          text-decoration: none
-          font-weight: bold
-          color: #bfbfbf
-        &:hover
-          color: black
-          background: #484848
-          +border-radius(10px)
+    .version
+      font-size: 30px
+      font-weight: bold
+      color: #fff
+      margin-top: 100px
+      margin-left: 75px
 
-  /** Pie Chart
-    _____________________________________________________________________________
+    .links
+      margin-top: 35px
+      margin-left: 25px
+      margin-right: 30px
+      li
+        list-style-type: none
+        a
+          font-family: Lucida Grande
+          display: block
+          padding: 5px
+          padding: 10px
+          text-decoration: none
+          font-weight: bold
+          color: #fff
+          background-color: rgba(0,0,0,0.4)
+          margin-bottom: 10px
+          +border-radius(10px)
+          &:hover
+            color: yellow
 
   #khaaaaaaan
     width: 246px
@@ -155,8 +164,8 @@ body
     margin-left: 0
     background: url(../images/khan.png)
     position: absolute
-    top: 55px
-    right: 65px
+    top: 66px
+    right: 72px
 
   #leaf
     width: 117px
@@ -165,9 +174,6 @@ body
     left: 71px
     top: 32px
     background: url(../images/leaf.png)
-
-  /** Footer
-    _____________________________________________________________________________
 
   #footer
     margin: 5px 15px 0 15px
@@ -181,15 +187,11 @@ body
     float: right
     width: 293px
 
-  /** Form
-    _____________________________________________________________________________
-
   #code
     float: left
     font-family: Arial, Helvetica, sans-serif
     font-size: 12px
     color: white
-
 
   div
     display: block
@@ -213,21 +215,6 @@ body
   .social
     margin-top: 20px
 
-  #sidebar
-    .version
-      font-size: 30px
-      font-weight: bold
-      color: #fff
-      margin-top: 100px
-      margin-left: 75px
-
-    .links
-      margin-top: 20px
-      margin-left: 70px
-      li
-        padding: 5px
-        list-style-type: none
-
   a.boldbuttons
     background: transparent url(../images/roundedge-gray-left.gif) no-repeat top left
     display: block
@@ -249,9 +236,6 @@ body
   a:hover.boldbuttons
     text-decoration: underline
 
-
-
   .buttonwrapper
     overflow: hidden
     width: 100%
-
