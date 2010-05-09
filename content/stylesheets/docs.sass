@@ -1,0 +1,325 @@
+/* Theme Styles */
+html
+  // background: url(../images/docs/bg.jpg) center repeat-y
+  background-color: black
+body
+
+  background: url(../images/docs/bg_top.jpg) top center no-repeat
+  font-family: Verdana, Geneva, sans-serif
+  color: white
+  font-size: 12px
+
+h1, h2, h3, h4, h5, h6
+  font-weight: normal
+
+h1
+  line-height: 30px
+  margin-bottom: 5px
+  &.page_title
+    display: block
+    margin: 15px 0 15px 0
+
+h2
+  font-size: 17px
+  margin-bottom: 5px
+
+h3
+  font-size: 15px
+
+h4
+  font-size: 12px
+  margin-bottom: 10px
+
+a
+  &:hover
+    text-decoration: none
+  color: white
+
+p
+  margin: 0 0 10px 0
+
+/* Use this br class to clear your floated columns
+
+div#first_container_16
+  overflow: hidden
+  position: relative
+
+.alignright
+  float: right
+
+.alignleft
+  float: left
+
+.roundedbox
+  background: url(../images/docs/black_40.png)
+  -moz-border-radius-bottomleft: 5px
+  -moz-border-radius-bottomright: 5px
+  -moz-border-radius-topleft: 5px
+  -moz-border-radius-topright: 5px
+
+#page_menu ul
+  float: right
+  margin-bottom: 0
+  li
+    float: left
+    margin: 0 3px 0 0
+    list-style: none
+    &.current_page_item
+      background: url(../images/docs/black_40.png)
+      -moz-border-radius-bottomleft: 5px
+      -moz-border-radius-bottomright: 5px
+    a
+      padding: 5px 10px 5px 10px
+      color: white
+      text-decoration: none
+      display: block
+    &.current_page_item a
+      color: #ffae00
+#date_rss
+  /*padding:5px 10px 5px 10px;
+  background: url(../images/docs/black_40.png)
+  -moz-border-radius-bottomleft: 5px
+  -moz-border-radius-bottomright: 5px
+  font-size: 10px
+  div
+    padding: 7px 32px 7px 10px
+    text-align: center
+    position: relative
+    img
+      position: absolute
+      right: 10px
+
+
+/* Header
+#leaf
+  position: absolute
+  left: 0
+  top: 18px
+#logo
+  h1
+    padding-left: 24px
+    font-size: 40px
+
+#top_banner
+  text-align: right
+#categories_menu
+  background: url(../images/docs/black_75.png)
+  height: 40px
+  -moz-border-radius-bottomleft: 5px
+  -moz-border-radius-bottomright: 5px
+  -moz-border-radius-topleft: 5px
+  -moz-border-radius-topright: 5px
+  ul li
+    float: left
+    margin: 0 0 0 0
+    list-style: none
+    a
+      padding: 10px 13px 10px 13px
+      font-size: 13px
+      color: white
+      text-decoration: none
+      display: block
+      background: url(../images/docs/categories_devider.gif) no-repeat left center
+    &.first a
+      background: none
+
+.transborder
+  -moz-border-radius: 15px 15px 15px 15px
+  background-color: rgba(0, 0, 0, 0.4)
+  padding: 10px
+
+.blog_post
+  overflow: hidden
+  background-color: #fff
+  margin: 0 0 10px 0
+  color: #000
+  -moz-border-radius-bottomleft: 10px
+  -moz-border-radius-bottomright: 10px
+  -moz-border-radius-topleft: 10px
+  -moz-border-radius-topright: 10px
+  h1.page_title
+    margin-bottom: 0
+  .grid_4, .grid_7
+    margin-top: 10px
+    margin-bottom: 10px
+.post_date
+  font-size: 11px
+  a
+    color: #ffae00
+.post_excerpt
+  font-style: italic
+  margin: 15px 0 10px 0
+.blog_post a.read_full_article
+  display: block
+  color: #ffae00
+  font-style: italic
+
+.outline
+  li
+    margin-left: 20px
+    font-size: 16px
+
+#paging
+  font-size: 11px
+  text-align: right
+  overflow: hidden
+  a
+    text-decoration: none
+    &.current
+      color: #339999
+      cursor: default
+
+/*main section
+
+span#pagenumbers
+  float: left
+  margin: 0 0 0 10px
+
+#gotopage
+  float: right
+  padding: 3px 8px 2px 9px
+  background: url(../images/docs/black_40.png)
+  -moz-border-radius-bottomleft: 5px
+  -moz-border-radius-bottomright: 5px
+  -moz-border-radius-topleft: 5px
+  -moz-border-radius-topright: 5px
+  a.more
+    margin: 0 0 0 5px
+.margin10px
+  margin: 10px 10px 10px 10px
+
+img.postimg
+  width: 200px
+  height: 200px
+  margin: 0px 10px 10px 0
+
+.full a
+  color: darkblue
+  
+#author_related
+  overflow: hidden
+  margin: 20px 0 0 0
+  div
+    &.gravatar
+      margin: 0 15px 0 0
+      float: left
+      overflow: hidden
+    &.link
+      float: left
+      overflow: hidden
+    &.recent
+      div.link div
+        font-size: 11px
+        width: 215px
+      a
+        color: white
+      div.link div a.linkhighlight
+        color: #ffae00
+.width295
+  width: 295px
+  float: left
+  overflow: hidden
+  margin-top: 10px
+  margin-bottom: 10px
+
+.marginLeft10px
+  margin-left: 10px
+
+.marginLeft5px
+  margin-left: 5px
+
+.marginRight10px
+  margin-right: 10px
+
+.marginRight5px
+  margin-right: 5px
+
+/* Right column
+#advertise
+  text-align: center
+  line-height: 50px
+  height: 58px
+  a
+    color: white
+    font-size: 11px
+#rightcolumn 
+  margin-top: 0px
+  .roundedbox
+    padding: 3px 8px 2px 8px
+    height: 25px
+  .box
+    margin: 0 0 10px 0
+#rightadvertising
+  line-height: 1
+  text-align: center
+  img
+    margin: 2px 1px 2px 1px
+#footer_container
+  float: left
+  width: 100%
+#footer
+  position: relative
+  margin: 10px 0 0 0
+
+/* Footer
+
+img#bird
+  position: absolute
+  left: -30px
+
+#footer a#footerfollowlink
+  margin: 0 0 7px 40px
+  display: block
+  font-size: 11px
+#footerbg
+  padding: 10px 0px 10px 0px
+  overflow: hidden
+  margin: 0 0 20px 0
+  background: url(../images/docs/black_75.png)
+  -moz-border-radius-bottomleft: 5px
+  -moz-border-radius-bottomright: 5px
+  -moz-border-radius-topleft: 5px
+  -moz-border-radius-topright: 5px
+.recent
+  overflow: hidden
+  margin-bottom: 10px
+#footer div
+  &.gravatar
+    margin: 0 15px 0 0
+    float: left
+    overflow: hidden
+  &.link
+    float: left
+    overflow: hidden
+  &.recent div.link div
+    font-size: 11px
+    width: 215px
+    a.linkhighlight
+      color: #ffae00
+#footer_categories
+  width: 260px
+  margin-left: 30px
+#footer h2
+  margin-bottom: 20px
+#footer_categories
+  h2
+    color: #ffae00
+  ul
+    margin: 0
+    li
+      list-style: none
+      margin: 0 0 2px 0
+#footerlinks
+  text-align: right
+  font-size: 11px
+  span
+    float: left
+    margin-left: 50px
+  ul li
+    display: inline
+    margin: 0 10px 0 0
+    list-style: none
+    a
+      text-decoration: none
+    &.current_page_item a
+      color: #ffae00

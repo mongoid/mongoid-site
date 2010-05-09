@@ -47,23 +47,6 @@ end
 
 ### html, md, haml etc
 
-compile '/docs/' do
-  case item[:extension]
-    when 'html'
-      filter :erb
-    when 'html.erb'
-      filter :erb
-    when 'haml'
-      filter :haml
-    when 'html.haml'
-      filter :haml
-    when 'markdown'
-      filter :kramdown
-  end
-  filter :syntax_colorize
-  layout 'doc_layout'
-end
-
 compile '/docs/*/' do
   case item[:extension]
     when 'html'
@@ -78,7 +61,7 @@ compile '/docs/*/' do
       filter :kramdown
   end
   filter :syntax_colorize
-  layout 'doc_layout'
+  layout "docs"
 end
 
 compile '*' do
