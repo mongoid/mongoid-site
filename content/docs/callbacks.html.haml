@@ -1,16 +1,12 @@
 --- 
 title: Callbacks
 ---
+%h2 Callbacks
 
-%h2
-  Callbacks
+.text
+  Mongoid supports the following callbacks: <tt>before_create</tt>, <tt>before_destroy</tt>,
+  <tt>before_save</tt>, <tt>before_update</tt>, <tt>before_validate</tt>, <tt>after_create</tt>,
+  <tt>after_destroy</tt>, <tt>after_save</tt>, <tt>after_update</tt>, <tt>after_validate</tt>.
 
-#docs
-  #doc
-    .text
-      Mongoid supports the following callbacks: <tt>before_create</tt>, <tt>before_destroy</tt>,
-      <tt>before_save</tt>, <tt>before_update</tt>, <tt>before_validate</tt>, <tt>after_create</tt>,
-      <tt>after_destroy</tt>, <tt>after_save</tt>, <tt>after_update</tt>, <tt>after_validate</tt>.
-
-      %p
-        Callbacks are available on any document, whether it is embedded within another document or not.
+  %p
+    Callbacks are available on any document, whether it is embedded within another document or not.

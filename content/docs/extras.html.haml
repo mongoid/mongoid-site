@@ -1,143 +1,148 @@
 --- 
 title: Extras
 ---
+%h2 Extras
 
-%h2
-  Extras
+.text
+  Mongoid has some useful extra features that can be used in applications.
 
-#docs
-  #doc
-    .text
-      Mongoid has some useful extra features that can be used in applications.
+%br
+.title Master / Slave Support
+.text
+  If slave databases are supplied in the <tt>mongoid.yml</tt>, Mongoid will round-robin all
+  enslaved documents' read queries to the slave databases. This can also be handled on a
+  per-query bases:
 
-    %br
-    .title Master / Slave Support
-    .text
-      If slave databases are supplied in the <tt>mongoid.yml</tt>, Mongoid will round-robin all
-      enslaved documents' read queries to the slave databases. This can also be handled on a
-      per-query bases:
+  %br
+  %br
+  To have all reads for a model round robin between slaves:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          enslave
+        end
 
-      %br
-      %br
-      To have all reads for a model round robin between slaves:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            enslave
-          end
+  %br
+  To send reads to the slaves on a per-query basis just enslave a <tt>Criteria</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        Person.where(:first_name => "Durran").enslave
 
-      %br
-      To send reads to the slaves on a per-query basis just enslave a <tt>Criteria</tt>:
-      %pre
-        :preserve
-          Person.where(:first_name => "Durran").enslave
+%br
+.title Caching
+.text
+  Out of the box, Mongoid wraps the MongoDB Ruby Driver's cursor in order to be memory
+  efficient for large queries and data sets. However if you want the query to load all
+  matching documents in memory and return them on <i>n</i> iterations without hitting
+  the database again you may cache a class or criteria:
 
-    %br
-    .title Caching
-    .text
-      Out of the box, Mongoid wraps the MongoDB Ruby Driver's cursor in order to be memory
-      efficient for large queries and data sets. However if you want the query to load all
-      matching documents in memory and return them on <i>n</i> iterations without hitting
-      the database again you may cache a class or criteria:
+  %br
+  %br
+  To have all queries for a model "cache":
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          cache
+        end
 
-      %br
-      %br
-      To have all queries for a model "cache":
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            cache
-          end
+  %br
+  To cache on a per-query basis:
+  %pre
+    %code.language-ruby
+      :preserve
+        Person.where(:first_name => "Durran").cache
 
-      %br
-      To cache on a per-query basis:
-      %pre
-        :preserve
-          Person.where(:first_name => "Durran").cache
+%br
+.title Dirty Attributes
+.text
+  Mongoid implements an ActiveModel style dirty attributes module that conforms to the
+  ActiveModel API exactly:
 
-    %br
-    .title Dirty Attributes
-    .text
-      Mongoid implements an ActiveModel style dirty attributes module that conforms to the
-      ActiveModel API exactly:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+        end
 
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :first_name
-          end
+        person = Person.new(:first_name => "Leroy")
+        person.first_name = "Lauren"
+        person.changed? # true
+        person.first_name_changed? # true
+        person.first_name_was # Leroy
+        person.first_name_change # [ "Leroy", "Lauren" ]
+        person.changes # { "first_name" => [ "Leroy", "Lauren" ] }
 
-          person = Person.new(:first_name => "Leroy")
-          person.first_name = "Lauren"
-          person.changed? # true
-          person.first_name_changed? # true
-          person.first_name_was # Leroy
-          person.first_name_change # [ "Leroy", "Lauren" ]
-          person.changes # { "first_name" => [ "Leroy", "Lauren" ] }
+%br
+.title Versioning
+.text
+  Mongoid supports simple versioning through inclusion of the <tt>Mongoid::Versioning</tt> module.
+  Including this module will create a versions association on the document that it will
+  append to on each save. It will also update the version number on the document, which is
+  an integer.
 
-    %br
-    .title Versioning
-    .text
-      Mongoid supports simple versioning through inclusion of the <tt>Mongoid::Versioning</tt> module.
-      Including this module will create a versions association on the document that it will
-      append to on each save. It will also update the version number on the document, which is
-      an integer.
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          include Mongoid::Versioning
+        end
 
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            include Mongoid::Versioning
-          end
+  %br
+.title Timestamping
+.text
+  Mongoid supplies a timestamping module in <tt>Mongoid::Timestamps</tt> which can be included
+  to get basic behavior for <tt>created_at</tt> and <tt>updated_at</tt> fields.
 
-      %br
-    .title Timestamping
-    .text
-      Mongoid supplies a timestamping module in <tt>Mongoid::Timestamps</tt> which can be included
-      to get basic behavior for <tt>created_at</tt> and <tt>updated_at</tt> fields.
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          include Mongoid::Timestamps
+        end
 
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            include Mongoid::Timestamps
-          end
+  %br
+.title Indexing
+.text
+  You can define indexes on documents using the index macro:
 
-      %br
-    .title Indexing
-    .text
-      You can define indexes on documents using the index macro:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :last_name
+          field :ssn
+          field :location, :type => Array
+          index [[ :first_name, Mongo::ASCENDING ], [ :last_name, Mongo::ASCENDING ]], :unique => true
+          index :ssn, :unique => true, :background => true
+          index [[ :location, Mongo::GEO2D ]], :min => 200, :max => 200
+        end
 
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :first_name
-            field :last_name
-            field :ssn
-            field :location, :type => Array
-            index [[ :first_name, Mongo::ASCENDING ], [ :last_name, Mongo::ASCENDING ]], :unique => true
-            index :ssn, :unique => true, :background => true
-            index [[ :location, Mongo::GEO2D ]], :min => 200, :max => 200
-          end
+  %br
+.title Keys
+.text
+  You can create a composite key in mongoid to replace the default id using the key macro:
 
-      %br
-    .title Keys
-    .text
-      You can create a composite key in mongoid to replace the default id using the key macro:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :last_name
+          key :first_name, :last_name
+        end
 
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :first_name
-            field :last_name
-            key :first_name, :last_name
-          end
-
-          person = Person.new(:first_name => "Syd", :last_name => "Vicious")
-          person.id # returns "syd-vicious"
+        person = Person.new(:first_name => "Syd", :last_name => "Vicious")
+        person.id # returns "syd-vicious"
 

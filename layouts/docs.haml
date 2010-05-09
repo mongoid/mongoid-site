@@ -5,6 +5,7 @@
 	
     %title Mongoid Documentation: #{@item[:title]}
     
+    %link{:href => "../../stylesheets/style.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
     %link{:href => "../../stylesheets/docs.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
           
     %script{:src => "../../javascript/cufon-yui.js", :type => "text/javascript"}
@@ -27,19 +28,23 @@
             %a{:href => "http://github.com/durran/mongoid"} Github
 
       %img#leaf{:src => "../../images/leaf_sm.png"}/
-      %a#logo{:href => "../../"}
-        %h1.fancy MONGOID
-          
-      #mainarea
-        .transborder
-          .content_body
-            = yield
+      #logo
+        %a{:href => "../../"}
+          %h1.fancy MONGOID
+        
+        %a.docs_header{:href => "../installation/"} Documentation
+
+      .main
+        .border
+          .content_body.colorize
+            :preserve
+              #{yield}
 
       #rightcolumn
         #search.box
           .roundedbox
             %h3
-              Documentation
+              Contents
         %ul.outline
           - home_page = @items.find { |p| p.path == '/docs/'}
           - home_page.children.sort_by { |p| p.path }.each do |page|

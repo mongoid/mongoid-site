@@ -1,3 +1,185 @@
+@import "compass/css3"
+
+/** Simple CSS Reset
+  _____________________________________________________________________________
+
+*
+  margin: 0
+  padding: 0
+  border: 0
+  outline: none
+
+/** Body
+  _____________________________________________________________________________
+
+body
+  background: black url(../images/bg.jpg)
+  background-position: top
+  background-repeat: no-repeat
+
+/** Floats
+  _____________________________________________________________________________
+
+.clear
+  clear: both
+
+.left
+  float: left
+
+.right
+  float: right
+
+/** Main Typography
+  _____________________________________________________________________________
+
+h1
+  font-size: 62px
+  color: white
+  margin: 0 0 8px 0
+  text-align: center
+  font-weight: normal
+
+h3
+  font-size: 21px
+  font-weight: normal
+  text-align: center
+  color: white
+  margin: 0 0 7px 0
+  text-transform: uppercase
+
+h4
+  font-family: Arial, Helvetica, sans-serif
+  font-size: 14px
+  font-weight: normal
+  text-align: center
+  color: #bfbfbf
+  margin: 0 0 7px 0
+  text-transform: uppercase
+  letter-spacing: 1px
+
+hr
+  display: block
+  border: none
+  width: 480px
+  height: 2px
+  margin: 0 auto 23px auto
+  background: url(../images/divider.png)
+
+/** Container��
+  _____________________________________________________________________________
+
+#container
+  width: 960px
+  margin: 0 auto
+
+/** Header
+  _____________________________________________________________________________
+
+#header
+  height: 130px
+
+#logo
+  text-align: center
+
+/** Main Background
+  _____________________________________________________________________________
+
+#content
+  display: block
+  height: 375px
+  padding: 50px 50px 10px
+  background: url(../images/content_bg.png)
+  background-repeat: no-repeat
+  position: relative
+
+/** Main Content
+  _____________________________________________________________________________
+
+#main
+  width: 555px
+  overflow: hidden
+  p
+    margin: 0 0 48px 0
+    font-family: Arial, Helvetica, sans-serif
+    font-size: 21px
+    text-align: center
+    color: #bfbfbf
+    line-height: 30px
+
+/** Sidebar Content
+  _____________________________________________________________________________
+
+#sidebar
+  width: 278px
+  height: 335px
+  overflow: hidden
+  p
+    font-family: Arial, Helvetica, sans-serif
+    font-size: 14px
+    text-align: center
+    color: #bfbfbf
+    line-height: 17px
+
+  .links
+    a
+      &:link
+        padding: 5px
+        text-decoration: none
+        font-weight: bold
+        color: #666666
+      &:visited
+        padding: 5px
+        text-decoration: none
+        font-weight: bold
+        color: #bfbfbf
+      &:hover
+        color: black
+        background: #484848
+        +border-radius(10px)
+
+/** Pie Chart
+  _____________________________________________________________________________
+
+#crazy_head
+  width: 246px
+  height: 238px
+  margin: 9px
+  margin-left: 0
+  background: url(../images/weird_head.png)
+
+#leaf
+  width: 117px
+  height: 76px
+  position: absolute
+  left: 71px
+  top: 32px
+  background: url(../images/leaf.png)
+
+/** Footer
+  _____________________________________________________________________________
+
+#footer
+  margin: 5px 15px 0 15px
+
+#social_networking
+  float: left
+  img
+    margin: 0 10px 0 0
+
+#contact_form
+  float: right
+  width: 293px
+
+/** Form
+  _____________________________________________________________________________
+
+#code
+  float: left
+  font-family: Arial, Helvetica, sans-serif
+  font-size: 12px
+  color: white
+
+
 div
   display: block
 
@@ -17,8 +199,8 @@ div
       padding: 5px
       color: #fff
       text-align: center
-      -moz-border-radius: 10px
-      -webkit-border-radius: 10px
+      +border-radius(10px)
+
 .social
   margin-top: 20px
 

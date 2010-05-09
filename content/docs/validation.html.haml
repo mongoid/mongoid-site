@@ -1,68 +1,64 @@
 --- 
 title: Validation
 ---
+%h2 Validation
 
-%h1
-  Docs
+.text
+  %p
+    Mongoid includes <tt>ActiveModel::Validation</tt> to supply the basic validation plus an
+    additional associated and uniqueness validator.
 
-#docs
-  #doc
-    .title Validation
-    .text
-      Mongoid includes <tt>ActiveModel::Validation</tt> to supply the basic validation plus an
-      additional associated and uniqueness validator.
+  %p
+    See <tt>#{link_to "ActiveModel::Validations", "http://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb"}</tt> documentation for more information.
 
-      %br
-      See <tt>#{link_to "ActiveModel::Validations", "http://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb"}</tt> documentation for more information.
+  %p Validate the acceptance of a boolean field:
+  %pre
+    :preserve
+      validates_acceptance_of :terms
 
-      %p Validate the acceptance of a boolean field:
-      %pre
-        :preserve
-          validates_acceptance_of :terms
+  %p Validate associated documents along with the parent:
+  %pre
+    :preserve
+      validates_associated :addresses, :employers
 
-      %p Validate associated documents along with the parent:
-      %pre
-        :preserve
-          validates_associated :addresses, :employers
+  %p Validate confirmation of a field via an accessor with "_confirmation" as its suffix:
+  %pre
+    :preserve
+      validates_confirmation_of :password
 
-      %p Validate confirmation of a field via an accessor with "_confirmation" as its suffix:
-      %pre
-        :preserve
-          validates_confirmation_of :password
+  %p Validate items are excluded from a collection:
+  %pre
+    :preserve
+      validates_exclusion_of :employers, :within => ["Hashrocket"]
 
-      %p Validate items are excluded from a collection:
-      %pre
-        :preserve
-          validates_exclusion_of :employers, :within => ["Hashrocket"]
+  %p Validate the format of a field:
+  %pre
+    :preserve
+      validates_format_of :title, :with => /[A-Za-z]/
 
-      %p Validate the format of a field:
-      %pre
-        :preserve
-          validates_format_of :title, :with => /[A-Za-z]/
+  %p Validate the inclusion of an item in a collection:
+  %pre
+    :preserve
+      validates_inclusion_of :employers, :within => ["Hashrocket"]
 
-      %p Validate the inclusion of an item in a collection:
-      %pre
-        :preserve
-          validates_inclusion_of :employers, :within => ["Hashrocket"]
+  %p Validate the length of a field:
+  %pre
+    :preserve
+      validates_length_of :password, :minimum => 8
 
-      %p Validate the length of a field:
-      %pre
-        :preserve
-          validates_length_of :password, :minimum => 8
+  %p Validate the numericality of a field:
+  %pre
+    :preserve
+      validates_numericality_of :age
 
-      %p Validate the numericality of a field:
-      %pre
-        :preserve
-          validates_numericality_of :age
+  %p Validate that a field exists:
+  %pre
+    :preserve
+      validates_presence_of :first_name
 
-      %p Validate that a field exists:
-      %pre
-        :preserve
-          validates_presence_of :first_name
-
-      %p Validate that the field is unique in the database:
-      %pre
-        :preserve
-          validates_uniqueness_of :ssn
+  %p Validate that the field is unique in the database:
+  %pre
+    :preserve
+      validates_uniqueness_of :ssn
 
 

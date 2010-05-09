@@ -1,3 +1,4 @@
+@import "compass/css3"
 @import "compass/reset"
 @import "960/grid"
 @import "960/text"
@@ -50,10 +51,7 @@ p
 
 .roundedbox
   background: url(../images/docs/black_40.png)
-  -moz-border-radius-bottomleft: 5px
-  -moz-border-radius-bottomright: 5px
-  -moz-border-radius-topleft: 5px
-  -moz-border-radius-topright: 5px
+  +border-radius(5px)
 
 /* Header
 #leaf
@@ -68,6 +66,20 @@ p
     padding-left: 24px
     font-size: 40px
     margin-bottom: 0
+    float: left
+  .docs_header
+    display: inline
+    background-color: #000
+    +border-radius(10px)
+    padding: 2px 6px
+    font-weight: bold
+    font-family: Lucida Grande
+    font-size: 11px
+    opacity: 0.8
+    vertical-align: -8px
+    text-decoration: none
+    margin-left: 5px
+    
 #page_menu 
   +grid(16)
   
@@ -80,8 +92,7 @@ p
       list-style: none
       &.current_page_item
         background: url(../images/docs/black_40.png)
-        -moz-border-radius-bottomleft: 5px
-        -moz-border-radius-bottomright: 5px
+        +border-bottom-radius(5px)
       a
         padding: 5px 10px 5px 10px
         color: white
@@ -89,49 +100,6 @@ p
         display: block
       &.current_page_item a
         color: #ffae00
-#date_rss
-  /*padding:5px 10px 5px 10px;
-  background: url(../images/docs/black_40.png)
-  -moz-border-radius-bottomleft: 5px
-  -moz-border-radius-bottomright: 5px
-  font-size: 10px
-  div
-    padding: 7px 32px 7px 10px
-    text-align: center
-    position: relative
-    img
-      position: absolute
-      right: 10px
-
-
-
-#top_banner
-  text-align: right
-#categories_menu
-  background: url(../images/docs/black_75.png)
-  height: 40px
-  -moz-border-radius-bottomleft: 5px
-  -moz-border-radius-bottomright: 5px
-  -moz-border-radius-topleft: 5px
-  -moz-border-radius-topright: 5px
-  ul li
-    float: left
-    margin: 0 0 0 0
-    list-style: none
-    a
-      padding: 10px 13px 10px 13px
-      font-size: 13px
-      color: white
-      text-decoration: none
-      display: block
-      background: url(../images/docs/categories_devider.gif) no-repeat left center
-    &.first a
-      background: none
-
-.transborder
-  -moz-border-radius: 15px 15px 15px 15px
-  background-color: rgba(0, 0, 0, 0.4)
-  padding: 10px
 
 .content_body
   overflow: hidden
@@ -140,69 +108,73 @@ p
   padding: 10px
   color: #000
   min-height: 596px
-  -moz-border-radius-bottomleft: 10px
-  -moz-border-radius-bottomright: 10px
-  -moz-border-radius-topleft: 10px
-  -moz-border-radius-topright: 10px
+  
+  line-height: 2em
+  font-size: 14px
+  
+  +border-radius(10px)
+  
+  h2
+    font-weight: bold
+    text-transform: uppercase
+
   h1.page_title
     margin-bottom: 0
 
   a
     color: darkblue
     
-
-.post_date
-  font-size: 11px
+  // Layout the docs body
+  .title
+    color: #111
+    font-size: 17px
+    font-weight: bold
+    padding-bottom: 5px
+    padding-top: 5px
+    text-transform: uppercase
   a
-    color: #ffae00
-.post_excerpt
-  font-style: italic
-  margin: 15px 0 10px 0
-.blog_post a.read_full_article
-  display: block
-  color: #ffae00
-  font-style: italic
-
+    text-decoration: none
+  pre
+    +border-radius(10px)
+    font-family: Monaco, Courier, monospace
+    color: #fff
+    margin: 10px 5px
+    overflow: auto
+    padding: 10px
+    background-color: #000
+    line-height: 19px
+  tt
+    color: darkBlue
+    font-family: Monaco, Courier, monospace
+    font-weight: bold
+  .tags
+    padding-top: 5px
+    color: #ffffcc
+    
+      
+      
+  .post_date
+    font-size: 11px
+    a
+      color: #ffae00
+  .post_excerpt
+    font-style: italic
+    margin: 15px 0 10px 0
+  
+  
 .outline
   li
     margin-left: 20px
     margin-bottom: 10px
-#paging
-  font-size: 11px
-  text-align: right
-  overflow: hidden
-  a
-    text-decoration: none
-    &.current
-      color: #339999
-      cursor: default
 
 /*main section
-
-#mainarea
+.main
   +grid(12,16)
+  > .border
+    +border-radius(15px)
+    background-color: rgba(0, 0, 0, 0.4)
+    padding: 10px
 
-span#pagenumbers
-  float: left
-  margin: 0 0 0 10px
-
-#gotopage
-  float: right
-  padding: 3px 8px 2px 9px
-  background: url(../images/docs/black_40.png)
-  -moz-border-radius-bottomleft: 5px
-  -moz-border-radius-bottomright: 5px
-  -moz-border-radius-topleft: 5px
-  -moz-border-radius-topright: 5px
-  a.more
-    margin: 0 0 0 5px
-.margin10px
-  margin: 10px 10px 10px 10px
-
-img.postimg
-  width: 200px
-  height: 200px
-  margin: 0px 10px 10px 0
 
 #rightcolumn
   +grid(4, 16)
@@ -215,3 +187,5 @@ img.postimg
   .box
     margin: 0 0 10px 0
 
+
+  

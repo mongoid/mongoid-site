@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+kicker -e 'rm -Rf output/ && nanoc3 compile' .

@@ -1,77 +1,77 @@
 --- 
 title: Documents
 ---
+%h2 Documents
 
-%h2
-  Documents
+.text
+  Documents are the core objects in Mongoid and any object that is to be persisted to the database
+  must include <tt>Mongoid::Document</tt>. The representation of a Document in MongoDB is a BSON object
+  that is very similar to a Ruby hash or JSON object. Documents can be stored in their own
+  collections in the database, or can be embedded in other Documents <i>n</i> levels deep.
 
-#docs
-  #doc
-    .text
-      Documents are the core objects in Mongoid and any object that is to be persisted to the database
-      must include <tt>Mongoid::Document</tt>. The representation of a Document in MongoDB is a BSON object
-      that is very similar to a Ruby hash or JSON object. Documents can be stored in their own
-      collections in the database, or can be embedded in other Documents <i>n</i> levels deep.
+  %br
+  %br
+.title Defining Documents in Mongoid
+.text
+  Consider a simple class for modeling a person in an application. A person may have a first name,
+  last name, and middle initial. We can define these attributes on a person by defining fields
+  on our person object. Fields will default to type <tt>String</tt> in Mongoid.
 
-      %br
-      %br
-    .title Defining Documents in Mongoid
-    .text
-      Consider a simple class for modeling a person in an application. A person may have a first name,
-      last name, and middle initial. We can define these attributes on a person by defining fields
-      on our person object. Fields will default to type <tt>String</tt> in Mongoid.
+  %br
+  %br
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :middle_initial
+          field :last_name
+        end
 
-      %br
-      %br
-      <tt>person.rb</tt>:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :first_name
-            field :middle_initial
-            field :last_name
-          end
+  Fields other than strings must define a type in order to be properly typecasted when being set.
+  Currently the valid types in Mongoid are: <tt>Array</tt>, <tt>Boolean</tt>, <tt>Date</tt>,
+  <tt>DateTime</tt>, <tt>Float</tt>, <tt>Integer</tt>, <tt>String</tt>, <tt>Time</tt> and any
+  object that inherits from <tt>Mongoid::Document</tt>.
 
-      Fields other than strings must define a type in order to be properly typecasted when being set.
-      Currently the valid types in Mongoid are: <tt>Array</tt>, <tt>Boolean</tt>, <tt>Date</tt>,
-      <tt>DateTime</tt>, <tt>Float</tt>, <tt>Integer</tt>, <tt>String</tt>, <tt>Time</tt> and any
-      object that inherits from <tt>Mongoid::Document</tt>.
+  %br
+  %br
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :birthday, :type => Date
+        end
 
-      %br
-      %br
-      <tt>person.rb</tt>:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :birthday, :type => Date
-          end
+  Fields may also have default values, set by adding a default option when defining the field.
 
-      Fields may also have default values, set by adding a default option when defining the field.
+  %br
+  %br
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :blood_alcohol_level, :type => Float, :default => 0.0
+        end
 
-      %br
-      %br
-      <tt>person.rb</tt>:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :blood_alcohol_level, :type => Float, :default => 0.0
-          end
+  %br
+.title Instantiating Documents
+.text
+  Documents are instantiated by calling new on the document and passing it a hash of attributes.
+  If an attribute exists in the hash that is not defined as a field or is an association, then
+  an exception will get raised. You can also pass a block.
 
-      %br
-    .title Instantiating Documents
-    .text
-      Documents are instantiated by calling new on the document and passing it a hash of attributes.
-      If an attribute exists in the hash that is not defined as a field or is an association, then
-      an exception will get raised. You can also pass a block.
+  %pre
+    %code.language-ruby
+      :preserve
+        person = Person.new(:first_name => "Ludwig", :last_name => "Beethoven")
 
-      %pre
-        :preserve
-          person = Person.new(:first_name => "Ludwig", :last_name => "Beethoven")
-
-          person = Person.new do |p|
-            p.first_name = "Ludwig"
-            p.last_name = "Beethoven"
-          end
+        person = Person.new do |p|
+          p.first_name = "Ludwig"
+          p.last_name = "Beethoven"
+        end

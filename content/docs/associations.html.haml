@@ -1,217 +1,224 @@
 --- 
 title: Associations
 ---
+%h2 Associations
 
-%h2
-  Associations
+.text
+  A <tt>Mongoid::Document</tt> can have associations to other documents through 3 traditional
+  ActiveRecord-style macros: <tt>embeds_one</tt>, <tt>embeds_many</tt> and <tt>embedded_in</tt>.
+  When setting up associations, one document will act as the root for all other objects in the
+  graph, and all associations will be <i>embedded</i> within that root document in the graph
+  as well as the database itself. Relational associations to documents in other collections
+  are not handled by these macros, as it is against the general reasoning for choosing to use
+  a non-relational data store. Relational associations are described at the bottom.
 
-#docs
-  #doc
-    .text
-      A <tt>Mongoid::Document</tt> can have associations to other documents through 3 traditional
-      ActiveRecord-style macros: <tt>embeds_one</tt>, <tt>embeds_many</tt> and <tt>embedded_in</tt>.
-      When setting up associations, one document will act as the root for all other objects in the
-      graph, and all associations will be <i>embedded</i> within that root document in the graph
-      as well as the database itself. Relational associations to documents in other collections
-      are not handled by these macros, as it is against the general reasoning for choosing to use
-      a non-relational data store. Relational associations are described at the bottom.
+  %br
+  %br
+  Considering the person model from previous examples, associations to other documents would
+  be set up like so:
 
-      %br
-      %br
-      Considering the person model from previous examples, associations to other documents would
-      be set up like so:
+  %br
+  %br
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :last_name
+          embeds_one :address
+          embeds_many :phones
+        end
 
-      %br
-      %br
-      <tt>person.rb</tt>:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :first_name
-            field :last_name
-            embeds_one :address
-            embeds_many :phones
-          end
+  <tt>address.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Address
+          include Mongoid::Document
+          field :street
+          field :city
+          field :state
+          field :post_code
+          embedded_in :person, :inverse_of => :addresses
+        end
 
-      <tt>address.rb</tt>:
-      %pre
-        :preserve
-          class Address
-            include Mongoid::Document
-            field :street
-            field :city
-            field :state
-            field :post_code
-            embedded_in :person, :inverse_of => :addresses
-          end
+  <tt>phone.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Phone
+          include Mongoid::Document
+          field :country_code, :type => Integer, :default => 1
+          field :number
+          embedded_in :person, :inverse_of => :phones
+        end
 
-      <tt>phone.rb</tt>:
-      %pre
-        :preserve
-          class Phone
-            include Mongoid::Document
-            field :country_code, :type => Integer, :default => 1
-            field :number
-            embedded_in :person, :inverse_of => :phones
-          end
+  Given the above models, an example person saved to the database would have this structure in BSON,
+  where a <tt>embeds_one</tt> gets embedded as a hash and a <tt>embeds_many</tt> gets embedded as an
+  array of hashes.
 
-      Given the above models, an example person saved to the database would have this structure in BSON,
-      where a <tt>embeds_one</tt> gets embedded as a hash and a <tt>embeds_many</tt> gets embedded as an
-      array of hashes.
+  %pre
+    %code.language-ruby
+      :preserve
+        {
+          first_name: "Durran",
+          last_name: "Jordan",
+          address: {
+            street: "30 Rockefeller Plaza",
+            city: "New York",
+            state: "NY",
+            post_code: "10112"
+          },
+          phones: [ { country_code: 1, number: "212-555-1212" } ]
+        }
 
-      %pre
-        :preserve
-          {
-            first_name: "Durran",
-            last_name: "Jordan",
-            address: {
-              street: "30 Rockefeller Plaza",
-              city: "New York",
-              state: "NY",
-              post_code: "10112"
-            },
-            phones: [ { country_code: 1, number: "212-555-1212" } ]
-          }
+  Associations may have options associated with them, the most important of which is the <i>required</i>
+  option of <tt>inverse_of</tt> on a <tt>embedded_in</tt> association. In order to properly set up the
+  relationships and make sure the object graph is always up to date with any modifications to any object,
+  the <tt>embedded_in</tt> association must provide this option (and be present itself). The value should
+  be set to the name of the association in its parent object. In addition, a <tt>class_name</tt> option
+  may be provided if the name of the association differs from a singular or plural form of the document's
+  class name. We can modify the examples above to show what an updated person would look like with the
+  phones association name changed:
 
-      Associations may have options associated with them, the most important of which is the <i>required</i>
-      option of <tt>inverse_of</tt> on a <tt>embedded_in</tt> association. In order to properly set up the
-      relationships and make sure the object graph is always up to date with any modifications to any object,
-      the <tt>embedded_in</tt> association must provide this option (and be present itself). The value should
-      be set to the name of the association in its parent object. In addition, a <tt>class_name</tt> option
-      may be provided if the name of the association differs from a singular or plural form of the document's
-      class name. We can modify the examples above to show what an updated person would look like with the
-      phones association name changed:
+  %br
+  %br
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :last_name
+          embeds_one :address
+          embeds_many :phone_numbers, :class_name => "Phone"
+        end
 
-      %br
-      %br
-      <tt>person.rb</tt>:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :first_name
-            field :last_name
-            embeds_one :address
-            embeds_many :phone_numbers, :class_name => "Phone"
-          end
+  %br
+.title Building and Creating Associations
+.text
+  Associations can be set directly, appended to, built, or created in certain cases:
 
-      %br
-    .title Building and Creating Associations
-    .text
-      Associations can be set directly, appended to, built, or created in certain cases:
+  %br
+  %br
+  <tt>embeds_one</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        person = Person.new
 
-      %br
-      %br
-      <tt>embeds_one</tt>:
-      %pre
-        :preserve
-          person = Person.new
+        person.build_address(:street => "Oxford Street")
+        person.create_address(:street => "Oxford Street")
+        person.address = Address.new(:street => "Oxford Street")
 
-          person.build_address(:street => "Oxford Street")
-          person.create_address(:street => "Oxford Street")
-          person.address = Address.new(:street => "Oxford Street")
+  <tt>embeds_many</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        person = Person.new
 
-      <tt>embeds_many</tt>:
-      %pre
-        :preserve
-          person = Person.new
+        person.phone_numbers.build(:number => "415-555-1212")
+        person.phone_numbers.create(:number => "415-555-1212")
+        person.phone_numbers << Phone.new(:number => "415-555-1212")
+        person.phone_numbers = [ Phone.new(:number => "415-555-1212") ]
 
-          person.phone_numbers.build(:number => "415-555-1212")
-          person.phone_numbers.create(:number => "415-555-1212")
-          person.phone_numbers << Phone.new(:number => "415-555-1212")
-          person.phone_numbers = [ Phone.new(:number => "415-555-1212") ]
+  <tt>embedded_in</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        address = Address.new
 
-      <tt>embedded_in</tt>:
-      %pre
-        :preserve
-          address = Address.new
+        address.person = Person.new(:first_name => "Mark")
 
-          address.person = Person.new(:first_name => "Mark")
+  %br
+.title Polymorphic Associations
+.text
+  By default, all <tt>embedded_in</tt> associations are polymorphic. No matter what name you provide
+  to the macro it will always return the parent object. You may provide the <tt>:polymorphic => true</tt>
+  option if you like as a "security blanket", but it will actually do nothing extra. An example of
+  this given the above models would be:
 
-      %br
-    .title Polymorphic Associations
-    .text
-      By default, all <tt>embedded_in</tt> associations are polymorphic. No matter what name you provide
-      to the macro it will always return the parent object. You may provide the <tt>:polymorphic => true</tt>
-      option if you like as a "security blanket", but it will actually do nothing extra. An example of
-      this given the above models would be:
+  %br
+  %br
+  <tt>address.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Address
+          include Mongoid::Document
+          field :street
+          field :city
+          field :state
+          field :post_code
+          embedded_in :addressable, :inverse_of => :addresses
+        end
 
-      %br
-      %br
-      <tt>address.rb</tt>:
-      %pre
-        :preserve
-          class Address
-            include Mongoid::Document
-            field :street
-            field :city
-            field :state
-            field :post_code
-            embedded_in :addressable, :inverse_of => :addresses
-          end
+  In the above example, address.addressable would actually return the parent object, which is the Person.
 
-      In the above example, address.addressable would actually return the parent object, which is the Person.
+  %br
+  %br
 
-      %br
-      %br
+.title Association Extensions
+.text
+  Mongoid supports anonymous association extensions, that have access to the proxied target
+  via the target instance variable.
 
-    .title Association Extensions
-    .text
-      Mongoid supports anonymous association extensions, that have access to the proxied target
-      via the target instance variable.
-
-      %br
-      %br
-      <tt>person.rb</tt>:
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            field :name
-            embeds_many :addresses do
-              def california
-                @target.select { |address| address.state == "CA" }
-              end
+  %br
+  %br
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :name
+          embeds_many :addresses do
+            def california
+              @target.select { |address| address.state == "CA" }
             end
           end
+        end
 
-      In the above example, person.addresses.california would return only CA addresses.
+  In the above example, person.addresses.california would return only CA addresses.
 
-      %br
-      %br
-    .title Relational Associations
-    .text
-      Mongoid supports basic relational associations to documents in another collection, or objects
-      that reside in another database. The related object must support ActiveRecord style finders
-      in order for the association to work. The 3 macros provided are <tt>has_one_related</tt>,
-      <tt>has_many_related</tt>, and <tt>belongs_to_related</tt>. When using the macros an id
-      field will be created on the object that is on the <tt>belongs_to_related</tt> side of the association.
+  %br
+  %br
+.title Relational Associations
+.text
+  Mongoid supports basic relational associations to documents in another collection, or objects
+  that reside in another database. The related object must support ActiveRecord style finders
+  in order for the association to work. The 3 macros provided are <tt>has_one_related</tt>,
+  <tt>has_many_related</tt>, and <tt>belongs_to_related</tt>. When using the macros an id
+  field will be created on the object that is on the <tt>belongs_to_related</tt> side of the association.
 
-      %br
-      %br
-      <tt>person.rb</tt>
-      %pre
-        :preserve
-          class Person
-            include Mongoid::Document
-            has_one_related :policy
-            has_many_related :prescriptions
-          end
+  %br
+  %br
+  <tt>person.rb</tt>
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          has_one_related :policy
+          has_many_related :prescriptions
+        end
 
-          class Policy
-            include Mongoid::Document
-            belongs_to_related :person
-          end
+        class Policy
+          include Mongoid::Document
+          belongs_to_related :person
+        end
 
-          class Prescription
-            include Mongoid::Document
-            belongs_to_related :person
-          end
+        class Prescription
+          include Mongoid::Document
+          belongs_to_related :person
+        end
 
-          person = Person.create
-          policy = Policy.create
-          prescription = Prescription.create
+        person = Person.create
+        policy = Policy.create
+        prescription = Prescription.create
 
-          person.policy = policy
-          person.prescriptions = [prescription]
+        person.policy = policy
+        person.prescriptions = [prescription]

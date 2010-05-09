@@ -1,108 +1,111 @@
 --- 
 title: Installation
 ---
+%h2 Installation
 
-%h2
-  Installation
+.text
+  Get the Mongoid gem from rubygems.org:
 
-#docs
-  #doc
-    .text
-      Get the Mongoid gem from rubygems.org:
-
-      %pre
+  %pre
+    %code.language-ruby
+      :preserve
         gem install mongoid
 
-      For performance improvements you will want to also install the mongo c extensions if
-      compatible with your system.
+  For performance improvements you will want to also install the mongo c extensions if
+  compatible with your system.
 
-      %pre
+  %pre
+    %code.language-ruby
+      :preserve
         gem install bson_ext
 
-      For Rails applications add the gem dependency to your <tt>Gemfile</tt>:
+  For Rails applications add the gem dependency to your <tt>Gemfile</tt>:
 
-      %pre
-        :preserve
-          gem "mongoid", "2.0.0.beta4"
-          gem "bson_ext", "0.20.1"
+  %pre
+    %code.language-ruby
+      :preserve
+        gem "mongoid", "2.0.0.beta4"
+        gem "bson_ext", "0.20.1"
 
-      Setup of the database connection itself is handled by using automatic configuration with
-      a <tt>config/mongoid.yml</tt>. You can generate a mongoid.yml via the following command:
+  Setup of the database connection itself is handled by using automatic configuration with
+  a <tt>config/mongoid.yml</tt>. You can generate a mongoid.yml via the following command:
 
-      %pre
-        :preserve
-          rails generate mongoid:config
+  %pre
+    %code.language-ruby
+      :preserve
+        rails generate mongoid:config
 
-      An example configuration is as follows, with the default values showing:
+  An example configuration is as follows, with the default values showing:
 
-      %br
-      <tt>config/mongoid.yml</tt>:
-      %pre
-        :preserve
-          defaults: &defaults
-            host: localhost
-            slaves:
-              - host: slave1.local
-                port: 27018
-              - host: slave2.local
-                port: 27019
-            allow_dynamic_fields: true
-            parameterize_keys: true
-            persist_in_safe_mode: true
-            raise_not_found_error: true
-            reconnect_time: 3
-            use_object_ids: false
+  %br
+  <tt>config/mongoid.yml</tt>:
+  %pre
+    %code.language-yaml
+      :preserve
+        defaults: &defaults
+          host: localhost
+          slaves:
+            - host: slave1.local
+              port: 27018
+            - host: slave2.local
+              port: 27019
+          allow_dynamic_fields: true
+          parameterize_keys: true
+          persist_in_safe_mode: true
+          raise_not_found_error: true
+          reconnect_time: 3
+          use_object_ids: false
 
-          development:
-            <<: *defaults
-            database: control_development
+        development:
+          <<: *defaults
+          database: control_development
 
-          test:
-            <<: *defaults
-            database: control_test
+        test:
+          <<: *defaults
+          database: control_test
 
-          # set these environment variables on your prod server
-          production:
-            <<: *defaults
-            host: <%= ENV['MONGOID_HOST'] %>
-            port: <%= ENV['MONGOID_PORT'] %>
-            database: <%= ENV['MONGOID_DATABASE'] %>
+        # set these environment variables on your prod server
+        production:
+          <<: *defaults
+          host: <%= ENV['MONGOID_HOST'] %>
+          port: <%= ENV['MONGOID_PORT'] %>
+          database: <%= ENV['MONGOID_DATABASE'] %>
 
-      %br
-    .title Configuration
-    .text
-      Mongoid currently supports the following configuration options in the mongoid.yml shown above:
+  %br
+.title Configuration
+.text
+  Mongoid currently supports the following configuration options in the mongoid.yml shown above:
 
-      %br
-      %br
-      <tt>allow_dynamic_fields</tt>: When attributes are not defined as fields but
-      added to an object, they will get fields added for them dynamically and will get
-      persisted. This defaults to true, and if set to false an error will get raised when
-      attempting to set a value that has no field defined.
+  %br
+  %br
+  <tt>allow_dynamic_fields</tt>: When attributes are not defined as fields but
+  added to an object, they will get fields added for them dynamically and will get
+  persisted. This defaults to true, and if set to false an error will get raised when
+  attempting to set a value that has no field defined.
 
-      %br
-      %br
-      <tt>paramterize_keys</tt>: Tells Mongoid to convert basic special characters in composite keys
-      to SEO friendly substrings. Defaults to true.
+  %br
+  %br
+  <tt>paramterize_keys</tt>: Tells Mongoid to convert basic special characters in composite keys
+  to SEO friendly substrings. Defaults to true.
 
-      %br
-      %br
-      <tt>persist_in_safe_mode</tt>: Tells Mongoid to perform all database operations in MongoDB's
-      safe mode. This will cause the driver to double check operations and raise an error if they
-      failed. Defaults to true, switching to false will be unsafe but will be a performance gain.
+  %br
+  %br
+  <tt>persist_in_safe_mode</tt>: Tells Mongoid to perform all database operations in MongoDB's
+  safe mode. This will cause the driver to double check operations and raise an error if they
+  failed. Defaults to true, switching to false will be unsafe but will be a performance gain.
 
-      %br
-      %br
-      <tt>raise_not_found_error</tt>: Will raise a Mongoid::Error::DocumentNotFound
-      when attempting to find a document by an id that doesnt exist. Defaults to true, but when
-      set to false will only return nil for the same query.
+  %br
+  %br
+  <tt>raise_not_found_error</tt>: Will raise a Mongoid::Error::DocumentNotFound
+  when attempting to find a document by an id that doesnt exist. Defaults to true, but when
+  set to false will only return nil for the same query.
 
-      %br
-      %br
-      <tt>reconnect_time</tt>: Tells Mongoid the max time to attempt reconnection to the database
-      if a connection failure has occured. Default is 3 seconds.
+  %br
+  %br
+  <tt>reconnect_time</tt>: Tells Mongoid the max time to attempt reconnection to the database
+  if a connection failure has occured. Default is 3 seconds.
 
-      %br
-      %br
-      <tt>use_object_ids</tt>: Tells Mongoid to use <tt>BSON::ObjectID</tt> objects as ids instead
-      of their string values.
+  %br
+  %br
+  <tt>use_object_ids</tt>: Tells Mongoid to use <tt>BSON::ObjectID</tt> objects as ids instead
+  of their string values.
