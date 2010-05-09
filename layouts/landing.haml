@@ -2,14 +2,14 @@
 %html{html_attrs}
   %head
     %meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
-    %title 
-      Mongoid 
+    %title
+      Mongoid
       - if item[:title]
         = "- #{item[:title]}"
-    
+
     %link{:href => "/stylesheets/style.css", :rel => "stylesheet", :type => "text/css"}
     %link{:href => "/stylesheets/home.css", :rel => "stylesheet", :type => "text/css"}
-    
+
     -# fancy fonts
     %script{:src => "/javascript/cufon-yui.js", :type => "text/javascript"}
     %script{:src => "/javascript/nevis_700.font.js", :type => "text/javascript"}
@@ -33,12 +33,12 @@
           %hr
           .gems
             .gem
-              %h3.fancy Mongoid 1.x for<br />Rails2
+              %h3.fancy Mongoid 1.x for<br />Rails 2
               .install
                 gem install mongoid
 
             .gem
-              %h3.fancy Mongoid 2.x for<br />Rails3
+              %h3.fancy Mongoid 2.x for<br />Rails 3
               .install
                 gem install mongoid --pre
 
@@ -48,4 +48,4 @@
         #sidebar.right
           :preserve
             #{yield}
-        
+
