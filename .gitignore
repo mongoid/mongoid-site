@@ -4,3 +4,4 @@ tmp/*
 .bundle/*
 output/*
 
+.sass-cache

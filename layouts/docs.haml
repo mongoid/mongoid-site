@@ -1,1 +1,47 @@
-= yield
+!!! Strict
+%html{html_attrs}
+  %head
+    %meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
+	
+    %title Mongoid Documentation: #{@item[:title]}
+    
+    %link{:href => "../../stylesheets/docs.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
+          
+    %script{:src => "../../javascript/cufon-yui.js", :type => "text/javascript"}
+    %script{:src => "../../javascript/nevis_700.font.js", :type => "text/javascript"}
+    
+    :javascript
+      Cufon.replace('h1.fancy');
+  
+  %body
+    #page_container
+      #page_menu
+        %ul
+          %li
+            %a{:href => "../../"} Home
+          %li
+            %a{:href => "../../about/"} About
+          %li.current_page_item
+            %a{:href => "#"} Docs
+          %li
+            %a{:href => "http://github.com/durran/mongoid"} Github
+
+      %img#leaf{:src => "../../images/leaf_sm.png"}/
+      %a#logo{:href => "../../"}
+        %h1.fancy MONGOID
+          
+      #mainarea
+        .transborder
+          .content_body
+            = yield
+
+      #rightcolumn
+        #search.box
+          .roundedbox
+            %h3
+              Documentation
+        %ul.outline
+          - home_page = @items.find { |p| p.path == '/docs/'}
+          - home_page.children.sort_by { |p| p.path }.each do |page|
+            %li= link_to_unless_current(page[:title], page.reps[0])
+        

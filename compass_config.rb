@@ -1,5 +1,6 @@
-project_path = File.dirname(__FILE__)
+require 'ninesixty'
+
 http_path    = '/'
-output_style = :compressed
-sass_dir     = 'content/stylesheets'
-css_dir      = 'output/stylesheets'
+css_dir = "output/stylesheets"
+sass_dir = "content/stylesheets"
+images_dir = "content/images"
