@@ -33,6 +33,8 @@
             %h2= item[:title]
             :preserve
               #{yield}
+            %b.right=item[:author]
+
 
       #rightcolumn
         #search.box
