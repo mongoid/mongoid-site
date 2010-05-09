@@ -1,15 +1,24 @@
 @import "compass/css3"
 @import "compass/reset"
+
 @import "960/grid"
 @import "960/text"
 
 $ninesixty-columns: 16
 
-/* Theme Styles
+// STYLE 1
+// html
+//   background-color: #000
+// body
+//   background: url(../images/bg.jpg) top center no-repeat
+
+// STYLE 2
 html
-  background-color: black
+  background-color: #0a0d1c 
 body
-  background: url(../images/docs/bg_top.jpg) top center no-repeat
+  background: url(../images/bg2.jpg) top center no-repeat
+
+body
   font-family: Verdana, Geneva, sans-serif
   color: white
   font-size: 12px
@@ -81,7 +90,7 @@ p
     font-family: Lucida Grande
     font-size: 11px
     opacity: 0.8
-    vertical-align: -10px
+    vertical-align: 0px
     text-decoration: none
     margin-left: 5px
     
@@ -146,14 +155,9 @@ p
   a
     text-decoration: none
   pre
-    +border-radius(10px)
-    font-family: Monaco, Courier, monospace
-    color: #fff
     margin: 10px 5px
     overflow: auto
     padding: 10px
-    background-color: #000
-    line-height: 19px
   tt
     color: darkBlue
     font-family: Monaco, Courier, monospace
@@ -192,12 +196,14 @@ p
     +border-top-radius(10px)
     background-color: rgba(0,0,0,0.4)
     h3
-      line-height: 22px
+      line-height: 26px
+      font-size: 15px
   .box
     margin: 0 0 10px 0
   
   // 
   .outline
+    margin-left: 10px
     li
       margin-left: 20px
       margin-bottom: 10px

@@ -1,26 +1,45 @@
-%h1.fancy
-  Links
+#main.left
+  .links
+    %a.link{:href => "../docs/installation/"} Documentation
+    %br
+    %a.link{:href => "../links/"} Links
+    %br
+    %a.link{:href => "http://github.com/durran/mongoid"} Source
+  %h1.logo Mongoid
 
-#news
-  #item
-    .title Related Links
+  %p.description Mongoid provides an elegant way to persist and query Ruby objects to documents in MongoDB.
+    
+  %hr
+  .gems
+    .gem
+      %h3.fancy Mongoid 1.x for<br />Rails2
+      .install
+        gem install mongoid
+    
+    .gem
+      %h3.fancy Mongoid 2.x for<br />Rails3
+      .install
+        gem install mongoid --pre
+  
     .clear
-    .text
-      %ol.links
-        %li
-          .image
-          = link_to "Mongoid Source on Github", "http://github.com/durran/mongoid"
-        %li
-          = link_to "Project Tracking on Pivotal Tracker", "http://www.pivotaltracker.com/projects/27482"
-        %li
-          = link_to "Mongoid Build Server", "http://ci.mongoid.org"
-        %li
-          = link_to "Mongoid Google Group", "http://groups.google.com/group/mongoid"
-        %li
-          = link_to "Mongoid API Documentation", "http://rdoc.info/projects/durran/mongoid"
-        %li
-          = link_to "Durran on Twitter", "http://twitter.com/modetojoy"
-        %li
-          = link_to "MongoDB", "http://www.mongodb.org"
-        %li
-          = link_to "Hashrocket", "http://www.hashrocket.com"
+  %hr
+  
+#sidebar
+  %ol.links
+    %li
+      .image
+      = link_to "Mongoid Source on Github", "http://github.com/durran/mongoid"
+    %li
+      = link_to "Project Tracking on Pivotal Tracker", "http://www.pivotaltracker.com/projects/27482"
+    %li
+      = link_to "Mongoid Build Server", "http://ci.mongoid.org"
+    %li
+      = link_to "Mongoid Google Group", "http://groups.google.com/group/mongoid"
+    %li
+      = link_to "Mongoid API Documentation", "http://rdoc.info/projects/durran/mongoid"
+    %li
+      = link_to "Durran on Twitter", "http://twitter.com/modetojoy"
+    %li
+      = link_to "MongoDB", "http://www.mongodb.org"
+    %li
+      = link_to "Hashrocket", "http://www.hashrocket.com"
