@@ -103,9 +103,9 @@ category: home
         %pre
           %code.language-ruby
             :preserve
-              Person \
-                .where(:last_name => "Zorg") \
-                .and(:middle_initial => "J") \
+              Person
+                .where(:last_name => "Zorg")
+                .and(:middle_initial => "J")
                 .and(:age.gt => 30)
         
         %pre
@@ -199,3 +199,4 @@ category: home
         .khan
 
 %script{:src => "/javascript/home.js"}
+
