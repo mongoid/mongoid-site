@@ -30,6 +30,41 @@ category: home
   %hr
 
 #sidebar.right
-  -# TODO: build a kick ass slider that cycles through all of Mongoid's awesome features
-  #khaaaaaaan{:title => "Se&ntilde;or Ghenghis Khan"}
+  
+  %a#next_arrow.next.browse
 
+  #slider_nav.navi
+  #slider.scrollable
+    .items
+      .item
+        %h3.fancy
+          Features
+        %ul
+          %li Effortless mapping of Ruby objects to documents and embedded documents.
+          %li Full Rails 3 Support including ActiveModel and Built in Generators
+          %li Rich criteria API for document retrieval from the database.
+          %li Named Scopes / Chainable criteria.
+          %li Support for versioning of documents.
+          %li Full callback support on documents and embedded documents.
+          %li Proper master/slave distribution against the database.
+          %li Optimized for use with extremely large datasets.
+        
+        .actions
+          .next.browse
+            Ok, Impress Me &raquo;
+        
+      .item
+        %h3.fancy BLAH
+        
+      .item
+        %h3.fancy BLAH2
+      .item.khaaaaaaan
+        %h3.fancy Ghenghis Khan says...
+        .quote{:style => "display:none"}
+          使用Mongoid，<br />
+          傻瓜！
+          
+        .khan{:title => "Use Mongoid, Fool!"}
+
+
+%script{:src => "/javascript/home.js"}

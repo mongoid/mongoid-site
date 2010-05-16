@@ -8,7 +8,11 @@
         = "- #{item[:title]}"
 
     %link{:href => "/stylesheets/home.css", :rel => "stylesheet", :type => "text/css"}
-
+    
+    -# jquery tools support
+    %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"}
+    %script{:src => "/javascript/jquery.tools.min.js"}
+    
     -# fancy fonts
     %script{:src => "/javascript/cufon-yui.js", :type => "text/javascript"}
     %script{:src => "/javascript/nevis_700.font.js", :type => "text/javascript"}
@@ -22,3 +26,8 @@
         :preserve
           #{yield}
 
+      #footer
+        %p
+          Mongoid is written and maintained by Durran Jordan, and is free software under the MIT license. 
+
+    

@@ -6,7 +6,7 @@
     %link{:href => "/stylesheets/docs.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
 
   %body
-    #page_container
+    #docs
       = render "shared/menu"
 
       #header
@@ -36,4 +36,7 @@
           %li= link_to_unless_current("Validation", "/docs/validation/")
           %li= link_to_unless_current("Inheritance", "/docs/inheritance/")
           %li= link_to_unless_current("Extras", "/docs/extras/")
-
+      #footer
+        %p
+          Mongoid is written and maintained by Durran Jordan, and is free software under the MIT license. 
+    

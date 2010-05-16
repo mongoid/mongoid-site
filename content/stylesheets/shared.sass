@@ -1,10 +1,53 @@
 @import "compass/css3"
+@import "compass/reset"
 
 // use 960.gs
 @import "960/grid"
 @import "960/text"
 
 $ninesixty-columns: 16
+
+html
+  background: #0a0d1c url(../images/bg2.jpg)
+  background-position: top
+  background-repeat: no-repeat
+body
+  background: url(../images/bg2.jpg) top center no-repeat
+
+body
+  font-family: Verdana, Geneva, sans-serif
+  color: white
+  font-size: 12px
+  background: inherit
+
+h1, h2, h3, h4, h5, h6
+  font-weight: normal
+
+h1
+  line-height: 30px
+  margin-bottom: 5px
+  &.page_title
+    display: block
+    margin: 15px 0 15px 0
+
+h2
+  font-size: 17px
+  margin-bottom: 5px
+
+h3
+  font-size: 15px
+
+h4
+  font-size: 12px
+  margin-bottom: 10px
+
+a
+  &:hover
+    text-decoration: none
+  color: white
+
+p
+  margin: 0 0 10px 0
 
 // common styles here
 .clear
@@ -59,6 +102,12 @@ $ninesixty-columns: 16
       color: #e7be69
     .pc
       color: #6c9cbd
+
+#footer
+  +grid(16)
+  text-align: right
+  p
+    padding-right: 20px
 
 #page_menu
   +grid(16)

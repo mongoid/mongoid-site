@@ -1,26 +1,4 @@
-@import "compass/css3"
-@import "compass/reset"
-
 @import "shared"
-
-// STYLE 1 /////////////////////
-// body
-//   background: black url(../images/bg.jpg)
-//   background-position: top
-//   background-repeat: no-repeat
-////////////////////////////////
-
-// STYLE 2 /////////////////////
-html
-  background: #0a0d1c url(../images/bg2.jpg)
-  background-position: top
-  background-repeat: no-repeat
-body
-  background: inherit
-////////////////////////////////
-
-/** Main Typography
-  _____________________________________________________________________________
 
 #landing
   width: 960px
@@ -65,15 +43,9 @@ body
     position: absolute
     top: 0
     
-  /** Header
-    _____________________________________________________________________________
-
-  /** Main Background
-    _____________________________________________________________________________
-
   #landing_box
     display: block
-    height: 435px
+    height: 430px
     padding: 0
     background: url(../images/landing_box2_alt2.png)
     background-repeat: no-repeat
@@ -90,14 +62,14 @@ body
 
   #main
     width: 555px
-    padding-left: 37px
+    padding-left: 22px
     padding-top: 50px
     overflow: hidden
     float: left
     
     .links
       position: absolute
-      left: 475px
+      left: 451px
       top: 50px
       text-align: right
       line-height: 15px
@@ -135,6 +107,107 @@ body
       text-align: center
       color: #bfbfbf
       line-height: 17px
+    
+    
+    #slider_nav
+      position: absolute
+      right: 118px
+      bottom: 7px
+      width: 100px
+      height: 20px
+      a
+        width: 9px
+        height: 8px
+        float: left
+        margin: 3px
+        background: url(/images/navigator2.png) 0 0 no-repeat
+        display: block
+        font-size: 1px
+        &:hover
+          background-position: 0 -8px
+        &.active
+          background-position: 0 -16px
+    
+    #slider
+      background-color: rgba(0,0,0,0.5)
+      border: 4px solid #fff
+      +border-radius(10px)
+      margin: 29px 27px 0 0
+    
+    #next_arrow
+      position: absolute
+      bottom: 213px
+      cursor: pointer
+      right: 20px
+      width: 15px
+      height: 22px
+      background: url(/images/next.png) 0 0 no-repeat
+    
+    .scrollable
+      position: relative
+      overflow: hidden
+      width: 321px
+      height: 361px
+      .items
+        width: 20000em
+        position: absolute
+      
+    .item    
+      float: left
+      width: 321px
+      height: 361px
+      overflow: auto
+      position: relative
+      > *
+        padding: 0 25px
+      h3
+        margin-top: 15px
+        text-align: left
+      a
+        color: #FFAE00
+      ul
+        li
+          margin-bottom: 5px
+          margin-left: 16px
+          line-height: 1.5em
+          list-style: disc outside none
+          font-size: 12px
+      .actions
+        padding: 0
+        text-align: right
+        position: absolute
+        bottom: 11px
+        right: 13px
+        cursor: pointer
+        color: #FFAE00
+        &:hover
+          text-decoration: underline
+
+      &.khaaaaaaan
+        h3
+          padding-right: 0
+        .khan
+          width: 246px
+          height: 238px
+          background: url(../images/khan.png) no-repeat
+          margin: 0 30px
+          padding: 0
+          position: absolute
+          bottom: 0
+        .quote
+          width: 198px
+          height: 115px
+          background: url(../images/quote.png) no-repeat
+          font-size: 22px
+          line-height: 1.5em
+          padding: 0
+          padding-top: 15px
+          text-align: center
+          color: #000
+          position: absolute
+          z-index: 5
+          right: 12px
+          top: 30px
 
     .version
       font-size: 30px
@@ -162,16 +235,7 @@ body
           +border-radius(10px)
           &:hover
             color: yellow
-
-  #khaaaaaaan
-    width: 246px
-    height: 238px
-    margin: 9px
-    margin-left: 0
-    background: url(../images/khan.png)
-    position: absolute
-    top: 66px
-    right: 72px
+    
 
   #leaf
     width: 117px
@@ -237,7 +301,6 @@ body
       background: transparent url(../images/roundedge-gray-right.gif) no-repeat top right
       display: block
       padding: 4px 10px 4px 2px
-
 
   a:hover.boldbuttons
     text-decoration: underline
