@@ -3,14 +3,7 @@ category: home
 ---
 
 #main.left
-  .links
-    %a.link{:href => "/docs/installation/"} Documentation
-    %br
-    %a.link{:href => "/links/"} Links
-    %br
-    %a.link{:href => "/about/"} About
-
-  %a.logo{:href => "../"} Mongoid
+  = render "shared/logo"
 
   %p.description Mongoid provides an elegant way to persist and query Ruby objects to documents in MongoDB.
 
