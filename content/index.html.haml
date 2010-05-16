@@ -35,13 +35,16 @@ category: home
 
   #slider_nav.navi
   #slider.scrollable
-    .items
-      .item
+    .items.colorize
+      .item.features
+        .actions
+          .next.browse Ok, Impress Me &raquo;
+        
         %h3.fancy
           Features
         %ul
           %li Effortless mapping of Ruby objects to documents and embedded documents.
-          %li Full Rails 3 Support including ActiveModel and Built in Generators
+          %li Rails 3 compatibility including ActiveModel Support and  Generators
           %li Rich criteria API for document retrieval from the database.
           %li Named Scopes / Chainable criteria.
           %li Support for versioning of documents.
@@ -49,22 +52,150 @@ category: home
           %li Proper master/slave distribution against the database.
           %li Optimized for use with extremely large datasets.
         
+        
+      .item
         .actions
-          .next.browse
-            Ok, Impress Me &raquo;
+          .next.browse Ok, next! &raquo;
+        
+        %h3.fancy Map Ruby Objects to Mongo Docs
+        %pre
+          %code.language-ruby
+            :preserve
+              class Person
+                include Mongoid::Document
+                field :name
+                embeds_many :phones
+                ...
+              end        
+        
+        %pre
+          %code.language-ruby
+            :preserve
+              class Phone
+                include Mongoid::Document
+                ...
+              end
+
         
       .item
-        %h3.fancy BLAH
+        .actions
+          .next.browse What else you got? &raquo;
         
+        %h3.fancy Rich Criteria API
+        %pre
+          %code.language-ruby
+            :preserve
+              .all(:aliases => ["The Dude", ...])
+            
+              .and(:age.gt => 18)
+            
+              .excludes(:status => "Married")
+            
+              .in(:status => ["Single", "Divorced"])
+            
+              .where(:age.lte => 55)
+
       .item
-        %h3.fancy BLAH2
+        .actions
+          .next.browse Dude! &raquo;
+        
+        %h3.fancy Chainable Criteria &amp; Named Scopes
+        %pre
+          %code.language-ruby
+            :preserve
+              Person \
+                .where(:last_name => "Zorg") \
+                .and(:middle_initial => "J") \
+                .and(:age.gt => 30)
+        
+        %pre
+          %code.language-ruby
+            :preserve
+              class Player
+                include Mongoid::Document
+                field :status
+                scope :inactive, 
+                      :where => { :active => false }
+              end
+
+      .item
+        .actions
+          .next.browse Wow! &raquo;
+        
+        %h3.fancy Dead Simple Versioning
+        %pre
+          %code.language-ruby
+            :preserve
+              class Person
+                include Mongoid::Document
+                include Mongoid::Versioning
+                ...
+              end
+
+      .item
+        .actions
+          .next.browse Uh, huh &raquo;
+      
+        %h3.fancy Callbacks
+        %pre
+          %code.language-ruby
+            :preserve
+              class Person
+                include Mongoid::Document
+                before_create :do_something
+                after_destroy :do_something_else
+                ...
+              end
+
+      .item
+        .actions
+          .next.browse Sweet! &raquo;
+        
+        %h3.fancy Full Rails 3 Compatibility
+        %pre
+          %code.language-ruby
+            :preserve
+              # add this to config/application.rb
+              require 'mongoid/railties'
+
+        %pre
+          %code.language-ruby
+            :preserve
+              >> rails generate mongoid:config
+              # generates config/mongoid.yml
+        
+        %pre
+          %code.language-ruby
+            :preserve
+              >> script/rails generate model
+              # generates a mongoid model
+
+      .item
+        .actions
+          .next.browse Ok, I'm sold &raquo;
+        
+        %h3.fancy Master/Slave support
+        %pre
+          %code.language-ruby
+            :preserve
+              # all reads go to slaves
+              class Person
+                include Mongoid::Document
+                enslave
+              end
+
+        %pre
+          %code.language-ruby
+            :preserve
+              # force a single query to use slaves
+              .where(:name => "Durran").enslave
+          
       .item.khaaaaaaan
         %h3.fancy Ghenghis Khan says...
-        .quote{:style => "display:none"}
+        .quote{:style => "display:none", :title => "Use Mongoid, Fool!"}
           使用Mongoid，<br />
           傻瓜！
           
-        .khan{:title => "Use Mongoid, Fool!"}
-
+        .khan
 
 %script{:src => "/javascript/home.js"}
