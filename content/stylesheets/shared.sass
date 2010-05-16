@@ -1,5 +1,11 @@
 @import "compass/css3"
 
+// use 960.gs
+@import "960/grid"
+@import "960/text"
+
+$ninesixty-columns: 16
+
 // common styles here
 .clear
   clear: both
@@ -54,3 +60,24 @@
     .pc
       color: #6c9cbd
 
+#page_menu
+  +grid(16)
+  font-family: Verdana,Geneva,sans-serif
+  font-size: 12px
+  ul
+    float: right
+    margin-bottom: 0
+    li
+      float: left
+      margin: 0 3px 0 0
+      list-style: none
+      &.current_page_item
+        background: url(../images/docs/black_40.png)
+        +border-bottom-radius(5px)
+      a
+        padding: 5px 10px 5px 10px
+        color: white
+        text-decoration: none
+        display: block
+      &.current_page_item a
+        color: #ffae00

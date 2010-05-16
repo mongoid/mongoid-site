@@ -1,6 +1,7 @@
 ---
 title: Known fixes to problems
 author: Fredrik Henne
+category: docs
 ---
 ####navvy
     http://github.com/jeffkreeftmeijer/navvy/tree/feature/mongoid

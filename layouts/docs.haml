@@ -2,24 +2,12 @@
 %html{html_attrs}
   %head
     %meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
-
     %title Mongoid Documentation: #{@item[:title]}
-
-    %link{:href => "/stylesheets/style.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
     %link{:href => "/stylesheets/docs.css", :media => "all", :rel => "stylesheet", :type => "text/css"}
 
   %body
     #page_container
-      #page_menu
-        %ul
-          %li
-            %a{:href => "../../"} Home
-          %li
-            %a{:href => "../../links/"} Links
-          %li.current_page_item
-            %a{:href => "#"} Docs
-          %li
-            %a{:href => "http://github.com/durran/mongoid"} Source
+      = render "shared/menu"
 
       #header
         %a{:href => "/"}
