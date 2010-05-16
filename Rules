@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
+preprocess do
+  # authors may unpublish items by setting meta attribute publish: false
+  items.delete_if { |item| item[:publish] == false }
+  copy_static
+end
+
 require 'compass'
 Compass.add_project_configuration('compass_config.rb')
 
