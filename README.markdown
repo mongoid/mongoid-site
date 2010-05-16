@@ -8,7 +8,7 @@ Please help Mongoid flesh out its documentation. We'll merge in any reasonable e
 
 # How to run the site locally
 
-Clone this repo and run `bundle install`. Then run `nanoc3 autocompile` to start the server at http://localhost:300
+Clone this repo and run `bundle install`. Then run `nanoc3 autocompile` to start the server at http://localhost:3000
 
 # Design Credits
 
