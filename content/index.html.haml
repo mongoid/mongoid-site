@@ -23,7 +23,7 @@ category: home
   %hr
 
 #sidebar.right
-  
+
   %a#next_arrow.next.browse
 
   #slider_nav.navi
@@ -32,7 +32,7 @@ category: home
       .item.features
         .actions
           .next.browse Ok, Impress Me &raquo;
-        
+
         %h3.fancy
           Features
         %ul
@@ -44,12 +44,12 @@ category: home
           %li Full callback support on documents and embedded documents.
           %li Proper master/slave distribution against the database.
           %li Optimized for use with extremely large datasets.
-        
-        
+
+
       .item
         .actions
           .next.browse Ok, next! &raquo;
-        
+
         %h3.fancy Map Ruby Objects to Mongo Docs
         %pre
           %code.language-ruby
@@ -59,8 +59,8 @@ category: home
                 field :name
                 embeds_many :phones
                 ...
-              end        
-        
+              end
+
         %pre
           %code.language-ruby
             :preserve
@@ -69,29 +69,29 @@ category: home
                 ...
               end
 
-        
+
       .item
         .actions
           .next.browse What else you got? &raquo;
-        
+
         %h3.fancy Rich Criteria API
         %pre
           %code.language-ruby
             :preserve
               .all(:aliases => ["The Dude", ...])
-            
+
               .and(:age.gt => 18)
-            
+
               .excludes(:status => "Married")
-            
+
               .in(:status => ["Single", "Divorced"])
-            
+
               .where(:age.lte => 55)
 
       .item
         .actions
           .next.browse Dude! &raquo;
-        
+
         %h3.fancy Chainable Criteria &amp; Named Scopes
         %pre
           %code.language-ruby
@@ -100,21 +100,21 @@ category: home
                 .where(:last_name => "Zorg")
                 .and(:middle_initial => "J")
                 .and(:age.gt => 30)
-        
+
         %pre
           %code.language-ruby
             :preserve
               class Player
                 include Mongoid::Document
                 field :status
-                scope :inactive, 
+                scope :inactive,
                       :where => { :active => false }
               end
 
       .item
         .actions
           .next.browse Wow! &raquo;
-        
+
         %h3.fancy Dead Simple Versioning
         %pre
           %code.language-ruby
@@ -128,7 +128,7 @@ category: home
       .item
         .actions
           .next.browse Uh, huh &raquo;
-      
+
         %h3.fancy Callbacks
         %pre
           %code.language-ruby
@@ -143,7 +143,7 @@ category: home
       .item
         .actions
           .next.browse Sweet! &raquo;
-        
+
         %h3.fancy Full Rails 3 Compatibility
         %pre
           %code.language-ruby
@@ -156,7 +156,7 @@ category: home
             :preserve
               >> rails generate mongoid:config
               # generates config/mongoid.yml
-        
+
         %pre
           %code.language-ruby
             :preserve
@@ -166,7 +166,7 @@ category: home
       .item
         .actions
           .next.browse Ok, I'm sold &raquo;
-        
+
         %h3.fancy Master/Slave support
         %pre
           %code.language-ruby
@@ -182,13 +182,13 @@ category: home
             :preserve
               # force a single query to use slaves
               .where(:name => "Durran").enslave
-          
+
       .item.khaaaaaaan
         %h3.fancy Ghenghis Khan says...
         .quote{:style => "display:none", :title => "Use Mongoid, Fool!"}
           使用Mongoid，<br />
           傻瓜！
-          
+
         .khan
 
 %script{:src => "/javascript/home.js"}
