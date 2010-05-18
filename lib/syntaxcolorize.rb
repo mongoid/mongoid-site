@@ -3,22 +3,27 @@ module Nanoc3::Filters
     identifiers :syntax_colorize
     def run(content, params={})
       require 'rubygems'
-      require 'coderay'
       require 'nokogiri'
+      require 'coderay'
       doc = Nokogiri::HTML(content)
-      doc.css('pre').each do |e|
-        e.css("code").each do |e|
-          code = e.inner_text
-          e.inner_html = ::CodeRay.scan(code, "ruby").html(params)
+      doc.css('pre').each do |scan|
+        scan.css("code").each do |data|
+          code = codify(data.inner_text, :ruby)
+          data.inner_html = code
         end
-        e.css("code[@class*=language-]").each do |e|
-          code = e.inner_text
-          lang = /language-([a-z0-9\-_]+)/.match(e['class'])[1]
-          e.inner_html = ::CodeRay.scan(code, lang).html(params)
+        scan.css("code[@class*=language-]").each do |data|
+          lang = /language-([a-z0-9\-_]+)/.match(data['class'])[1]
+          code = codify(data.inner_text, lang)
+          data.inner_html = code
         end
       end
       doc.to_s
     end
+
+    def codify(str, lang)
+      %{#{::CodeRay.scan(str, lang).html}}
+    end
+
   end
 end
 
