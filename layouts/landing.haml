@@ -3,9 +3,7 @@
   %head
     %meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
     %title
-      Mongoid
-      - if item[:title]
-        = "- #{item[:title]}"
+      Mongoid#{item[:title] ? ": #{item[:title]}" : ""}
 
     %link{:href => "/stylesheets/home.css", :rel => "stylesheet", :type => "text/css"}
     
