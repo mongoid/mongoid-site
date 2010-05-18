@@ -204,11 +204,13 @@ category: docs
   %pre
     %code
       :preserve
-        class Person < Mongoid::Document
+        class Person
+          include Mongoid::Document
+
           field :gender
           field :age
 
-          class << self
+          class &lt;&lt; self
             def men
               criteria.where(:gender => "Male")
             end
@@ -296,7 +298,7 @@ category: docs
           named_scope :frags_over, lambda { |count| { :where => { :frags.gt => count } } }
           named_scope :deaths_under, lambda { |count| where(:deaths.lt => count) }
 
-          class << self
+          class &lt;&lt; self
             def alive
               where(:status => "Alive")
             end
@@ -312,7 +314,7 @@ category: docs
 
           named_scope :saved, where(:saved => true)
 
-          class << self
+          class &lt;&lt; self
             def blizzard
               where(:studio => "Blizzard")
             end

@@ -21,11 +21,11 @@ category: docs
           end
         end
 
-        class Browser < Canvas
+        class Browser &lt; Canvas
           field :version, :type => Integer
         end
 
-        class Firefox < Browser
+        class Firefox &lt; Browser
           field :useragent
         end
 
@@ -41,11 +41,11 @@ category: docs
           end
         end
 
-        class Circle < Shape
+        class Circle &lt; Shape
           field :radius, :type => Float
         end
 
-        class Rectangle < Shape
+        class Rectangle &lt; Shape
           field :width, :type => Float
           field :height, :type => Float
         end
