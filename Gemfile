@@ -11,3 +11,4 @@ gem "coderay"
 gem "mime-types"
 gem "nokogiri"
 
+# vim:set filetype=ruby:

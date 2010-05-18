@@ -142,7 +142,7 @@ category: docs
       :preserve
         person = Person.new(:first_name => "Dudley")
         address = Address.new(:street => "Upper Street")
-        person.addresses << address
+        person.addresses &lt;&lt; address
         person.save # or address.save will yield same result.
 
   <i>The MongoDB query:</i>
@@ -194,7 +194,7 @@ category: docs
       :preserve
         person = Person.where(:first_name => "Dudley").first
         address = Address.new(:street => "Upper Street")
-        person.addresses << address
+        person.addresses &lt;&lt; address
         address.save
 
   <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>

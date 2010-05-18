@@ -122,7 +122,7 @@ category: docs
 
         person.phone_numbers.build(:number => "415-555-1212")
         person.phone_numbers.create(:number => "415-555-1212")
-        person.phone_numbers << Phone.new(:number => "415-555-1212")
+        person.phone_numbers &lt;&lt; Phone.new(:number => "415-555-1212")
         person.phone_numbers = [ Phone.new(:number => "415-555-1212") ]
 
   <tt>embedded_in</tt>:
@@ -130,7 +130,6 @@ category: docs
     %code.language-ruby
       :preserve
         address = Address.new
-
         address.person = Person.new(:first_name => "Mark")
 
   %br

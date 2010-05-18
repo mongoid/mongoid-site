@@ -57,19 +57,19 @@ category: docs
           use_object_ids: false
 
         development:
-          <<: *defaults
+          &lt;&lt;: *defaults
           database: control_development
 
         test:
-          <<: *defaults
+          &lt;&lt;: *defaults
           database: control_test
 
         # set these environment variables on your prod server
         production:
-          <<: *defaults
-          host: <%= ENV['MONGOID_HOST'] %>
-          port: <%= ENV['MONGOID_PORT'] %>
-          database: <%= ENV['MONGOID_DATABASE'] %>
+          &lt;&lt;: *defaults
+          host: &lt;%= ENV['MONGOID_HOST'] %>
+          port: &lt;%= ENV['MONGOID_PORT'] %>
+          database: &lt;%= ENV['MONGOID_DATABASE'] %>
 
   %br
 .title Configuration
