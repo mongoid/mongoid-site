@@ -41,7 +41,7 @@ category: docs
           field :city
           field :state
           field :post_code
-          embedded_in :person, :inverse_of => :addresses
+          embedded_in :person, :inverse_of => :address
         end
 
   <tt>phone.rb</tt>:
@@ -152,7 +152,7 @@ category: docs
           field :city
           field :state
           field :post_code
-          embedded_in :addressable, :inverse_of => :addresses
+          embedded_in :addressable, :inverse_of => :address
         end
 
   In the above example, address.addressable would actually return the parent object, which is the Person.
