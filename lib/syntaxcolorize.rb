@@ -8,13 +8,11 @@ module Nanoc3::Filters
       doc = Nokogiri::HTML(content)
       doc.css('pre').each do |scan|
         scan.css("code").each do |data|
-          code = codify(data.inner_text, :ruby)
-          data.inner_html = code
+          data.inner_html = codify(data.inner_text, :ruby)
         end
         scan.css("code[@class*=language-]").each do |data|
           lang = /language-([a-z0-9\-_]+)/.match(data['class'])[1]
-          code = codify(data.inner_text, lang)
-          data.inner_html = code
+          data.inner_html = codify(data.inner_text, lang)
         end
       end
       doc.to_s
