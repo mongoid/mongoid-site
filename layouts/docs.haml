@@ -13,8 +13,6 @@
         %a{:href => "/"}
           %h1.logo MONGOID
 
-        %a.docs_header{:href => "../installation/"} Documentation
-
       .main
         .border
           .content_body.colorize
@@ -36,11 +34,11 @@
           %li= link_to_unless_current("Validation", "/docs/validation/")
           %li= link_to_unless_current("Inheritance", "/docs/inheritance/")
           %li= link_to_unless_current("Extras", "/docs/extras/")
-      
+
       = render "shared/footer"
-      
-      
+
+
     #ribbon
       %p
         %a{:href => "http://github.com/mongoid/mongoid-site", :rel => "me", :title => "Fork me on GitHub!"} Fork me on GitHub!
-    
+
