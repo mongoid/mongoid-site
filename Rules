@@ -50,6 +50,10 @@ end
 
 ### html, md, haml etc
 
+compile '/home*' do
+  filter :erb
+end
+
 compile '/docs/*/' do
   case item[:extension]
     when 'html'
