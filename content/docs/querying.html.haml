@@ -142,7 +142,19 @@ category: docs
   %pre
     %code
       :preserve
-        Person.criteria.order_by([[:last_name, :asc], [:first_name, :asc]])
+        # chain asc/ascending and desc/descending to the criteria
+        Person.criteria.desc(:last_name).asc(:first_name)
+        Person.criteria.descending(:last_name).ascending(:first_name)
+  %pre
+    %code
+      :preserve
+        # pass in a list of symbols
+        Person.criteria.order_by(:last_name.desc, :first_name.asc, :city.desc)
+  %pre
+    %code
+      :preserve
+        # you can alternatively pass in an array of arrays
+        Person.criteria.order_by([[:last_name, :desc], [:first_name, :asc]])
 
   %br
   <tt>Criteria#skip</tt>: Skips n number of documents, similar to a traditional offset.
@@ -260,14 +272,14 @@ category: docs
         Person.only(:first_name).where(:age.gt => 18).group
 
   %br
-.title Named Scopes
+.title Scopes
 .text
-  Mongoid supports named scopes similar to ActiveRecord named scopes. A named scope can provide a hash,
+  Mongoid supports scopes very similar to ActiveRecord 3.0 scopes. A `scope` can provide a hash,
   a proc with a hash, a criteria, or a proc with a criteria. You may also provide an additional
-  block to a named scope if you want extensions added to it. Named scopes can exist on root document classes
+  block to a scope if you want extensions added to it. Scopes can exist on root document classes
   or embedded has many association classes.
 
-  Named scopes on association classes cannot be called directly off the class, they must be called on the
+  Scopes on association classes cannot be called directly off the class, they must be called on the
   association itself on the parent class instance. These scopes also do not require the association to have
   been persisted. An Example is at the bottom.
 
@@ -289,14 +301,14 @@ category: docs
 
           embeds_many :games
 
-          named_scope :active, where(:active => true) do
+          scope :active, where(:active => true) do
             def count
               size
             end
           end
-          named_scope :inactive, :where => { :active => false }
-          named_scope :frags_over, lambda { |count| { :where => { :frags.gt => count } } }
-          named_scope :deaths_under, lambda { |count| where(:deaths.lt => count) }
+          scope :inactive, :where => { :active => false }
+          scope :frags_over, lambda { |count| { :where => { :frags.gt => count } } }
+          scope :deaths_under, lambda { |count| where(:deaths.lt => count) }
 
           class &lt;&lt; self
             def alive
@@ -312,7 +324,7 @@ category: docs
           field :studio
           embedded_in :player, :inverse_of => :games
 
-          named_scope :saved, where(:saved => true)
+          scope :saved, where(:saved => true)
 
           class &lt;&lt; self
             def blizzard
