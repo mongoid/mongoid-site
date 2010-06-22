@@ -139,6 +139,29 @@ category: docs
           end
         end
 
+.title Removing Active Record
+.text
+  %p
+    Now that you have a mongoid.yml you can't wait to delete that pesky database.yml,
+    right? Do it and you'll start getting ActiveRecord errors all over the place.
+    You don't need ActiveRecord unless you're trying to use Mongo in concert
+    with a SQL database. Here's how you remove ActiveRecord from the most
+    recent version of Rails 3:
+
+  %ul
+    %li Open <tt>yourapp/config/application.rb</tt>
+    %li
+      Near the top, remove the line <tt>require 'rails/all'</tt> and add the following
+      three lines so you end up with this:
+  %pre
+    %code.language-ruby
+      :preserve
+        require "action_controller/railtie"
+        require "action_mailer/railtie"
+        require "active_resource/railtie"
+  %ul
+    %li Start up your app and welcome yourself to a life without ActiveRecord!
+
 .title Not Using Rails 3?
 .text
   You can initialize Mongoid in it's configuration block, either by calling the above
