@@ -20,6 +20,10 @@ category: docs
 
   %p
     Callbacks are available on any document, whether it is embedded within another document or not.
+    Note that to be efficient, Mongoid only fires the callback of the document that the
+    persistence action was executed on. This is that Mongoid aims to support large hierarchies
+    and to handle optimized atomic updates callbacks can't be firing all over the document
+    hierarchy.
 
   <tt>article.rb</tt>:
   %pre
