@@ -59,6 +59,9 @@ category: docs
   where a <tt>embeds_one</tt> gets embedded as a hash and a <tt>embeds_many</tt> gets embedded as an
   array of hashes.
 
+  Note that the <tt>embedded_in</tt> macro MUST be defined in order for the embedding to work -
+  don't forget it!
+
   %pre
     %code.language-ruby
       :preserve
@@ -189,9 +192,12 @@ category: docs
 .text
   Mongoid supports basic relational associations to documents in another collection, or objects
   that reside in another database. The related object must support ActiveRecord style finders
-  in order for the association to work. The 3 macros provided are <tt>has_one_related</tt>,
-  <tt>has_many_related</tt>, and <tt>belongs_to_related</tt>. When using the macros an id
-  field will be created on the object that is on the <tt>belongs_to_related</tt> side of the association.
+  in order for the association to work. The 3 macros provided are <tt>references_one</tt>,
+  <tt>references_many</tt>, and <tt>referenced_in</tt>. When using the macros an id
+  field will be created on the object that is on the <tt>referenced_in</tt> side of the association,
+  unless using the <tt>:stored_as</tt> option, which will store ids for the other objects
+  as an array on the defined document and vise-versa. Note that the <tt>inverse_of</tt> option
+  is a requirement in this case.
 
   %br
   %br
@@ -201,18 +207,24 @@ category: docs
       :preserve
         class Person
           include Mongoid::Document
-          has_one_related :policy
-          has_many_related :prescriptions
+          references_one :policy
+          references_many :prescriptions
+          references_many :preferences, :stored_as => :array, :inverse_of => :people
         end
 
         class Policy
           include Mongoid::Document
-          belongs_to_related :person
+          referenced_in :person
         end
 
         class Prescription
           include Mongoid::Document
-          belongs_to_related :person
+          referenced_in :person
+        end
+
+        class Preference
+          include Mongoid::Document
+          references_many :people, :stored_as => :array, :inverse_of => :preferences
         end
 
         person = Person.create
