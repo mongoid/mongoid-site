@@ -294,6 +294,47 @@ category: docs
         );
 
 %br
+.title Mixed Persistence
+.text
+  Note that when Mongoid persists, it looks at the document the persistence command was
+  executed and does an atomic update of all of its updates, as well as any changes embedded
+  below it in the hierarchy. This is handy for operating on the entire tree, and getting
+  a single database call for the changes. Note that as of beta8, deletion does not work in
+  this context, it has to be done separately.
+
+  %br
+  %br
+  <tt>Scenario:</tt> Updating a root document, a child document, and adding a new child.
+
+  %br
+  %br
+  <i>In Mongoid:</i>
+  %pre
+    %code.language-ruby
+      :preserve
+        person = Person.where(:first_name => "Dudley").first
+        person.last_name = "Moore"
+        person.email.address = "d.moore@gmail.com"
+        person.addresses.build(:street => "Upper Street")
+        person.save
+
+  <i>The MongoDB query: (Assume person.id = "4baa56f1230048567300485c")</i>
+  %pre
+    %code.language-javascript
+      :preserve
+        db.people.update(
+          { "_id" : "4baa56f1230048567300485c" },
+          {
+            "$set" :
+            { "last_name" : "Moore", "email.address" : "d.moore@gmail.com" },
+            "$push" :
+            { "addresses" : { "street" : "Upper Street" } }
+          },
+          false,
+          true
+        );
+
+%br
 .title Deleting Records
 .text
   <tt>Scenario:</tt> Deleting an existing root document. This will perform a <tt>remove</tt>
