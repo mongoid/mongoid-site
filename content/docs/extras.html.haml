@@ -161,3 +161,16 @@ category: docs
           field :first_name, :accessible => false
           attr_protected :_id
         end
+
+  %br
+.title Persisting to Different Collections.
+.text
+  Simple, use the <tt>store_in</tt> macro.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          store_in :students
+        end
