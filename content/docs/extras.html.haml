@@ -146,3 +146,18 @@ category: docs
         person = Person.new(:first_name => "Syd", :last_name => "Vicious")
         person.id # returns "syd-vicious"
 
+  %br
+.title Protected Attributes
+.text
+  You can protect attributes from mass assignment by using the <tt>:accessible</tt> option
+  on your field or by declaring them as <tt>attr_protected</tt>. Note that if you want to
+  protect <tt>_id</tt> you must use the later.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name, :accessible => false
+          attr_protected :_id
+        end
