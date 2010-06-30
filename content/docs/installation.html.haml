@@ -24,7 +24,7 @@ category: docs
   %pre
     %code.language-ruby
       :preserve
-        gem "mongoid", ">= 2.0.0.beta7"
+        gem "mongoid", ">= 2.0.0.beta8"
         gem "bson_ext", "1.0.1"
 
   Setup of the database connection itself is handled by using automatic configuration with
@@ -110,3 +110,8 @@ category: docs
   <tt>use_object_ids</tt>: Tells Mongoid to use <tt>BSON::ObjectID</tt> objects as ids instead
   of their string values.
 
+  %br
+  %br
+  <tt>skip_version_check</tt>: If you are having issues authenticating against MongoHQ or
+  MongoMachine because of access to the system collection being not allowed, set this to
+  true.
