@@ -35,6 +35,15 @@ category: docs
       :preserve
         rails generate mongoid:config
 
+  Executing this will add the following to the top of your <tt>config/application.rb</tt>,
+  as well as switching your default ORM to Mongoid (i.e. <tt>rails g model</tt> will now
+  generate Mongoid <tt>Documents</tt> as your models):
+
+  %pre
+    %code.language-ruby
+      :preserve
+        require 'mongoid/railtie'
+
   An example configuration is as follows, with the default values showing:
 
   %br
@@ -115,3 +124,35 @@ category: docs
   <tt>skip_version_check</tt>: If you are having issues authenticating against MongoHQ or
   MongoMachine because of access to the system collection being not allowed, set this to
   true.
+
+  %br
+  %br
+.title Not Using Rails 3?
+.text
+  You can initialize Mongoid in it's configuration block, either by calling the above
+  mentioned methods directly or using <tt>from_hash</tt> to load in a mongoid.yml:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Mongoid.configure do |config|
+          name = "control_development"
+          host = "localhost"
+          config.master = Mongo::Connection.new.db(name)
+          config.slaves = [
+            Mongo::Connection.new(host, 27018, :slave_ok => true).db(name)
+          ]
+          config.persist_in_safe_mode = false
+        end
+
+  OR
+
+  %pre
+    %code.language-ruby
+      :preserve
+        file_name = File.join(File.dirname(__FILE__), "..", "config", "mongoid.yml")
+        @settings = YAML.load(ERB.new(File.new(file_name).read).result)
+
+        Mongoid.configure do |config|
+          config.from_hash(@settings[ENV['RACK_ENV']])
+        end
