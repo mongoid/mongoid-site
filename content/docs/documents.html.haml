@@ -31,9 +31,10 @@ category: docs
         end
 
   Fields other than strings must define a type in order to be properly typecasted when being set.
-  Currently the valid types in Mongoid are: <tt>Array</tt>, <tt>Boolean</tt>, <tt>Date</tt>,
-  <tt>DateTime</tt>, <tt>Float</tt>, <tt>Integer</tt>, <tt>String</tt>, <tt>Time</tt> and any
-  object that inherits from <tt>Mongoid::Document</tt>.
+  Currently the valid types in Mongoid are: <tt>Array</tt>, <tt>BigDecimal</tt>, <tt>Boolean</tt>,
+  <tt>Date</tt>, <tt>DateTime</tt>, <tt>Float</tt>, <tt>Integer</tt>, <tt>String</tt>,
+  <tt>Time</tt> and any object that inherits from <tt>Mongoid::Document</tt>. BigDecimals will get
+  converted to and from Strings in the database.
 
   %br
   %br
@@ -47,6 +48,7 @@ category: docs
         end
 
   Fields may also have default values, set by adding a default option when defining the field.
+  Note that default values MUST match the type of the field, and can accept lambdas.
 
   %br
   %br
