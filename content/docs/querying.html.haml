@@ -64,10 +64,10 @@ category: docs
   %pre
     %code
       :preserve
-        Mongoid::Criteria.new(Person)
-        Person.criteria
-        Person.only(:first_name, :last_name)
-        Person.where(:age.gt => 18)
+        all_people = Mongoid::Criteria.new(Person)
+        all_people_again = Person.criteria
+        all_people_names_only = Person.only(:first_name, :last_name)
+        people_over_18 = Person.where(:age.gt => 18)
 
   In the above example the first two will create an empty criteria for the person, where the third will
   automatically add a field selection criterion to it and the fourth will create one with a where
