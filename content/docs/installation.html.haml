@@ -24,7 +24,7 @@ category: docs
   %pre
     %code.language-ruby
       :preserve
-        gem "mongoid", ">= 2.0.0.beta7"
+        gem "mongoid", ">= 2.0.0.beta9"
         gem "bson_ext", "1.0.1"
 
   Setup of the database connection itself is handled by using automatic configuration with
@@ -34,6 +34,15 @@ category: docs
     %code.language-ruby
       :preserve
         rails generate mongoid:config
+
+  Executing this will add the following to the top of your <tt>config/application.rb</tt>,
+  as well as switching your default ORM to Mongoid (i.e. <tt>rails g model</tt> will now
+  generate Mongoid <tt>Documents</tt> as your models):
+
+  %pre
+    %code.language-ruby
+      :preserve
+        require 'mongoid/railtie'
 
   An example configuration is as follows, with the default values showing:
 
@@ -110,3 +119,40 @@ category: docs
   <tt>use_object_ids</tt>: Tells Mongoid to use <tt>BSON::ObjectID</tt> objects as ids instead
   of their string values.
 
+  %br
+  %br
+  <tt>skip_version_check</tt>: If you are having issues authenticating against MongoHQ or
+  MongoMachine because of access to the system collection being not allowed, set this to
+  true.
+
+  %br
+  %br
+.title Not Using Rails 3?
+.text
+  You can initialize Mongoid in it's configuration block, either by calling the above
+  mentioned methods directly or using <tt>from_hash</tt> to load in a mongoid.yml:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Mongoid.configure do |config|
+          name = "control_development"
+          host = "localhost"
+          config.master = Mongo::Connection.new.db(name)
+          config.slaves = [
+            Mongo::Connection.new(host, 27018, :slave_ok => true).db(name)
+          ]
+          config.persist_in_safe_mode = false
+        end
+
+  OR
+
+  %pre
+    %code.language-ruby
+      :preserve
+        file_name = File.join(File.dirname(__FILE__), "..", "config", "mongoid.yml")
+        @settings = YAML.load(ERB.new(File.new(file_name).read).result)
+
+        Mongoid.configure do |config|
+          config.from_hash(@settings[ENV['RACK_ENV']])
+        end

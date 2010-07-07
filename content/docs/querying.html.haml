@@ -52,8 +52,6 @@ category: docs
         Person.find_or_create_by(:first_name => "Syd")
         Person.find_or_initialize_by(:first_name => "Syd")
 
-  %br
-
 .title Criteria API
 .text
   The preferred method of querying the database is through the criteria API, which is a DSL
@@ -73,7 +71,8 @@ category: docs
 
   In the above example the first two will create an empty criteria for the person, where the third will
   automatically add a field selection criterion to it and the fourth will create one with a where
-  selector already added.
+  selector already added. You may use any entry point method defined in <tt>Mongoid::Finders</tt>, which
+  are class methods on your document class. These are listed below.
 
 %br
 .title Criteria Methods
@@ -82,25 +81,41 @@ category: docs
 
   %br
   %br
-  <tt>Criteria#all</tt>: Matches if all values provided match, useful for doing exact matches on arrays.
+  <tt>Criteria#all_in</tt>: Matches if all values provided match, useful for doing exact matches on arrays.
   %pre
     %code
       :preserve
-        Person.criteria.all(:aliases => [ "Jeffrey", "The Dude" ])
+        Person.all_in(:aliases => [ "Jeffrey", "The Dude" ])
 
   %br
-  <tt>Criteria#and</tt>: Matches documents for each field/value pair.
+  <tt>Criteria#any_in</tt>: Matches documents that have a field matching any value in the array.
   %pre
     %code
       :preserve
-        Person.criteria.and(:age.gt => 18, :gender => "Male")
+        Person.any_in(:status => ["Single", "Divorced", "Separated"])
+
+  %br
+  <tt>Criteria#and</tt>: Matches documents for each field/value pair. Aliased from where, it's just
+  nice syntactic sugar.
+  %pre
+    %code
+      :preserve
+        Person.and(:age.gt => 18, :gender => "Male")
+
+  %br
+  <tt>Criteria#count</tt>: This must be chained behind another criterion not to interfere with
+  the ActiveRecord style count.
+  %pre
+    %code
+      :preserve
+        Person.where(:status => "Married").count
 
   %br
   <tt>Criteria#excludes</tt>: Matches documents that don't match the key value pairs
   %pre
     %code
       :preserve
-        Person.criteria.excludes(:status => "Married")
+        Person.excludes(:status => "Married")
 
   %br
   <tt>Criteria#id</tt>: Matches a document with the supplied id.
@@ -110,32 +125,25 @@ category: docs
         Person.criteria.id("4b2fe28ee2dc9b5f7b000029")
 
   %br
-  <tt>Criteria#in</tt>: Matches documents that have a field matching any value in the array.
-  %pre
-    %code
-      :preserve
-        Person.criteria.in(:status => ["Single", "Divorced", "Separated"])
-
-  %br
   <tt>Criteria#limit</tt>: Limits the results to a certain number.
   %pre
     %code
       :preserve
-        Person.criteria.limit(20)
+        Person.limit(20)
 
   %br
   <tt>Criteria#not_in</tt>: Matches when document values are not in the list.
   %pre
     %code
       :preserve
-        Person.criteria.not_in(:status => ["Divorced", "Single"])
+        Person.not_in(:status => ["Divorced", "Single"])
 
   %br
   <tt>Criteria#only</tt>: Limits the fields returned from the database. Useful for list optimization.
   %pre
     %code
       :preserve
-        Person.criteria.only(:first_name, :last_name)
+        Person.only(:first_name, :last_name)
 
   %br
   <tt>Criteria#order_by</tt>: Adds sorting criteria. (Note - always index fields you sort on)
@@ -143,25 +151,25 @@ category: docs
     %code
       :preserve
         # chain asc/ascending and desc/descending to the criteria
-        Person.criteria.desc(:last_name).asc(:first_name)
-        Person.criteria.descending(:last_name).ascending(:first_name)
+        Person.desc(:last_name).asc(:first_name)
+        Person.descending(:last_name).ascending(:first_name)
   %pre
     %code
       :preserve
         # pass in a list of symbols
-        Person.criteria.order_by(:last_name.desc, :first_name.asc, :city.desc)
+        Person.order_by(:last_name.desc, :first_name.asc, :city.desc)
   %pre
     %code
       :preserve
         # you can alternatively pass in an array of arrays
-        Person.criteria.order_by([[:last_name, :desc], [:first_name, :asc]])
+        Person.order_by([[:last_name, :desc], [:first_name, :asc]])
 
   %br
   <tt>Criteria#skip</tt>: Skips n number of documents, similar to a traditional offset.
   %pre
     %code
       :preserve
-        Person.criteria.skip(100)
+        Person.skip(100)
 
   %br
 .title Putting It All Together
