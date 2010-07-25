@@ -129,6 +129,20 @@ category: docs
   %br
   %br
 
+.title Logging
+.text
+  You can define your own logger for Mongoid if you do not want to use the default
+  Rails logger in your Rails' <tt>application.rb</tt>.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        module MyApplication
+          class Application &lt; Rails::Application
+            config.mongoid.logger = Logger.new($stdout, :warn)
+          end
+        end
+
 .title Not Using Rails 3?
 .text
   You can initialize Mongoid in it's configuration block, either by calling the above
