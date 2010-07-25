@@ -1,0 +1,33 @@
+---
+title: Upgrading
+author: Durran Jordan
+category: docs
+---
+.text
+  Use this as a reference when upgrading between Mongoid versions.
+
+%br
+.title Upgrading to 2.0.0 beta 11 +
+.text
+  The <tt>Mongoid.use_object_ids</tt> configuration option has been removed
+  and will need to be removed from your mongoid.yml or configuration block.
+
+  If you had been using the default <tt>String</tt> representation of
+  <tt>BSON::ObjectID</tt> as your ids, you will need to do one of the following
+  options:
+
+  %br
+  %br
+  1. Tell each one of your models to use <tt>Strings</tt> as ids like so:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          identity :type => String
+        end
+
+  2. Migrate all your <tt>String</tt> ids over to <tt>ObjectIDs</tt> in your
+  database. See <a href="http://gist.github.com/489098">This Gist</a> for an
+  example script to do this. (Thanks Kyle Banker)
