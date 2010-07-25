@@ -78,6 +78,23 @@ category: docs
         person.addresses.destroy_all(:conditions => { :street => "Bond St" })
 
   %br
+.title Persisting in Safe Mode
+.text
+  Even though Mongoid provides the global configuration option for persisting
+  in safe mode, if you are using the default you may use safe mode on a per
+  query basis. Just prepend a <tt>safely</tt> in front of your persistence
+  command:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Person.safely.create(:title => "King")
+        Person.safely.delete_all
+
+        person.safely.save
+        person.safely.destroy
+
+  %br
 .title Persistence Strategies and Underlying DB Queries
 .text
   For all following examples, the following models will be used:
