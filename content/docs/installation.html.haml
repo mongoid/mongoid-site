@@ -58,12 +58,12 @@ category: docs
               port: 27018
             - host: slave2.local
               port: 27019
+          autocreate_indexes: false
           allow_dynamic_fields: true
           parameterize_keys: true
           persist_in_safe_mode: true
           raise_not_found_error: true
           reconnect_time: 3
-          use_object_ids: false
 
         development:
           &lt;&lt;: *defaults
