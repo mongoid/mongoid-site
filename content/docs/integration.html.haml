@@ -1,0 +1,21 @@
+---
+title: Integration
+author: Durran Jordan
+category: docs
+---
+.title Passenger
+.text
+  %p
+    The MongoDB wiki will alert you of an initializer that you need to include
+    if you are using <tt>Passenger</tt> with smart spawning enabled.
+    (Conservative spawning is the default.) In the case of Mongoid you will
+    <i>NOT</i> need to do this as Mongoid detects if <tt>Passenger</tt>
+    is running in this mode and will reconnect for you when a worker is forked.
+
+.title Unicorn
+.text
+  %p
+    No extra configuration is needed for Mongoid if you are using <tt>Unicorn</tt>
+    with <tt>preload_app</tt> set to <tt>true</tt>. Mongoid will detect if
+    <tt>Unicorn</tt> has forked a child worker and will reconnect to the database
+    on the next query.
