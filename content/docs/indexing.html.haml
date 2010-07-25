@@ -69,6 +69,22 @@ category: docs
           index [[ :location, Mongo::GEO2D ]], :min => 200, :max => 200
         end
 
+  You can have Mongoid define indexes for you on "foreign key" fields for
+  relational associations.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Comment
+          include Mongoid::Document
+          referenced_in :post, :inverse_of => :comments, :index => true
+          references_many \
+            :users,
+            :stored_as => :array,
+            :inverse_of => :comments,
+            :index => true
+        end
+
   When you want to create the indexes in the database, use the provided rake task:
 
   %pre
