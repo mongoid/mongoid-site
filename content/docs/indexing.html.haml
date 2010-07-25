@@ -1,0 +1,88 @@
+---
+title: Indexing
+author: Durran Jordan
+category: docs
+---
+.title Indexing
+.text
+  You can define indexes on documents using the index macro. For unique indexes
+  provide a unique options, otherwise no option is necessary.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :ssn
+          index :ssn, :unique => true
+        end
+
+  You can define indexes on embedded document fields as well.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          embeds_many :addresses
+          index "addresses.street"
+        end
+
+  You can index on multiple fields and provide direction.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :last_name
+          index(
+            [
+              [ :first_name, Mongo::ASCENDING ],
+              [ :last_name, Mongo::ASCENDING ]
+            ],
+            :unique => true
+          )
+        end
+
+
+  Indexes can be run in the background in cases where they may take some time:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :ssn
+          index :ssn, :unique => true, :background => true
+        end
+
+  For geospacial indexes, make sure the field you are indexing is an <tt>Array</tt>.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :location, :type => Array
+          index [[ :location, Mongo::GEO2D ]], :min => 200, :max => 200
+        end
+
+  When you want to create the indexes in the database, use the provided rake task:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        rake db:create_indexes
+
+  If you want indexes autocreated when the model classes are loaded, add this
+  configuration option to your mongoid.yml. Note this is <i>NOT</i> recommended for any
+  production environment.
+
+  %br
+  %pre
+    %code.language-yaml
+      :preserve
+        defaults: &defaults
+          autocreate_indexes: true

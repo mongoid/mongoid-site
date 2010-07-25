@@ -110,25 +110,6 @@ category: docs
         end
 
   %br
-.title Indexing
-.text
-  You can define indexes on documents using the index macro:
-
-  %pre
-    %code.language-ruby
-      :preserve
-        class Person
-          include Mongoid::Document
-          field :first_name
-          field :last_name
-          field :ssn
-          field :location, :type => Array
-          index [[ :first_name, Mongo::ASCENDING ], [ :last_name, Mongo::ASCENDING ]], :unique => true
-          index :ssn, :unique => true, :background => true
-          index [[ :location, Mongo::GEO2D ]], :min => 200, :max => 200
-        end
-
-  %br
 .title Keys
 .text
   You can create a composite key in mongoid to replace the default id using the key macro:
