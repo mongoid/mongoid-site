@@ -172,6 +172,13 @@ category: docs
         Person.skip(100)
 
   %br
+  <tt>Criteria#near</tt>: Do a geospacial query for a point a certain distance away.
+  %pre
+    %code
+      :preserve
+        Address.near(:position => [ 37.7, -122.4, 10 ])
+
+  %br
 .title Putting It All Together
 .text
   Return only the first and last names for a person with a post code of 94133:
