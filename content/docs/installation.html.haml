@@ -35,18 +35,14 @@ category: docs
       :preserve
         rails generate mongoid:config
 
-  Executing this will add the following to the top of your <tt>config/application.rb</tt>,
-  as well as switching your default ORM to Mongoid (i.e. <tt>rails g model</tt> will now
-  generate Mongoid <tt>Documents</tt> as your models):
+  %p
+    Executing this will also switch your default ORM to Mongoid
+    (i.e. <tt>rails g model</tt> will now generate Mongoid <tt>Documents</tt>
+    as your models):
 
-  %pre
-    %code.language-ruby
-      :preserve
-        require 'mongoid/railtie'
+  %p
+    An example configuration is as follows, with the default values showing:
 
-  An example configuration is as follows, with the default values showing:
-
-  %br
   <tt>config/mongoid.yml</tt>:
   %pre
     %code.language-yaml
@@ -61,7 +57,7 @@ category: docs
           autocreate_indexes: false
           allow_dynamic_fields: true
           parameterize_keys: true
-          persist_in_safe_mode: true
+          persist_in_safe_mode: false
           raise_not_found_error: true
           reconnect_time: 3
 
