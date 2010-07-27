@@ -7,7 +7,20 @@ category: docs
   %p
     Use this as a reference when upgrading between Mongoid versions.
 
-.title Upgrading to 2.0.0 beta 11 +
+.title Upgrading to 2.0.0.beta.14 +
+.text
+  %p
+    The <tt>:accessible =&gt; false</tt> option on fields has been
+    removed in favor of <tt>attr_accessible</tt> and <tt>attr_protected</tt>.
+    You will need to change those definitions in your models.
+
+  %p
+    Note that gemcutter is sorting the gems funkily, so when upgrading
+    Mongoid for now you will have to specify the exact version. If you are
+    using bundler then it takes care of this for you. The gems in the way
+    will get yanked soon.
+
+.title Upgrading to 2.0.0.beta.11 +
 .text
   %p
     The <tt>Mongoid.use_object_ids</tt> configuration option has been removed
@@ -34,7 +47,7 @@ category: docs
     database. See <a href="http://gist.github.com/489098">This Gist</a> for an
     example script to do this. (Thanks Kyle Banker)
 
-.title Upgrading to 2.0.0 beta 10 +
+.title Upgrading to 2.0.0.beta.10 +
 .text
   %p
     <tt>Passenger</tt> users who are using smart spawning must now remove
