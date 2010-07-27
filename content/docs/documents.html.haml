@@ -79,3 +79,36 @@ category: docs
           p.last_name = "Beethoven"
         end
 
+.title Controlling Access to Fields
+.text
+  You can protect attributes from mass assignment by using <tt>attr_protected</tt>, or
+  provide the inverse functionality with <tt>attr_accessible</tt>. This is for
+  cases where sensitive fields cannot be accidentally set through a form
+  submission or similar.
+
+  %p
+    When using <tt>attr_protected</tt> all other fields will be able to be set
+    via mass assignment.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          attr_protected :_id
+        end
+
+  %p
+    When using <tt>attr_accessible</tt> all other fields will not be able to be set
+    via mass assignment.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :first_name
+          field :last_name
+          attr_accessible :first_name, :last_name
+        end
