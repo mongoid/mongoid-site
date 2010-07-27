@@ -3,12 +3,32 @@ title: Integration
 author: Durran Jordan
 category: docs
 ---
+.title Cucumber
+.text
+  %p
+    Since MongoDB does not support transactions, you will want to add a
+    hook to <tt>Cucumber</tt> that ensures the database is clean before
+    each feature.
+
+  %p
+    In <tt>features/support/hooks.rb</tt>:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Mongoid.master.collections.select do |collection|
+          collection.name !~ /system/
+        end.each(&:drop)
+
 .title Devise
 .text
   %p
     In order to get <tt>Devise</tt> set up to work with Mongoid, all you will
     need to do is remove the ActiveRecord require and replace it with the
-    Mongoid one in the <tt>config/initializers/devise.rb</tt>
+    Mongoid one.
+
+  %p
+    In <tt>config/initializers/devise.rb</tt>:
 
   %pre
     %code.language-ruby
