@@ -66,6 +66,31 @@ category: docs
     if Passenger is running in this mode and will reconnect for you when
     a worker is forked.
 
+.title RSpec
+.text
+  %p
+    Similar to Cucumber, <a href="http://github.com/rspec">Rspec</a>'s
+    <tt>use_transactional_fixtures</tt> option will have no affect on Mongoid,
+    so you can clean up your specs after the suite.
+
+  %p
+    In <tt>spec/spec_helper.rb</tt>:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Rspec.configure do |config|
+          config.after :suite do
+            Mongoid.master.collections.select do |collection|
+              collection.name !~ /system/
+            end.each(&:drop)
+          end
+        end
+
+  %p
+    You may also do this after <tt>:each</tt> as well if you have a lot of
+    integration spec, but note it will be slower.
+
 .title Unicorn
 .text
   %p
