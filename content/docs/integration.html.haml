@@ -3,6 +3,21 @@ title: Integration
 author: Durran Jordan
 category: docs
 ---
+.title Devise
+.text
+  %p
+    In order to get <tt>Devise</tt> set up to work with Mongoid, all you will
+    need to do is remove the ActiveRecord require and replace it with the
+    Mongoid one in the <tt>config/initializers/devise.rb</tt>
+
+  %pre
+    %code.language-ruby
+      :preserve
+        # ==> ORM configuration
+        # Load and configure the ORM. Supports :active_record (default),
+        # :mongoid (bson_ext recommended) and :data_mapper (experimental).
+        require "devise/orm/mongoid"
+
 .title Passenger
 .text
   %p
