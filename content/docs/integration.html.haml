@@ -3,12 +3,30 @@ title: Integration
 author: Durran Jordan
 category: docs
 ---
+.title Carrierwave
+.text
+  %p
+    Support for Mongoid exists in
+    <a href="http://github.com/jnicklas/carrierwave">Carrierwave</a>
+    for doing file attachments, and you may specify them to be files or
+    S3 currently. If no <tt>:mount_on</tt> option is provided to the uploader,
+    the filename will get stored in a field with "_filename" appended
+    to the name of the uploader.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class User
+          include Mongoid::Document
+          mount_uploader :avatar, AvatarUploader #field is avatar_filename
+        end
+
 .title Cucumber
 .text
   %p
     Since MongoDB does not support transactions, you will want to add a
-    hook to <tt>Cucumber</tt> that ensures the database is clean before
-    each feature.
+    hook to <a href="http://github.com/aslakhellesoy/cucumber">Cucumber</a>
+    that ensures the database is clean before each feature.
 
   %p
     In <tt>features/support/hooks.rb</tt>:
@@ -23,9 +41,9 @@ category: docs
 .title Devise
 .text
   %p
-    In order to get <tt>Devise</tt> set up to work with Mongoid, all you will
-    need to do is remove the ActiveRecord require and replace it with the
-    Mongoid one.
+    In order to get <a href="http://github.com/plataformatec/devise">Devise</a>
+    set up to work with Mongoid, all you will need to do is remove the
+    ActiveRecord require and replace it with the Mongoid one.
 
   %p
     In <tt>config/initializers/devise.rb</tt>:
@@ -42,15 +60,17 @@ category: docs
 .text
   %p
     The MongoDB wiki will alert you of an initializer that you need to include
-    if you are using <tt>Passenger</tt> with smart spawning enabled.
-    (Conservative spawning is the default.) In the case of Mongoid you will
-    <i>NOT</i> need to do this as Mongoid detects if <tt>Passenger</tt>
-    is running in this mode and will reconnect for you when a worker is forked.
+    if you are using <a href="http://www.modrails.com/">Passenger</a>
+    with smart spawning enabled. (Conservative spawning is the default.)
+    In the case of Mongoid you will <i>NOT</i> need to do this as Mongoid detects
+    if Passenger is running in this mode and will reconnect for you when
+    a worker is forked.
 
 .title Unicorn
 .text
   %p
-    No extra configuration is needed for Mongoid if you are using <tt>Unicorn</tt>
+    No extra configuration is needed for Mongoid if you are using
+    <a href="http://unicorn.bogomips.org/">Unicorn</a>
     with <tt>preload_app</tt> set to <tt>true</tt>. Mongoid will detect if
-    <tt>Unicorn</tt> has forked a child worker and will reconnect to the database
+    Unicorn has forked a child worker and will reconnect to the database
     on the next query.
