@@ -7,6 +7,20 @@ category: docs
   %p
     Use this as a reference when upgrading between Mongoid versions.
 
+.title Upgrading to 2.0.0.beta.15 +
+.text
+  %p
+    If you had been using the class variable <tt>include_root_in_json</tt>
+    for JSON serialization, this will no longer work. You will need to now
+    use the global Mongoid configuration option of the same name in your
+    <tt>mongoid.yml</tt> if you want to turn it on. (It now defaults to false.)
+
+  %pre
+    %code.language-yaml
+      :preserve
+        defaults: &defaults
+          include_root_in_json: true
+
 .title Upgrading to 2.0.0.beta.14 +
 .text
   %p
