@@ -7,7 +7,7 @@ category: docs
 .text
   %p
     Brian Cardarella's
-    <a href="http://github.com/bcardarella/remarkable_mongoid">Remarkable</a>
+    <a href="http://github.com/bcardarella/remarkable_mongoid">Remarkable-Mongoid</a>
     gem provides a nice addition of RSpec matchers for Mongoid. It contains
     the matchers shown below, plus all validation matchers from
     <a href="http://github.com/remarkable/remarkable/tree/master/remarkable_activemodel">
@@ -26,4 +26,25 @@ category: docs
           it { should be_embedded_in :group }
 
           it { should validate_uniqueness_of :dob }
+        end
+
+.title Riot
+.text
+  %p
+    The <a href="http://github.com/thumblemonks/riot-mongoid">Riot-Mongoid</a>
+    gem provides a nice addition of riot assertions for Mongoid. It contains
+    assertions for fields, keys, associations, and validations.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        context "Person Model" do
+          setup { Person.new }
+
+          asserts_topic.has_field :title,       :type => String
+
+          asserts_topic.has_association :references_one, :account
+          asserts_topic.has_association :embeds_many, :addresses
+
+          asserts_topic.has_validation :validates_presence_of, :title
         end
