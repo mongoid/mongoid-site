@@ -234,3 +234,19 @@ category: docs
         person.policy = policy
         person.prescriptions = [prescription]
 
+.title Cascading Removals
+.text
+  %p
+    Similar to ActiveRecord, if you want child relational associations to be
+    deleted when the parent record is deleted, simply supply the <tt>:dependent</tt>
+    option on the <tt>references_one</tt> or <tt>references_many</tt> macro.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          references_one :policy, :dependent => :destroy
+          references_many :prescriptions, :dependent => :delete
+        end
+
