@@ -80,6 +80,26 @@ category: docs
         person.changes # { "first_name" => [ "Leroy", "Lauren" ] }
 
 %br
+.title Paranoid Documents
+.text
+  There may be times when you don't want documents to actually get deleted
+  from the database, but "flagged" as deleted. Mongoid provides a Paranoia
+  module to give you just that.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          include Mongoid::Paranoia
+        end
+
+        person.delete   # Sets the deleted_at field to the current time.
+        person.delete!  # Permanently deletes the document.
+        person.destroy! # Permanently delete the document with callbacks.
+        person.restore  # Brings the "deleted" document back to life.
+
+%br
 .title Versioning
 .text
   Mongoid supports simple versioning through inclusion of the <tt>Mongoid::Versioning</tt> module.
