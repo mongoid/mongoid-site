@@ -38,6 +38,68 @@ category: docs
           collection.name !~ /system/
         end.each(&:drop)
 
+  %p
+    If you are using the <tt><a href="http://github.com/bmabey/database_cleaner">database_cleaner</a></tt> gem,
+    just add these lines to <tt>features/support/env.rb</tt> instead:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        require 'database_cleaner'
+        require 'database_cleaner/cucumber'
+        DatabaseCleaner.strategy = :truncation
+        DatabaseCleaner.orm = "mongoid"
+
+.title RSpec
+.text
+  %p
+    Similar to Cucumber, <a href="http://github.com/rspec">Rspec</a>'s
+    <tt>use_transactional_fixtures</tt> option will have no affect on Mongoid,
+    so you can clean up your specs after the suite.
+
+  %p
+    In <tt>spec/spec_helper.rb</tt>:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Rspec.configure do |config|
+          config.after :suite do
+            Mongoid.master.collections.select do |collection|
+              collection.name !~ /system/
+            end.each(&:drop)
+          end
+        end
+
+  %p
+    You may also do this after <tt>:each</tt> as well if you have a lot of
+    integration spec, but note it will be slower.
+
+
+  %p
+    If you are using the <tt><a href="http://github.com/bmabey/database_cleaner">database_cleaner</a></tt> gem,
+    you can instead add these lines to your RSpec configure block <tt>spec/spec_helper.rb</tt>:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Rspec.configure do |config|
+          require 'database_cleaner'
+          config.before(:suite) do
+            DatabaseCleaner.strategy = :transaction
+            DatabaseCleaner.orm = "mongoid"
+            DatabaseCleaner.clean_with(:truncation)
+          end
+
+          config.before(:each) do
+            DatabaseCleaner.start
+          end
+
+          config.after(:each) do
+            DatabaseCleaner.clean
+          end
+        end
+
 .title Devise
 .text
   %p
@@ -66,30 +128,6 @@ category: docs
     if Passenger is running in this mode and will reconnect for you when
     a worker is forked.
 
-.title RSpec
-.text
-  %p
-    Similar to Cucumber, <a href="http://github.com/rspec">Rspec</a>'s
-    <tt>use_transactional_fixtures</tt> option will have no affect on Mongoid,
-    so you can clean up your specs after the suite.
-
-  %p
-    In <tt>spec/spec_helper.rb</tt>:
-
-  %pre
-    %code.language-ruby
-      :preserve
-        Rspec.configure do |config|
-          config.after :suite do
-            Mongoid.master.collections.select do |collection|
-              collection.name !~ /system/
-            end.each(&:drop)
-          end
-        end
-
-  %p
-    You may also do this after <tt>:each</tt> as well if you have a lot of
-    integration spec, but note it will be slower.
 
 .title Unicorn
 .text
