@@ -102,10 +102,11 @@ category: docs
 %br
 .title Versioning
 .text
-  Mongoid supports simple versioning through inclusion of the <tt>Mongoid::Versioning</tt> module.
-  Including this module will create a versions association on the document that it will
-  append to on each save. It will also update the version number on the document, which is
-  an integer.
+  %p
+    Mongoid supports simple versioning through inclusion of the <tt>Mongoid::Versioning</tt> module.
+    Including this module will create a versions association on the document that it will
+    append to on each save. It will also update the version number on the document, which is
+    an integer.
 
   %pre
     %code.language-ruby
@@ -113,6 +114,21 @@ category: docs
         class Person
           include Mongoid::Document
           include Mongoid::Versioning
+        end
+
+  %p
+    You can also set a <tt>max_versions</tt> setting, and Mongoid will only keep the max most recent versions.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          include Mongoid::Versioning
+
+          # keep at most 5 versions of a record
+          max_versions 5
+
         end
 
   %br
