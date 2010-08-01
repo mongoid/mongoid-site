@@ -40,15 +40,15 @@ category: docs
 
   %p
     If you are using the <tt><a href="http://github.com/bmabey/database_cleaner">database_cleaner</a></tt> gem,
-    just add these lines to <tt>features/support/env.rb</tt> instead:
+    instead just create a file called <tt>features/support/database_cleaner.rb</tt> with the content:
 
   %pre
     %code.language-ruby
       :preserve
         require 'database_cleaner'
-        require 'database_cleaner/cucumber'
         DatabaseCleaner.strategy = :truncation
         DatabaseCleaner.orm = "mongoid"
+        Before { DatabaseCleaner.clean }
 
 .title RSpec
 .text
@@ -91,10 +91,6 @@ category: docs
           end
 
           config.before(:each) do
-            DatabaseCleaner.start
-          end
-
-          config.after(:each) do
             DatabaseCleaner.clean
           end
         end
