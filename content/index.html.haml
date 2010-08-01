@@ -58,6 +58,7 @@ category: home
                 include Mongoid::Document
                 field :name
                 embeds_many :phones
+                references_many :addresses
                 ...
               end
 
