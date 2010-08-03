@@ -162,6 +162,36 @@ category: docs
   %ul
     %li Start up your app and welcome yourself to a life without ActiveRecord!
 
+.title Other Languages
+.text
+  %p
+    By default Mongoid adds the I18n translation file for English. However adding new
+    languages is easy. In your application initializer (for Rails 3 it can be in <tt>config/initializers/mongoid.rb</tt>), just add the code:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        # adds Spanish
+        Mongoid.add_language("es")
+
+  %p Available languages for Mongoid are:
+  %ul
+    %li <tt>es</tt>: Spanish
+    %li <tt>fr</tt>: French
+    %li <tt>it</tt>: Italian
+    %li <tt>pl</tt>: Polish
+    %li <tt>pt</tt>: Portuguese
+    %li <tt>sv</tt>: Swedish
+
+  %p You can also just include them all by:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        # include all language that Mongoid knows about
+        Mongoid.add_language("*")
+
+
 .title Not Using Rails 3?
 .text
   You can initialize Mongoid in it's configuration block, either by calling the above
