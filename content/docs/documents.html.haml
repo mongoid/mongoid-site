@@ -112,3 +112,10 @@ category: docs
           field :last_name
           attr_accessible :first_name, :last_name
         end
+
+.title Reserved Names
+.text
+  %p
+    If you define a field on your document that conflicts with a reserved
+    method name in Mongoid, the configuration will raise an error. For a list
+    of these you may look at <tt>Mongoid.destructive_fields</tt>.
