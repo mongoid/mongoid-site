@@ -95,6 +95,18 @@ category: docs
         person.safely.destroy
 
   %br
+.title Explicit Modifiers
+.text
+  Mongoid supports explicit $inc modification.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        person = Person.find(id)
+        person.inc(:score, 100)
+        person.safely.inc(:score, 100) # Update in safe mode.
+
+  %br
 .title Persistence Strategies and Underlying DB Queries
 .text
   For all following examples, the following models will be used:
