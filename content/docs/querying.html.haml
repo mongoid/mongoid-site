@@ -95,6 +95,15 @@ category: docs
         Person.any_in(:status => ["Single", "Divorced", "Separated"])
 
   %br
+  <tt>Criteria#any_of</tt>: Matches documents that have any of the provided matches.
+  This is a $or query in MongoDB and can include multiple fields or multiple
+  conditions for the same field.
+  %pre
+    %code
+      :preserve
+        Person.any_of({ :status => "Single" }, { :preference => "Open" })
+
+  %br
   <tt>Criteria#and</tt>: Matches documents for each field/value pair. Aliased from where, it's just
   nice syntactic sugar.
   %pre
@@ -132,6 +141,13 @@ category: docs
         Person.limit(20)
 
   %br
+  <tt>Criteria#near</tt>: Do a geospacial query for a point a certain distance away.
+  %pre
+    %code
+      :preserve
+        Address.near(:position => [ 37.7, -122.4, 10 ])
+
+  %br
   <tt>Criteria#not_in</tt>: Matches when document values are not in the list.
   %pre
     %code
@@ -139,7 +155,8 @@ category: docs
         Person.not_in(:status => ["Divorced", "Single"])
 
   %br
-  <tt>Criteria#only</tt>: Limits the fields returned from the database. Useful for list optimization.
+  <tt>Criteria#only</tt>: Limits the fields returned from the database.
+  Useful for list optimization.
   %pre
     %code
       :preserve
@@ -172,11 +189,30 @@ category: docs
         Person.skip(100)
 
   %br
-  <tt>Criteria#near</tt>: Do a geospacial query for a point a certain distance away.
+  <tt>Criteria#where</tt>: Matches documents for each field/value pair.
   %pre
     %code
       :preserve
-        Address.near(:position => [ 37.7, -122.4, 10 ])
+        Person.where(:age.gt => 18, :gender => "Male")
+
+  %br
+.title Regular Expressions
+.text
+  You can pass regular expressions for string matching.
+  %pre
+    %code
+      :preserve
+        Person.where(:last_name => /^Jord/)
+
+  %br
+.title Multiple Expressions on the Same Field
+.text
+  Mongoid will combine them into a single expression.
+  %pre
+    %code
+      :preserve
+        # Creates a { "age" => { "$gt" => 18, "$lt" => 30 } } selector.
+        Person.where(:age.gt => 18, :age.lt => 30)
 
   %br
 .title Putting It All Together
