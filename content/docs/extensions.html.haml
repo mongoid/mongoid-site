@@ -21,11 +21,35 @@ category: docs
           end
         end
 
+.title mongoid-rspec
+.text
+  %p
+    Evan Sagge's <a href="http://github.com/evansagge/mongoid-rspec">mongoid-rspec</a>
+    provides RSpec matchers for Mongoid. Includes matchers for associations,
+    options, validations, and fields.
+
+  %pre
+    %code.language-ruby
+      :preserve
+        describe Person do
+          it { should reference_one :account }
+          it { should reference_many :posts }
+          it { should be_referenced_in :organization }
+
+          it { should validate_presence_of(:name) }
+
+          it { should have_field(:age).of_type(Integer) }
+        end
+
+        describe Address do
+          it { should be_embedded_in(:person).as_inverse_of(:addresses) }
+        end
+
 .title Remarkable
 .text
   %p
     Brian Cardarella's
-    <a href="http://github.com/bcardarella/remarkable_mongoid">Remarkable-Mongoid</a>
+    <a href="http://github.com/bcardarella/remarkable_mongoid">remarkable-mongoid</a>
     gem provides a nice addition of RSpec matchers for Mongoid. It contains
     the matchers shown below, plus all validation matchers from
     <a href="http://github.com/remarkable/remarkable/tree/master/remarkable_activemodel">
