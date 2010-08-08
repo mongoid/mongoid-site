@@ -4,21 +4,22 @@ author: Durran Jordan
 category: docs
 ---
 .text
-  Documents are the core objects in Mongoid and any object that is to be persisted to the database
-  must include <tt>Mongoid::Document</tt>. The representation of a Document in MongoDB is a BSON object
-  that is very similar to a Ruby hash or JSON object. Documents can be stored in their own
-  collections in the database, or can be embedded in other Documents <i>n</i> levels deep.
+  %p
+    Documents are the core objects in Mongoid and any object that is to be
+    persisted to the database must include <tt>Mongoid::Document</tt>.
+    The representation of a Document in MongoDB is a BSON object
+    that is very similar to a Ruby hash or JSON object. Documents can be
+    stored in their own collections in the database, or can be embedded
+    in other Documents <i>n</i> levels deep.
 
-  %br
-  %br
 .title Defining Documents in Mongoid
 .text
-  Consider a simple class for modeling a person in an application. A person may have a first name,
-  last name, and middle initial. We can define these attributes on a person by defining fields
-  on our person object. Fields will default to type <tt>String</tt> in Mongoid.
+  %p
+    Consider a simple class for modeling a person in an application. A person
+    may have a first name, last name, and middle initial. We can define these
+    attributes on a person by defining fields on our person object. Fields will
+    default to type <tt>String</tt> in Mongoid.
 
-  %br
-  %br
   <tt>person.rb</tt>:
   %pre
     %code.language-ruby
@@ -30,15 +31,15 @@ category: docs
           field :last_name
         end
 
-  Fields other than strings must define a type in order to be properly typecasted when being set.
-  Currently the valid types in Mongoid are: <tt>Array</tt>, <tt>BigDecimal</tt>,
-  <tt>Boolean</tt>, <tt>Date</tt>, <tt>DateTime</tt>, <tt>Float</tt>,
-  <tt>Integer</tt>, <tt>String</tt>, <tt>Symbol</tt>, <tt>Time</tt>
-  and any object that inherits from <tt>Mongoid::Document</tt>. BigDecimals will get
-  converted to and from Strings in the database.
+  %p
+    Fields other than strings must define a type in order to be properly
+    typecasted when being set. Currently the valid types in Mongoid are:
+    <tt>Array</tt>, <tt>BigDecimal</tt>,
+    <tt>Boolean</tt>, <tt>Date</tt>, <tt>DateTime</tt>, <tt>Float</tt>,
+    <tt>Integer</tt>, <tt>String</tt>, <tt>Symbol</tt>, <tt>Time</tt>
+    and any object that inherits from <tt>Mongoid::Document</tt>. BigDecimals
+    will get converted to and from Strings in the database.
 
-  %br
-  %br
   <tt>person.rb</tt>:
   %pre
     %code.language-ruby
@@ -47,12 +48,11 @@ category: docs
           include Mongoid::Document
           field :birthday, :type => Date
         end
+  %p
+    Fields may also have default values, set by adding a default option
+    when defining the field. Note that default values MUST match the type
+    of the field, and can accept lambdas.
 
-  Fields may also have default values, set by adding a default option when defining the field.
-  Note that default values MUST match the type of the field, and can accept lambdas.
-
-  %br
-  %br
   <tt>person.rb</tt>:
   %pre
     %code.language-ruby
@@ -62,12 +62,13 @@ category: docs
           field :blood_alcohol_level, :type => Float, :default => 0.0
         end
 
-  %br
 .title Instantiating Documents
 .text
-  Documents are instantiated by calling new on the document and passing it a hash of attributes.
-  If an attribute exists in the hash that is not defined as a field or is an association, then
-  an exception will get raised. You can also pass a block.
+  %p
+    Documents are instantiated by calling new on the document and passing
+    it a hash of attributes. If an attribute exists in the hash that is not
+    defined as a field or is an association, then an exception will get raised.
+    You can also pass a block.
 
   %pre
     %code.language-ruby
@@ -81,10 +82,11 @@ category: docs
 
 .title Controlling Access to Fields
 .text
-  You can protect attributes from mass assignment by using <tt>attr_protected</tt>, or
-  provide the inverse functionality with <tt>attr_accessible</tt>. This is for
-  cases where sensitive fields cannot be accidentally set through a form
-  submission or similar.
+  %p
+    You can protect attributes from mass assignment by using <tt>attr_protected</tt>, or
+    provide the inverse functionality with <tt>attr_accessible</tt>. This is for
+    cases where sensitive fields cannot be accidentally set through a form
+    submission or similar.
 
   %p
     When using <tt>attr_protected</tt> all other fields will be able to be set
@@ -112,6 +114,50 @@ category: docs
           field :last_name
           attr_accessible :first_name, :last_name
         end
+
+.title Dynamic Attributes
+.text
+  %p
+    By default Mongoid supports dynamic attributes - that is it will allow
+    attributes to get set and persisted on the document even if a field
+    was not defined for them. There is a slight 'gotcha' however when
+    dealing with dynamic attributes in that Mongoid is not completely
+    lenient about the use of <tt>method_missing</tt> and breaking the public
+    interface of the Document class.
+
+  %p
+    When dealing with dynamic attributes the following rules apply:
+
+  %ul
+    %li
+      If the attribute exists in the document, Mongoid will provide you
+      with your standard getter and setter methods. For example, consider
+      a person who has an attribute of "gender" set on the document:
+
+      %pre
+        %code.language-ruby
+          :preserve
+            person[:gender] = "Male"
+            person.gender # => returns "Male"
+            person.gender = "Female" #=> will set gender to "Female"
+
+    %li
+      If the attribute does not already exist on the document, Mongoid
+      will not provide you with the getters and setters and will
+      enforce normal <tt>method_missing</tt> behavior. In this case you
+      must use the other provided accessor methods: ( <tt>[]</tt> and
+      <tt>[]=</tt> ) or ( <tt>read_attribute</tt> and
+      <tt>write_attribute</tt> ):
+
+      %pre
+        %code.language-ruby
+          :preserve
+            person[:gender] # => returns nil
+            person[:gender] = "Male" # => set gender to "Male"
+
+            person.read_attribute(:age) # => returns nil
+            person.write_attribute(:age, 35) # => sets age to 35
+
 
 .title Reserved Names
 .text
