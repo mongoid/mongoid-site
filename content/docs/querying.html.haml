@@ -71,7 +71,22 @@ category: docs
 
   In the above example the first two will create an empty criteria for the person, where the third will
   automatically add a field selection criterion to it and the fourth will create one with a where
-  selector already added. You may use any entry point method defined in <tt>Mongoid::Finders</tt>, which
+  selector already added.
+
+  Whenever you want to match against an embedded document's fields, concatenate the name of each field
+  into a single dot-delimited symbol:
+  %pre
+    %code
+      :preserve
+        # All people whose employer's place of business is in the US.
+        Person.where(:"employer.country" => "United States")
+  %pre
+    %code
+      :preserve
+        # All people whose favorite ice cream flavor is Rocky Road.
+        Person.where(:"favorites.ice_cream.flavor" => "Rocky Road")
+
+  You may use any entry point method defined in <tt>Mongoid::Finders</tt>, which
   are class methods on your document class. These are listed below.
 
 %br
@@ -189,11 +204,17 @@ category: docs
         Person.skip(100)
 
   %br
-  <tt>Criteria#where</tt>: Matches documents for each field/value pair.
+  <tt>Criteria#where</tt>: Matches documents for each field/value pair. Symbols for embedded documents
+  can be provided by using a dot-delimited string.
   %pre
     %code
       :preserve
         Person.where(:age.gt => 18, :gender => "Male")
+  %pre
+    %code
+      :preserve
+        # query against an embedded document
+        Person.where(:"employer.country" => "United States")
 
   %br
 .title Regular Expressions
