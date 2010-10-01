@@ -36,9 +36,10 @@ category: docs
     typecasted when being set. Currently the valid types in Mongoid are:
     <tt>Array</tt>, <tt>BigDecimal</tt>,
     <tt>Boolean</tt>, <tt>Date</tt>, <tt>DateTime</tt>, <tt>Float</tt>,
-    <tt>Integer</tt>, <tt>String</tt>, <tt>Symbol</tt>, <tt>Time</tt>
-    and any object that inherits from <tt>Mongoid::Document</tt>. BigDecimals
-    will get converted to and from Strings in the database.
+    <tt>Hash</tt>, <tt>Integer</tt>, <tt>String</tt>, <tt>Symbol</tt>,
+    <tt>Time</tt> and any object that inherits from
+    <tt>Mongoid::Document</tt>. BigDecimals will get converted to and
+    from Strings in the database.
 
   <tt>person.rb</tt>:
   %pre
