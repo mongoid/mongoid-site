@@ -19,7 +19,7 @@ task :generate do
   local_path = File.expand_path(Settings.deploy_local_path)
   backup_path = File.expand_path(Settings.deploy_backup_path)
 
-  if File.exists?(local
+  if File.exists?(local_path)
 
     # use an incremental backup folder if 2 deploys are on the same minute
     inc = 1
@@ -42,6 +42,7 @@ task :generate do
 
   # generate the new one
   puts `nanoc3 compile`
+  puts `mv ./output #{local_path}`
 end
 
 desc "Deploying to github using git push"
