@@ -67,7 +67,7 @@ compile '/docs/*/' do
     when 'markdown'
       filter :kramdown
   end
-  filter :syntax_colorize
+  filter :colorize_syntax
   layout 'docs'
 end
 
@@ -84,7 +84,7 @@ compile '*' do
     when 'markdown'
       filter :kramdown
   end
-  filter :syntax_colorize
+  filter :colorize_syntax
   layout 'landing'
 end
 
