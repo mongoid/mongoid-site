@@ -38,7 +38,7 @@ Options:
     <tt>:accept</tt> Specify the accepted value.
 
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_acceptance_of :terms
 
@@ -51,7 +51,7 @@ Options:
   %li
     <tt>:message</tt> Supply a custom error message.
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_associated :addresses, :employers
 
@@ -64,7 +64,7 @@ Options:
   %li
     <tt>:message</tt> Supply a custom error message.
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_confirmation_of :password
 
@@ -79,7 +79,7 @@ Options:
   %li
     <tt>:message</tt> Supply a custom error message.
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_exclusion_of :employers, :in => ["Hashrocket"]
 
@@ -100,7 +100,7 @@ Options:
   %li
     <tt>:message</tt> Supply a custom error message.
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_format_of :title, :with => /[A-Za-z]/
 
@@ -118,7 +118,7 @@ Options:
     <tt>:message</tt> Supply a custom error message.
 
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_inclusion_of :employers, :in => ["Hashrocket"]
 
@@ -150,7 +150,7 @@ Options:
     <tt>:wrong_length</tt> Define a custom message for an incorrect length.
 
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_length_of :password, :minimum => 8, :maximum => 16
 
@@ -182,7 +182,7 @@ Options:
     <tt>:only_integer</tt> Set whether the value has to be an integer.
 
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_numericality_of :age, :even => true
 
@@ -195,7 +195,7 @@ Options:
   %li
     <tt>:message</tt> Supply a custom error message.
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_presence_of :first_name
 
@@ -213,7 +213,7 @@ Options:
   %li
     <tt>:message</tt> Supply a custom error message.
 %pre
-  %code
+  %code.language-ruby
     :preserve
       validates_uniqueness_of :ssn
 
