@@ -22,7 +22,7 @@ category: docs
   %br
   Finding all documents given some conditions:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.all(:conditions => { :first_name => "Syd" })
         Person.find(:all, :conditions => { :first_name => "Syd" })
@@ -30,7 +30,7 @@ category: docs
   %br
   Find the first document given some conditions:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.first(:conditions => { :first_name => "Syd" })
         Person.find(:first, :conditions => { :first_name => "Syd" })
@@ -39,7 +39,7 @@ category: docs
   Find the last document given some conditions. If no sorting parameter is provided then the id
   field will be used to reverse the sort.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.last(:conditions => { :first_name => "Syd" })
         Person.find(:last, :conditions => { :first_name => "Syd" })
@@ -47,7 +47,7 @@ category: docs
   %br
   Find using a dynamic finder - if the object does not exist then create/instantiate it:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.find_or_create_by(:first_name => "Syd")
         Person.find_or_initialize_by(:first_name => "Syd")
@@ -62,7 +62,7 @@ category: docs
   %br
   There are several different ways of creating a new criteria:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         all_people = Mongoid::Criteria.new(Person)
         all_people_again = Person.criteria
@@ -83,14 +83,14 @@ category: docs
   %br
   <tt>Criteria#all_in</tt>: Matches if all values provided match, useful for doing exact matches on arrays.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.all_in(:aliases => [ "Jeffrey", "The Dude" ])
 
   %br
   <tt>Criteria#any_in</tt>: Matches documents that have a field matching any value in the array.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.any_in(:status => ["Single", "Divorced", "Separated"])
 
@@ -99,7 +99,7 @@ category: docs
   This is a $or query in MongoDB and can include multiple fields or multiple
   conditions for the same field.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.any_of({ :status => "Single" }, { :preference => "Open" })
 
@@ -107,7 +107,7 @@ category: docs
   <tt>Criteria#and</tt>: Matches documents for each field/value pair. Aliased from where, it's just
   nice syntactic sugar.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.and(:age.gt => 18, :gender => "Male")
 
@@ -115,42 +115,42 @@ category: docs
   <tt>Criteria#count</tt>: This must be chained behind another criterion not to interfere with
   the ActiveRecord style count.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.where(:status => "Married").count
 
   %br
   <tt>Criteria#excludes</tt>: Matches documents that don't match the key value pairs
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.excludes(:status => "Married")
 
   %br
   <tt>Criteria#id</tt>: Matches a document with the supplied id.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.criteria.id("4b2fe28ee2dc9b5f7b000029")
 
   %br
   <tt>Criteria#limit</tt>: Limits the results to a certain number.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.limit(20)
 
   %br
   <tt>Criteria#near</tt>: Do a geospacial query for a point a certain distance away.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Address.near(:position => [ 37.7, -122.4, 10 ])
 
   %br
   <tt>Criteria#not_in</tt>: Matches when document values are not in the list.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.not_in(:status => ["Divorced", "Single"])
 
@@ -158,25 +158,25 @@ category: docs
   <tt>Criteria#only</tt>: Limits the fields returned from the database.
   Useful for list optimization.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.only(:first_name, :last_name)
 
   %br
   <tt>Criteria#order_by</tt>: Adds sorting criteria. (Note - always index fields you sort on)
   %pre
-    %code
+    %code.language-ruby
       :preserve
         # chain asc/ascending and desc/descending to the criteria
         Person.desc(:last_name).asc(:first_name)
         Person.descending(:last_name).ascending(:first_name)
   %pre
-    %code
+    %code.language-ruby
       :preserve
         # pass in a list of symbols
         Person.order_by(:last_name.desc, :first_name.asc, :city.desc)
   %pre
-    %code
+    %code.language-ruby
       :preserve
         # you can alternatively pass in an array of arrays
         Person.order_by([[:last_name, :desc], [:first_name, :asc]])
@@ -184,14 +184,14 @@ category: docs
   %br
   <tt>Criteria#skip</tt>: Skips n number of documents, similar to a traditional offset.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.skip(100)
 
   %br
   <tt>Criteria#where</tt>: Matches documents for each field/value pair.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.where(:age.gt => 18, :gender => "Male")
 
@@ -200,7 +200,7 @@ category: docs
 .text
   You can pass regular expressions for string matching.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.where(:last_name => /^Jord/)
 
@@ -209,7 +209,7 @@ category: docs
 .text
   Mongoid will combine them into a single expression.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         # Creates a { "age" => { "$gt" => 18, "$lt" => 30 } } selector.
         Person.where(:age.gt => 18, :age.lt => 30)
@@ -219,28 +219,28 @@ category: docs
 .text
   Return only the first and last names for a person with a post code of 94133:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.only(:first_name, :last_name).where("address.post_code" => "94133")
 
   %br
   Return only the first names for people whos last names are "Vicious" and have a US phone number.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.only(:first_name).where("phones.country_code" => 1).in(:last_name => ["Vicious"])
 
   %br
   Return all fields for people with last names of "Zorg" and middle initals of "J"
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.where(:last_name => "Zorg").and(:middle_initial => "J")
 
   %br
   Criteria where clause examples using MongoDB expressions:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.where(:title.all => ["Sir"])
         Person.where(:age.exists => true)
@@ -265,7 +265,7 @@ category: docs
   %br
   <tt>person.rb</tt>:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         class Person
           include Mongoid::Document
@@ -294,7 +294,7 @@ category: docs
   %br
   Find the max value or min value in the database for a single field, returns a float:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.max(:age)
         Person.min(:age)
@@ -302,7 +302,7 @@ category: docs
   %br
   Find the sum of a field across all documents, returns a float:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Invoice.sum(:total)
 
@@ -310,7 +310,7 @@ category: docs
   Get aggregate counts for supplied fields on all documents, this returns an array of hashes with key
   being the field value, and value being the count:
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.only(:first_name).where(:age.gt => 18).aggregate
 
@@ -318,7 +318,7 @@ category: docs
   Get groups of documents for supplied fields, this returns an array of hashes with key being the field value,
   and value being an array of documents. The entire result set must fit in memory.
   %pre
-    %code
+    %code.language-ruby
       :preserve
         Person.only(:first_name).where(:age.gt => 18).group
 
@@ -341,7 +341,7 @@ category: docs
 
   %br
   %pre
-    %code
+    %code.language-ruby
       :preserve
         class Player
           include Mongoid::Document
