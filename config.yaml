@@ -3,6 +3,11 @@
 # will be considered as binary.
 text_extensions: [ 'css', 'erb', 'haml', 'htm', 'html', 'js', 'less', 'markdown', 'md', 'php', 'rb', 'sass', 'txt', 'xhtml', 'xml' ]
 
+# deploy settings
+deploy_local_path: "~/Sites/mongoid.github.com"
+deploy_backup_path: "./tmp/backup"
+deploy_github_repo: "git@github.com:mongoid/mongoid.github.com.git"
+
 # The path to the directory where all generated files will be written to. This
 # can be an absolute path starting with a slash, but it can also be path
 # relative to the site directory.
