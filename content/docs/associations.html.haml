@@ -163,8 +163,9 @@ category: docs
 
 .title Association Extensions
 .text
-  Mongoid supports anonymous association extensions, that have access to the proxied target
-  via the target instance variable.
+  Mongoid supports anonymous association extensions. Access the proxied target
+  with the <tt>@target</tt> instance variable. Access the parent document with 
+  the <tt>@parent</tt> instance variable.
 
   %br
   %br
@@ -179,10 +180,16 @@ category: docs
             def california
               @target.select { |address| address.state == "CA" }
             end
+            
+            def domestic
+              @target.select { |address| address.country == @parent.country_of_origin }
+            end
           end
         end
 
-  In the above example, person.addresses.california would return only CA addresses.
+  In the above example, <tt>person.addresses.california</tt> would return only CA addresses, 
+  and <tt>person.addresses.international</tt> would return only addresses with the same 
+  <tt>country</tt> as <tt>person.country_of_origin</tt>.
 
   %br
   %br
