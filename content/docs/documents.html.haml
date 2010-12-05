@@ -62,6 +62,22 @@ category: docs
           include Mongoid::Document
           field :blood_alcohol_level, :type => Float, :default => 0.0
         end
+        
+  %p
+    You can override the type of the unique _id field on the collection with the 
+    identity keyword. In the following example, the type of the _id field will 
+    now be String. This is useful if you would like the _id field to be 
+    something other than an ObjectId.
+  
+  <tt>person.rb</tt>:
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          identity :type => String
+        end
+        
 
 .title Instantiating Documents
 .text
