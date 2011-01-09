@@ -7,6 +7,186 @@ category: docs
   %p
     Use this as a reference when upgrading between Mongoid versions.
 
+.title Upgrading to 2.0.0.rc.1 +
+.text
+  %p
+    Please note there are many changes in this upgrade - please take
+    caution and be mindful of each item listed here. There were close to
+    400 commits between beta 20 and rc 1, and was a COMPLETE REWRITE
+    of all association code as well as refactorings and rewrites in many
+    other areas. Unforeseen issues may arise. In case of emergency point
+    at the <tt>safe_master</tt> branch or the tag of
+    <tt>2.0.0.beta.20</tt> from bundler to potentially stay out of
+    harm's way. :)
+
+  %p
+    And on to the changes...
+
+  %p
+    Relational associations no longer autosave when the parent relation
+    is created. Previously a save on a new document which had a
+    references_many or references_one association loaded would save
+    the relations on it's first save. In order to get this functionality
+    back, an <tt>:autosave =&gt; true</tt> option must be provided to the
+    macro (This only applies to references_many and references_one):
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          references_many :posts, :autosave => true
+          references_one :game, :autosave => true
+        end
+
+  %p
+    For relational many-to-many associations, the
+    <tt>:stored_as =&gt; :array</tt> option on references_many has been
+    sacked. You will get an error on class load to change these to the
+    new syntax:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          references_and_referenced_in_many :preferences
+        end
+
+  %p
+    Mongoid now validates all associated "child" relations by default,
+    which is the opposite behaviour from the last release. You may
+    remove any validates_associated definitions that do not require
+    custom behaviour for the following relations:
+
+    %ul
+      %li <tt>embeds_many</tt>
+      %li <tt>embeds_one</tt>
+      %li <tt>references_many</tt>
+      %li <tt>references_one</tt>
+
+  %p
+    If you do NOT want the automatic validation on these relations, you
+    can supply the definition with a <tt>:validate =&gt; false</tt>
+    option to turn it off:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          embeds_many :addresses, :validate => false
+        end
+
+  %p
+    Criteria object are now immutable, and return a new object with each
+    method call. Also, the following methods have been added:
+
+    %ul
+      %li <tt>delete_all</tt>
+      %li <tt>destroy_all</tt>
+      %li <tt>create</tt>
+
+  %p
+    This allows for limited database update commands to happen off of
+    a criteria object:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        Person.where(:title => "Prince").create # => Creates one
+        Person.where(:age.gt => 40).delete_all # => Delete all matching
+        Person.where(:age.gt => 40).destroy_all # => Destroy all matching
+
+  %p
+    Mongoid now supports <tt>default_scope</tt> in a limited capacity:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Person
+          include Mongoid::Document
+          field :name, :type => String
+          default_scope asc(:name)
+        end
+
+  %p
+    Mongoid now supports multiple additional database connections on a
+    per-model basis. Note that the "databases" entry in the configuration
+    is only for ADDITIONAL databases - the primary master still is
+    configured as usual:
+
+  %pre
+    %code.language-yaml
+      :preserve
+        defaults: &defaults
+          host: localhost
+          slaves:
+            - host: localhost
+              port: 27018
+            - host: localhost
+              port: 27019
+          databases:
+            secondary:
+              database: secondary_config_test
+              host: localhost
+              post: 27020
+              slaves:
+                - host: localhost
+                  port: 27021
+                - host: localhost
+                  port: 27022
+
+  %p
+    To tell a model to persist to another database:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Business
+          include Mongoid::Document
+          set_database :secondary
+        end
+
+  %p
+    The <tt>inverse_of</tt> option is no longer required on any relation.
+
+  %p
+    Mongoid now allows recursive embedded relationships through 2 simple
+    macros:
+
+  %pre
+    %code.language-ruby
+      :preserve
+        class Role
+          include Mongoid::Document
+          field :name, :type => String
+          recursively_embeds_many
+        end
+
+        role.parent_role # => Gets the parent.
+        role.child_roles # => Gets the children.
+
+        class Role
+          include Mongoid::Document
+          field :name, :type => String
+          recursively_embeds_one
+        end
+
+        role.parent_role # => Gets the parent.
+        role.child_role # => Gets the child.
+
+  %p
+    <tt>:default_order</tt> No longer functions on relations and is a known
+    issue.
+
+  %p
+    For third-party library developers, the internal Mongoid relation
+    metadata has been revamped. Now when performing a
+    <tt>Document#reflect_on_association(name)</tt> you will be returned a
+    <tt>Mongoid::Relations::Metadata</tt> object, which now provides
+    much more comprehensive information about the relation in question.
+
 .title Upgrading to 2.0.0.beta.16 +
 .text
   %p
