@@ -82,10 +82,13 @@ category: docs
 .title Instantiating Documents
 .text
   %p
-    Documents are instantiated by calling new on the document and passing
-    it a hash of attributes. If an attribute exists in the hash that is not
-    defined as a field or is an association, then an exception will get raised.
-    You can also pass a block.
+    Documents are instantiated by calling <tt>new</tt> on the document and passing
+    it a hash of attributes. You can also pass a block.
+
+  %p
+    If you have set the <tt>allow_dynamic_fields</tt> configuration option to
+    <tt>false</tt> and an attribute exists in the hash that is not defined as a field
+    or an association then an exception will be raised.
 
   %pre
     %code.language-ruby
