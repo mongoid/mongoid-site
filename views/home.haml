@@ -1,0 +1,37 @@
+%h1 mongoid
+
+%p
+  Mongoid (pronounced mann-goyd) is an Object-Document-Mapper (ODM) for
+  <a href="">MongoDB</a> written in Ruby. It was conceived in August,
+  2009 during a whiskey-induced evening at the infamous Oasis in Florida,
+  USA by <a href="">Durran Jordan</a>.
+
+%p
+  The philosophy of Mongoid is to provide a familiar API to Ruby developers
+  who have been using Active Record or Data Mapper, while leveraging the
+  power of MongoDB's schemaless and performant document-based design, dynamic
+  queries, and atomic modifier operations.
+
+%h2 sample syntax
+
+:coderay
+  #!ruby
+
+  class Artist
+    include Mongoid::Document
+    field :name, type: String
+    embeds_many :instruments
+  end
+
+  class Instrument
+    include Mongoid::Document
+    field :name, type: String
+    embedded_in :artist
+  end
+
+  # Find the first artist named "Syd Vicious" and create an embedded bass
+  # document for him. Of course he'll smash it within the next few minutes,
+  # but no worries we can delete it later.
+  Artist.where(name: "Syd Vicious").first.tap do |artist|
+    artist.instruments.create(type: "Bass")
+  end

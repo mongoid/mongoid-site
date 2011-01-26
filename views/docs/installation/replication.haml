@@ -1,0 +1,72 @@
+%h1 replication
+
+%h3 replica sets
+
+%p
+  Configuring Mongoid to use a replica set is easy. Simply add an array of
+  host/port pairs to your <tt>mongoid.yml</tt> with an optional
+  <tt>read_secondary</tt> option if you want to send reads to slaves.
+
+:coderay
+  #!ruby
+  hosts: [[ "db1.mongoid.org", 27017 ], [ "db2.mongoid.org", 27018 ]]
+  read_secondary: true
+
+%p
+  Note that Mongoid does not handle reconnection at the time of this
+  documentation, so you'll have to catch the connection errors and retry
+  yourself in the meantime.
+
+%h3 master/slave
+
+%p
+  You can configure Mongoid to do traditional master/slave replication,
+  where reads get round-robined to the slave databases. All is handled
+  through the <tt>mongoid.yml</tt> once again.
+
+:coderay
+  #!ruby
+  defaults: &defaults
+    host: localhost
+    slaves:
+      - host: localhost
+        port: 27018
+      - host: localhost
+        port: 27019
+
+%h3 multiple databases
+
+%p
+  You can configure Mongoid to use multiple databases on separate servers
+  through the config as well as the model level.
+
+:coderay
+  #!ruby
+  defaults: &defaults
+    host: localhost
+    slaves:
+      - host: localhost
+        port: 27018
+      - host: localhost
+        port: 27019
+    databases:
+      secondary:
+        database: secondary_database
+        host: localhost
+        port: 27020
+        slaves:
+          - host: localhost
+            port: 27021
+          - host: localhost
+            port: 27022
+
+%p
+  To tell a model to use a secondary database, simple tell it at the class
+  level.
+
+:coderay
+  #!ruby
+  class Business
+    include Mongoid::Document
+    set_database :secondary
+  end
