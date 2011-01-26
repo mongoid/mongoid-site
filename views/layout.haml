@@ -1,0 +1,15 @@
+!!! Strict
+%html
+  %head
+    = stylesheet_link_tag "coderay.css"
+    = stylesheet_link_tag "site.css"
+    %title= render_title
+    = yield_content :head
+
+  %body
+    #container
+      .navigation= partial("partials/navigation")
+      .main
+        .header= yield_content :header
+        .content= yield
+        .footer= partial("partials/footer")

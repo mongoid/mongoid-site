@@ -1,0 +1,22 @@
+%h1 installation
+
+%p
+  The preferred method for installing Mongoid is with bundler. Add the Mongoid
+  and optional BSON extenstions to your Gemfile:
+
+:coderay
+  #!ruby
+  gem "mongoid", "~> 2.0"
+  gem "bson_ext", "~> 1.2"
+
+%p
+  Alternatively you can get the Mongoid gem direcly from rubygems.org:
+
+:coderay
+  #!ruby
+  $ gem install mongoid bson_ext
+
+%p
+  Note for performance improvements you will want to also install the bson c
+  extensions if compatible with your system, however it is not a direct
+  dependency of Mongoid in case it is not compatible.
