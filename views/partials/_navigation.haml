@@ -1,74 +1,70 @@
-= image_tag "/images/mongoid-logo-small.png"
+
 
 %ul.navigation
+  = image_tag "/images/mongoid-logo-small.png"
   %li.area= link_to_active "home", "/home", class: "area"
 
   %li.area= link_to_active "docs", "/docs", class: "area"
 
-  %li= link_to_active "installation", "/docs/installation", class: "section"
-  - if render_subsection?("/docs/installation")
-    %li= link_to_active "configuration", "/docs/installation/configuration", class: "subsection"
-    %li= link_to_active "languages", "/docs/installation/languages", class: "subsection"
-    %li= link_to_active "replication", "/docs/installation/replication", class: "subsection"
+  %li.section= link_to_active "installation", "/docs/installation", class: "section"
+  %li= link_to_active "configuration", "/docs/installation/configuration", class: "subsection"
+  %li= link_to_active "languages", "/docs/installation/languages", class: "subsection"
+  %li= link_to_active "replication", "/docs/installation/replication", class: "subsection"
 
-  %li= link_to_active "documents", "/docs/documents", class: "section"
-  - if render_subsection?("/docs/documents")
-    %li= link_to_active "fields", "/docs/documents/fields", class: "subsection"
-    %li= link_to_active "dynamic fields", "/docs/documents/dynamic", class: "subsection"
-    %li= link_to_active "access", "/docs/documents/access", class: "subsection"
-    %li= link_to_active "dirty tracking", "/docs/documents/dirty", class: "subsection"
-    %li= link_to_active "inheritance", "/docs/documents/inheritance", class: "subsection"
+  %li.section= link_to_active "documents", "/docs/documents", class: "section"
+  %li= link_to_active "fields", "/docs/documents/fields", class: "subsection"
+  %li= link_to_active "dynamic fields", "/docs/documents/dynamic", class: "subsection"
+  %li= link_to_active "access", "/docs/documents/access", class: "subsection"
+  %li= link_to_active "dirty tracking", "/docs/documents/dirty", class: "subsection"
+  %li= link_to_active "inheritance", "/docs/documents/inheritance", class: "subsection"
 
-  %li= link_to_active "relations", "/docs/relations", class: "section"
-  - if render_subsection?("/docs/relations")
+  %li.section= link_to_active "relations", "/docs/relations", class: "section"
+  %li= link_to_active "embedded", "/docs/relations/embedded", class: "subsection"
+  
+  %ul.chapters
+    %li= link_to_active "1...n", "/docs/relations/embedded/1-n", class: "chapter"
+    %li= link_to_active "1...1", "/docs/relations/embedded/1-1", class: "chapter"
+    %li= link_to_active "creation", "/docs/relations/embedded/creation", class: "chapter"
+    %li= link_to_active "removal", "/docs/relations/embedded/removal", class: "chapter"
+  
+  
+  %li= link_to_active "referenced", "/docs/relations/referenced", class: "subsection"
+  %ul.chapters
+    %li= link_to_active "1...n", "/docs/relations/referenced/1-n", class: "chapter"
+    %li= link_to_active "1...1", "/docs/relations/referenced/1-1", class: "chapter"
+    %li= link_to_active "n...n", "/docs/relations/referenced/n-n", class: "chapter"
+    %li= link_to_active "creation", "/docs/relations/referenced/creation", class: "chapter"
+    %li= link_to_active "removal", "/docs/relations/referenced/removal", class: "chapter"
+    %li= link_to_active "cascading", "/docs/relations/referenced/cascading", class: "chapter"
+    %li= link_to_active "auto saving", "/docs/relations/referenced/autosave", class: "chapter"
 
-    %li= link_to_active "embedded", "/docs/relations/embedded", class: "subsection"
-    - if render_subsection?("/docs/relations/embedded")
-      %li= link_to_active "1...n", "/docs/relations/embedded/1-n", class: "chapter"
-      %li= link_to_active "1...1", "/docs/relations/embedded/1-1", class: "chapter"
-      %li= link_to_active "creation", "/docs/relations/embedded/creation", class: "chapter"
-      %li= link_to_active "removal", "/docs/relations/embedded/removal", class: "chapter"
+  %li= link_to_active "metadata", "/docs/relations/metadata", class: "subsection"
+  %li= link_to_active "validations", "/docs/relations/validations", class: "subsection"
 
-    %li= link_to_active "referenced", "/docs/relations/referenced", class: "subsection"
-    - if render_subsection?("/docs/relations/referenced")
-      %li= link_to_active "1...n", "/docs/relations/referenced/1-n", class: "chapter"
-      %li= link_to_active "1...1", "/docs/relations/referenced/1-1", class: "chapter"
-      %li= link_to_active "n...n", "/docs/relations/referenced/n-n", class: "chapter"
-      %li= link_to_active "creation", "/docs/relations/referenced/creation", class: "chapter"
-      %li= link_to_active "removal", "/docs/relations/referenced/removal", class: "chapter"
-      %li= link_to_active "cascading", "/docs/relations/referenced/cascading", class: "chapter"
-      %li= link_to_active "auto saving", "/docs/relations/referenced/autosave", class: "chapter"
+  %li.section= link_to_active "persistence", "/docs/persistence", class: "section"
+  %li= link_to_active "standard", "/docs/persistence/standard", class: "subsection"
+  %li= link_to_active "atomic", "/docs/persistence/atomic", class: "subsection"
 
-    %li= link_to_active "metadata", "/docs/relations/metadata", class: "subsection"
-    %li= link_to_active "validations", "/docs/relations/validations", class: "subsection"
+  %li.section= link_to_active "querying", "/docs/querying", class: "section"
+  %li= link_to_active "criteria", "/docs/querying/criteria", class: "subsection"
+  %li= link_to_active "scopes", "/docs/querying/scopes", class: "subsection"
 
-  %li= link_to_active "persistence", "/docs/persistence", class: "section"
-  - if render_subsection?("/docs/persistence")
-    %li= link_to_active "standard", "/docs/persistence/standard", class: "subsection"
-    %li= link_to_active "atomic", "/docs/persistence/atomic", class: "subsection"
+  %li.section= link_to_active "callbacks", "/docs/callbacks", class: "section"
 
-  %li= link_to_active "querying", "/docs/querying", class: "section"
-  - if render_subsection?("/docs/querying")
-    %li= link_to_active "criteria", "/docs/querying/criteria", class: "subsection"
-    %li= link_to_active "scopes", "/docs/querying/scopes", class: "subsection"
+  %li.section= link_to_active "validation", "/docs/validation", class: "section"
 
-  %li= link_to_active "callbacks", "/docs/callbacks", class: "section"
+  %li.section= link_to_active "indexing", "/docs/indexing", class: "section"
 
-  %li= link_to_active "validation", "/docs/validation", class: "section"
+  %li.section= link_to_active "extras", "/docs/extras", class: "section"
 
-  %li= link_to_active "indexing", "/docs/indexing", class: "section"
+  %li.section= link_to_active "rails", "/docs/rails", class: "section"
+  %li= link_to_active "rake tasks", "/docs/rails/rake", class: "subsection"
+  %li= link_to_active "railties", "/docs/rails/railties", class: "subsection"
 
-  %li= link_to_active "extras", "/docs/extras", class: "section"
+  %li.section= link_to_active "extensions", "/docs/extensions", class: "section"
 
-  %li= link_to_active "rails", "/docs/rails", class: "section"
-  - if render_subsection?("/docs/rails")
-    %li= link_to_active "rake tasks", "/docs/rails/rake", class: "subsection"
-    %li= link_to_active "railties", "/docs/rails/railties", class: "subsection"
+  %li.section= link_to_active "upgrading", "/docs/upgrading", class: "section"
 
-  %li= link_to_active "extensions", "/docs/extensions", class: "section"
-
-  %li= link_to_active "upgrading", "/docs/upgrading", class: "section"
-
-  %li= link_to_active "contributing", "/docs/contributing", class: "section"
+  %li.section= link_to_active "contributing", "/docs/contributing", class: "section"
 
   %li.area= link_to_active "credits", "/credits", class: "area"

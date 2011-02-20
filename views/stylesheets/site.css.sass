@@ -6,24 +6,27 @@ a.active
   color: #FF6666 !important
 
 a.area
-  color: #FFFFFF
+  color: #DDDDDD
   font-size: 14px
   text-transform: uppercase
 
 a.section
-  color: #999999
+  color: #DDDDDD
   font-size: 12px
   text-transform: uppercase
+  padding-left: 10px
+  text-decoration: underline 
 
 a.subsection
-  color: #666666
+  color: #DDDDDD
   font-size: 12px
   text-transform: uppercase
-
+  padding-left: 25px  
+  
 a.chapter
-  color: #99CC99
+  color: #DDDDDD
   font-size: 12px
-  text-transform: uppercase
+  text-transform: uppercase  
 
 body
   font-family: Arial, Helvetica, sans-serif
@@ -42,12 +45,15 @@ div#container
   height: 100%
   width: 100%
 
-div.content
-  background-color: #202020
-  border: 8px solid #FFFFFF
+div.content  
+  background-color: azure
+  border: 5px solid #FFFFFF
   border-radius: 8px
   -moz-border-radius: 8px
-  width: 600px
+  width: 625px
+  -webkit-box-shadow: 0 0 10px rgb(0,0,0)
+  -moz-box-shadow: 0 0 10px rgb(0,0,0) 
+  box-shadow: 0 0 10px rgb(0,0,0)
 
 div.footer
   border: 8px solid #333333
@@ -72,29 +78,29 @@ div.navigation
   float: left
   margin: 0px
   padding-top: 20px
-  text-align: right
-  width: 150px
+  text-align: left
+  width: 180px
 
-h1
-  color: #FF6666
-  font-size: 22px
-  font-weight: normal
+h1         
+  color: #010A82
+  font-size: 24px
+  font-weight: bold
   margin: 0px
   padding: 10px
   text-transform: uppercase
 
-h2
-  color: #CC6666
+h2      
+  color: #010A82
+  font-size: 18px
+  font-weight: bold
+  margin: 0px
+  padding: 10px
+  text-transform: uppercase
+
+h3  
+  color: #010A82
   font-size: 16px
-  font-weight: normal
-  margin: 0px
-  padding: 10px
-  text-transform: uppercase
-
-h3
-  color: #CC6666
-  font-size: 14px
-  font-weight: normal
+  font-weight: bold
   padding-left: 10px
   text-transform: uppercase
 
@@ -103,7 +109,7 @@ html
   height: 100%
 
 img
-  border: 0px
+  border: 0px  
 
 img.diagram
   padding-bottom: 10px
@@ -111,15 +117,24 @@ img.diagram
   padding-top: 10px
 
 p
-  color: #CCCCCC
-  font-size: 13px
+  color: #000000  
+  text-indent: 1.5em
+  font-family: 'lucida sans unicode', 'lucida grande', sans-serif
+  font-size: 14px
+  word-spacing: 0pt
+  line-height: 1.4
   margin: 0px
   padding-bottom: 10px
   padding-left: 10px
   padding-right: 10px
 
+p.image 
+  text-align: center
+  
+
 tt
-  color: #99CC99
+  color: #256B20
+  font-weight: bold
 
 ul
   color: #CCCCCC
@@ -134,9 +149,17 @@ ul.code
   margin: 0px
 
 ul.navigation
+  color: #CCCCCC
   font-size: 16px
   list-style: none
   margin: 0px
 
   li.area
     padding-top: 10px
+  li.section
+    padding-top: 10px
+
+ul.chapters
+  font-size: 16px
+  margin: 0px
+  padding-left: 55px
