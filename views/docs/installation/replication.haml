@@ -21,7 +21,9 @@
 
 %p
   You can configure Mongoid to do traditional master/slave replication,
-  where reads get round-robined to the slave databases. All is handled
+  where reads get 
+  =link_to 'round-robined', 'http://en.wikipedia.org/wiki/Round-robin_scheduling'
+  to the slave databases. All is handled
   through the <tt>mongoid.yml</tt> once again.
 
 :coderay
@@ -61,7 +63,7 @@
             port: 27022
 
 %p
-  To tell a model to use a secondary database, simple tell it at the class
+  To configure a model to use a secondary database, simple specify it at the class
   level.
 
 :coderay

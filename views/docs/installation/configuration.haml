@@ -46,7 +46,7 @@
 
 %p
   You can create your <tt>mongoid.yml</tt> and place it anywhere you like.
-  Just be sure that on application initialization you do the following:
+  Just be sure that on application initialisation you do the following:
 
 :coderay
   #!ruby
@@ -66,7 +66,7 @@
 
 %p
   Mongoid currently supports the following configuration options, either
-  provided in the mongoid.yml or programatically [ defaults in
+  provided in the <tt>mongoid.yml</tt> or programatically [ defaults in
   brackets ].
 
 :coderay
@@ -93,7 +93,7 @@
   include_root_in_json [false]
 
 %p
-  When set to true mongoid will include the name of the root document
+  When set to true Mongoid will include the name of the root document
   and the name of each association as the root element when calling
   <tt>#to_json</tt> on a model.
 
@@ -121,7 +121,7 @@
 
 %p
   Will raise a Mongoid::Error::DocumentNotFound
-  when attempting to find a document by an id that doesnt exist.
+  when attempting to find a document by an id that doesn't exist.
   When set to false will only return nil for the same query.
 
 :coderay

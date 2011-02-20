@@ -9,7 +9,7 @@
 %p
   The philosophy of Mongoid is to provide a familiar API to Ruby developers
   who have been using Active Record or Data Mapper, while leveraging the
-  power of MongoDB's schemaless and performant document-based design, dynamic
+  power of MongoDB's schema-less and performant document-based design, dynamic
   queries, and atomic modifier operations.
 
 %h2 sample syntax
@@ -35,3 +35,16 @@
   Artist.where(name: "Syd Vicious").first.tap do |artist|
     artist.instruments.create(type: "Bass")
   end
+
+%h2 links
+
+
+%p= link_to 'Mongoid source code at Github', 'https://github.com/mongoid/mongoid'
+
+%p= link_to 'Mailing list', 'http://groups.google.com/group/mongoid'
+
+%p= link_to 'Mongoid API documentation', 'http://rdoc.info/github/mongoid/mongoid' 
+
+%p= link_to 'Durran on Twitter', 'http://twitter.com/modetojoy'
+
+%p= link_to 'MongoDB', 'http://www.mongodb.org/'

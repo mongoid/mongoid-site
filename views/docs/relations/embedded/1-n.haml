@@ -11,7 +11,7 @@
 
 %p
   The parent document of the relation should use the <tt>embeds_many</tt>
-  macro to indicate is has <i>n</i> number of embedded children, where
+  macro to indicate that it has <i>n</i> number of embedded children, where
   the document that is embedded uses <tt>embedded_in</tt>.
 
 :coderay
@@ -92,11 +92,11 @@
   person.addresses.push(Address.new)
   person.addresses.concat([ address ])
 
-  # Appends and returns a new child address from the attirbutes.
+  # Appends and returns a new child address from the attributes.
   person.addresses.build(city: "Berlin")
   person.addresses.new(city: "Berlin")
 
-  # Appends, saves, and returns a new child address from the attirbutes.
+  # Appends, saves, and returns a new child address from the attributes.
   person.addresses.create(city: "Berlin")
 
   # Appends, saves, and returns a new child address from the attributes,
