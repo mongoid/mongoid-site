@@ -3,6 +3,7 @@
 %p
   Mongoid overrides activerecord scope. So for internationalization of activerecord messages you need to do change the scope. Example:
 
+
 :coderay
   #!ruby  
   
@@ -10,4 +11,17 @@
   I18n.t :record_invalid, :scope => [:activerecord, :errors, :messages]     
 
   # Mongoid
-  I18n.t :record_invalid, :scope => [:mongoid, :errors, :messages]
+  I18n.t :record_invalid, :scope => [:mongoid, :errors, :messages] 
+
+%p
+:coderay
+  #!ruby
+  en:
+    # activerecord
+    mongoid:
+      models:
+        user: Dude
+      attributes:
+        user:
+          login: "Handle"
+          # will translate User attribute "login" as "Handle"
