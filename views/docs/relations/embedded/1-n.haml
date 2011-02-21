@@ -7,7 +7,7 @@
   document are defined using Mongoid's <tt>embeds_many</tt> and
   <tt>embedded_in</tt> macros.
 
-%h3 defining
+%h3 setting up the models 
 
 %p
   The parent document of the relation should use the <tt>embeds_many</tt>
@@ -31,17 +31,19 @@
 
 %p
   Definitions are required on both sides to the relation in order for it to
-  work properly.
+  work properly. <tt>:inverse_of</tt> is not required.
 
-%h3 storage
+%h3 a model at the database level
 
 %p
-  Documents that are embedded using the <tt>embeds_many</tt> macro are stored
-  as an array of hashes inside the parent in the parent's database
-  collection.
+  Documents that are embedded in using the <tt>embeds_many</tt> macro are stored
+  as an array of hashes inside the parent. 
+
+%p
+  For example, a Person which embeds many addresses will be represented in the database as follows:
 
 :coderay
-  #!javascript
+  #!javascript                                                                
 
   {
     "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
@@ -50,6 +52,11 @@
         "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
         "city" : "Berlin",
         "country" : "Deutschland"
+      },
+      {
+        "_id" : ObjectId("4d61a5b4511ea72ca4000002"),
+        "city" : "Namur",
+        "country" : "Belgium"
       }
     ]
   }
@@ -57,8 +64,7 @@
 %h3 accessors
 
 %p
-  Accessing the relations is handled through the methods created based on the
-  names of the relations. The following example shows basic access on both
+  The name of the associations defines the accessors methods. The following example shows basic access on both
   sides of the relation.
 
 :coderay
@@ -107,7 +113,7 @@
   address.build_person(title: "Prince")
 
   # Replace the parent with a newly saved one from the attributes.
-  address.create_person(title: "Prince")
+  address.create_person(title: "Prince")                  
 
 %h3 removal
 
@@ -149,9 +155,11 @@
 :coderay
   #!ruby
 
-  # Find a child by a single or multiple ids.
-  person.addresses.find(id)
-  person.addresses.find([ id_one, id_two ])
+  # Find the first child that matches an id 
+  person.addresses.find(id)                   # Returns an address.
+
+  # Find one child for every id. 
+  person.addresses.find([ id_one, id_two ])   # Returns an array of addresses.
 
   # Find matching children.
   person.addresses.where(city: "Berlin")
@@ -162,7 +170,7 @@
   # Find or initialize a matching (new) child.
   person.addresses.find_or_initialize_by(city: "Berlin")
 
-  # Do any children exist that are persisted?
+  # Is any of these addresses persisted?
   person.addresses.exists?
 
   # Paginate the child documents.
@@ -171,9 +179,9 @@
 %h3 polymorphic behaviour
 
 %p
-  When a child embedded document can belong to more than one type of parent
-  document, you can tell Mongoid to support this by adding the <tt>as</tt>
-  option to the definition on the parents, and the <tt>polymorphic</tt>
+  When a child (embedded document) can belong to more than one type of parent
+  document, you must add the <tt>as</tt>
+  option on the definition of the parent documents, and the <tt>polymorphic</tt>
   option on the child.
 
 :coderay
