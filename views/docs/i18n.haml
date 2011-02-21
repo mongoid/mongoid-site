@@ -1,0 +1,13 @@
+%h1 i18n - internationalization
+
+%p
+  Mongoid overrides activerecord scope. So for internationalization of activerecord messages you need to do change the scope. Example:
+
+:coderay
+  #!ruby  
+  
+  # Active record, do no use this.
+  I18n.t :record_invalid, :scope => [:activerecord, :errors, :messages]     
+
+  # Mongoid
+  I18n.t :record_invalid, :scope => [:mongoid, :errors, :messages]
