@@ -9,7 +9,11 @@
 
 :coderay
   #!ruby
-  hosts: [[ "db1.mongoid.org", 27017 ], [ "db2.mongoid.org", 27018 ]]
+  hosts:
+    - - db1.mongoid.org
+        27017
+    - - db2.mongoid.org
+        27018
   read_secondary: true
 
 %p
