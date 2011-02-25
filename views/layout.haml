@@ -10,6 +10,7 @@
     #container
       .navigation= partial("partials/navigation")
       .main
-        .header= yield_content :header
+        .header= partial("partials/header")
         .content= yield
         .footer= partial("partials/footer")
+        .clear

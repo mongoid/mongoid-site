@@ -41,6 +41,10 @@ div.code
 div#container
   height: 100%
   width: 100%
+  z-index: 100
+
+div.clear
+  clear: both
 
 div.content
   background-color: #202020
@@ -50,18 +54,22 @@ div.content
   width: 600px
 
 div.footer
-  border: 8px solid #333333
   color: #666666
   font-size: 12px
+  padding-top: 5px
   text-align: right
   width: 600px
 
 div.header
-  background-color: #333333
   height: 116px
   padding-left: 8px
   padding-right: 8px
+  text-align: right
   width: 600px
+
+  img
+    margin-top: 80px
+    margin-left: 5px
 
 div.main
   float: left
@@ -99,6 +107,8 @@ h3
   text-transform: uppercase
 
 html
+  background-image: url("/images/background.png")
+  background-repeat: repeat-x repeat-y
   background-color: #333333
   height: 100%
 
