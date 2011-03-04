@@ -1,0 +1,44 @@
+%h1 performance
+
+%p
+  Performance numbers are recorded for each release as of 2.0.0 and
+  displayed here. The data used in the metrics is that of what would
+  be considered a fairly standard application in MongoDB that Mongoid
+  could manage.
+
+  %ul
+    %li 1,000,000 documents in the main collection
+    %li 1,000 embedded documents on a root document (1-n)
+    %li 100,000 referenced documents to another collection (1-n)
+    %li 10,000 referenced documents to another collection (n-n)
+
+%p.italic
+  * Performance metrics done on a 2.93 GHz i7 iMac / 8GB RAM.
+
+%p
+  %ul
+    %li Green indicates fast operations
+    %li Yellow indicates average operations
+    %li Red indicates slow operations
+
+%table#performance
+  %tr
+    %td.green insert 1 million docs<br/>449.81 sec
+    %td.green iterate and load 1 million docs<br/>52.00 sec
+    %td.green update 1 million docs<br/>426.10 sec
+    %td.green push 1,000 embedded docs (1-n)<br/>0.50 sec
+  %tr
+    %td.green update 1,000 embedded docs (1-n)<br/>0.23 sec
+    %td.yellow delete 1,000 embedded docs (1-n)<br/>10.30 sec
+    %td.green replace embedded doc 1,000 times (1-1)<br/>0.41 sec
+    %td.yellow push 100,000 referenced docs (1-n)<br/>52.84 sec
+  %tr
+    %td.green update 100,000 referenced docs (1-n)<br/>28.89 sec
+    %td.green delete 100,000 referenced docs (1-n)<br/>0.08 sec
+    %td.green replace referenced doc 100,000 times (1-1)<br/>40.25 sec
+    %td.red push 10,000 referenced docs (n-n)<br/>116.85 sec
+  %tr
+    %td.red update 10,000 referenced docs (n-n)<br/>53.61 sec
+    %td.red delete 10,000 referenced docs (n-n)<br/>47.18 sec
+    %td
+    %td
