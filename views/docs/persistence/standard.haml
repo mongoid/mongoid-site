@@ -234,14 +234,12 @@
 :coderay
   #!ruby
 
-  # Delete the document.
   person.delete
 
 %mongodb mongodb command
 :coderay
   #!ruby
 
-  # Driver remove command.
   collections["people"].remove("_id" : ... )
 
 %a{name: "destroy"}
@@ -254,13 +252,68 @@
 :coderay
   #!ruby
 
-  # Destroy the document.
   person.destroy
 
 %mongodb mongodb command
 :coderay
   #!ruby
 
-  # Driver remove command.
   collections["people"].remove("_id" : ... )
 
+%a{name: "delete_all"}
+  %h3 delete_all
+
+%p
+  Deletes all matching documents in the database given the supplied
+  conditions. See the criteria section on deletion for preferred
+  ways to perform these actions. This does not run any callbacks on
+  the matching documents.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Delete all the documents from the collection.
+  Person.delete_all
+
+  # Delete all matching documents.
+  Person.delete_all(conditions: { first_name: "Heinrich" })
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Delete all command.
+  collections["people"].remove
+
+  # Delete all matching command.
+  collections["people"].remove("first_name" : "Heinrich")
+
+%a{name: "destroy_all"}
+  %h3 destroy_all
+
+%p
+  Deletes all matching documents in the database given the supplied
+  conditions. See the criteria section on deletion for preferred
+  ways to perform these actions. This runs destroy callbacks on all
+  matching documents.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Destroy all the documents from the collection.
+  Person.destroy_all
+
+  # Destroy all matching documents.
+  Person.destroy_all(conditions: { first_name: "Heinrich" })
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Destroy all command.
+  collections["people"].remove
+
+  # Destroy all matching command.
+  collections["people"].remove("first_name" : "Heinrich")
