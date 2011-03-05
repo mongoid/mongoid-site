@@ -26,18 +26,12 @@
     - if render_subsection?("/docs/relations/embedded")
       %li= link_to_active "1...n", "/docs/relations/embedded/1-n", class: "chapter"
       %li= link_to_active "1...1", "/docs/relations/embedded/1-1", class: "chapter"
-      %li= link_to_active "creation", "/docs/relations/embedded/creation", class: "chapter"
-      %li= link_to_active "removal", "/docs/relations/embedded/removal", class: "chapter"
 
     %li= link_to_active "referenced", "/docs/relations/referenced", class: "subsection"
     - if render_subsection?("/docs/relations/referenced")
       %li= link_to_active "1...n", "/docs/relations/referenced/1-n", class: "chapter"
       %li= link_to_active "1...1", "/docs/relations/referenced/1-1", class: "chapter"
       %li= link_to_active "n...n", "/docs/relations/referenced/n-n", class: "chapter"
-      %li= link_to_active "creation", "/docs/relations/referenced/creation", class: "chapter"
-      %li= link_to_active "removal", "/docs/relations/referenced/removal", class: "chapter"
-      %li= link_to_active "cascading", "/docs/relations/referenced/cascading", class: "chapter"
-      %li= link_to_active "auto saving", "/docs/relations/referenced/autosave", class: "chapter"
 
     %li= link_to_active "metadata", "/docs/relations/metadata", class: "subsection"
     %li= link_to_active "validations", "/docs/relations/validations", class: "subsection"
