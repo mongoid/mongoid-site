@@ -74,3 +74,21 @@
     include Mongoid::Document
     set_database :secondary
   end
+
+%h3 sharding
+
+%p
+  If you are using Mongoid in a sharded MongoDB environment and want to tell
+  Mongoid to include the shard keys in it's updates, specify this at the
+  model class level.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+
+    field :first_name, type: String
+    field :last_name, type: String
+
+    shard_key :first_name, :last_name
+  end
