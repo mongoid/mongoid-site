@@ -9,13 +9,13 @@
     %li <a href="#create!"><tt>Model.create!</tt></a>
     %li <a href="#save"><tt>Model#save</tt></a>
     %li <a href="#save!"><tt>Model#save!</tt></a>
-    %li <tt>Model#update_attributes</tt>
-    %li <tt>Model#update_attributes!</tt>
-    %li <tt>Model#update_attribute</tt>
-    %li <tt>Model#delete</tt>
-    %li <tt>Model#destroy</tt>
-    %li <tt>Model.delete_all</tt>
-    %li <tt>Model.destroy_all</tt>
+    %li <a href="#update_attributes"><tt>Model#update_attributes</tt></a>
+    %li <a href="#update_attributes!"><tt>Model#update_attributes!</tt></a>
+    %li <a href="#update_attribute"><tt>Model#update_attribute</tt></a>
+    %li <a href="#delete"><tt>Model#delete</tt></a>
+    %li <a href="#destroy"><tt>Model#destroy</tt></a>
+    %li <a href="#delete_all"><tt>Model.delete_all</tt></a>
+    %li <a href="#destroy_all"><tt>Model.destroy_all</tt></a>
 
 %a{name: "create"}
 %h3 create
@@ -111,7 +111,7 @@
   # Update command for the changed document.
   collections["people"].update({
     { "_id" : ... },
-    { "$set" : { "first_name" : "Christian Johan" }
+    { "$set" : { "first_name" : "Christian Johan" } }
   })
 
 %a{name: "save!"}
@@ -147,5 +147,120 @@
   # Update command for the changed document.
   collections["people"].update({
     { "_id" : ... },
-    { "$set" : { "first_name" : "Christian Johan" }
+    { "$set" : { "first_name" : "Christian Johan" } }
   })
+
+%a{name: "update_attributes"}
+  %h3 update_attributes
+
+%p
+  Modifies the provided attributes to new values and persists them in
+  a single call. This runs validations and will return true if they
+  passed, false if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Update the provided attributes.
+  person.update_attributes(first_name: "Jean", last_name: "Zorg")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Jean", "last_name" : "Zorg" } }
+  })
+
+%a{name: "update_attributes!"}
+  %h3 update_attributes!
+
+%p
+  Modifies the provided attributes to new values and persists them in
+  a single call. This runs validations and will return true if they
+  passed or raise an error if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Update the provided attributes.
+  person.update_attributes!(first_name: "Jean", last_name: "Zorg")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Jean", "last_name" : "Zorg" } }
+  })
+
+%a{name: "update_attribute"}
+  %h3 update_attribute
+
+%p
+  Updates a single attribute in the database while running validations.
+  Returns true if valid and false if validation failed.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Update the provided attribute.
+  person.update_attribute(first_name, "Jean")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Jean" } }
+  })
+
+%a{name: "delete"}
+  %h3 delete
+
+%p
+  Deletes the document from the database without running callbacks.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Delete the document.
+  person.delete
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Driver remove command.
+  collections["people"].remove("_id" : ... )
+
+%a{name: "destroy"}
+  %h3 destroy
+
+%p
+  Deletes the document from the database while running destroy callbacks.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Destroy the document.
+  person.destroy
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Driver remove command.
+  collections["people"].remove("_id" : ... )
+
