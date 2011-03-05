@@ -1,0 +1,151 @@
+%h1 standard persistence
+
+%p
+  Mongoid's standard persistence methods come in the form of common methods
+  you would find in other mapping frameworks.
+
+  %ul
+    %li <a href="#create"><tt>Model.create</tt></a>
+    %li <a href="#create!"><tt>Model.create!</tt></a>
+    %li <a href="#save"><tt>Model#save</tt></a>
+    %li <a href="#save!"><tt>Model#save!</tt></a>
+    %li <tt>Model#update_attributes</tt>
+    %li <tt>Model#update_attributes!</tt>
+    %li <tt>Model#update_attribute</tt>
+    %li <tt>Model#delete</tt>
+    %li <tt>Model#destroy</tt>
+    %li <tt>Model.delete_all</tt>
+    %li <tt>Model.destroy_all</tt>
+
+%a{name: "create"}
+%h3 create
+
+%p
+  Inserts a new document into the database given the provided attributes.
+  This will run validations and will return the document whether it was
+  persisted or not. You can check <tt>Model#persisted?</tt> to see if it
+  was successful.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db.
+  Person.create(first_name: "Heinrich", last_name: "Heine")
+
+  # This can also take a block.
+  Person.create(first_name: "Heinrich") do |doc|
+    doc.last_name = "Heine"
+  end
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+%a{name: "create!"}
+%h3 create!
+
+%p
+  Inserts a new document into the database given the provided attributes.
+  This will run validations and will return the document if it passed
+  validations, otherwise it will raise a validations error.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db, raising an error if
+  # validation failed.
+  Person.create!(first_name: "Heinrich", last_name: "Heine")
+
+  # This can also take a block.
+  Person.create!(first_name: "Heinrich") do |doc|
+    doc.last_name = "Heine"
+  end
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+%a{name: "save"}
+%h3 save
+
+%p
+  Saves the document to the database. If the document is new then the
+  entire document will be inserted. If the document is already saved
+  then only changes to the document will the persisted. This runs
+  validations by default, however they can be switched off by providing
+  an option to the method. Returns <tt>true</tt> if validation passed
+  and <tt>false</tt> if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db.
+  person = Person.new(first_name: "Heinrich", last_name: "Heine")
+  person.save
+
+  # Save without running validations.
+  person.save(validate: false)
+
+  # Save an existing document's changed fields.
+  person.first_name = "Christian Johan"
+  person.save
+
+%mongodb mongodb commands
+:coderay
+  #!ruby
+
+  # Insert command for the new document.
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Christian Johan" }
+  })
+
+%a{name: "save!"}
+%h3 save!
+
+%p
+  Saves the document to the database. If the document is new then the
+  entire document will be inserted. If the document is already saved
+  then only changes to the document will the persisted. Returns
+  <tt>true</tt> if validation passed and raises an error if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db.
+  person = Person.new(first_name: "Heinrich", last_name: "Heine")
+  person.save!
+
+  # Save an existing document's changed fields.
+  person.first_name = "Christian Johan"
+  person.save!
+
+%mongodb mongodb commands
+:coderay
+  #!ruby
+
+  # Insert command for the new document.
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Christian Johan" }
+  })

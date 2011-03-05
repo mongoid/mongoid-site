@@ -19,6 +19,16 @@
     %li= link_to_active "dirty tracking", "/docs/documents/dirty", class: "subsection"
     %li= link_to_active "inheritance", "/docs/documents/inheritance", class: "subsection"
 
+  %li= link_to_active "persistence", "/docs/persistence", class: "section"
+  - if render_subsection?("/docs/persistence")
+    %li= link_to_active "standard", "/docs/persistence/standard", class: "subsection"
+    %li= link_to_active "atomic", "/docs/persistence/atomic", class: "subsection"
+
+  %li= link_to_active "querying", "/docs/querying", class: "section"
+  - if render_subsection?("/docs/querying")
+    %li= link_to_active "criteria", "/docs/querying/criteria", class: "subsection"
+    %li= link_to_active "scopes", "/docs/querying/scopes", class: "subsection"
+
   %li= link_to_active "relations", "/docs/relations", class: "section"
   - if render_subsection?("/docs/relations")
 
@@ -35,16 +45,6 @@
 
     %li= link_to_active "metadata", "/docs/relations/metadata", class: "subsection"
     %li= link_to_active "validations", "/docs/relations/validations", class: "subsection"
-
-  %li= link_to_active "persistence", "/docs/persistence", class: "section"
-  - if render_subsection?("/docs/persistence")
-    %li= link_to_active "standard", "/docs/persistence/standard", class: "subsection"
-    %li= link_to_active "atomic", "/docs/persistence/atomic", class: "subsection"
-
-  %li= link_to_active "querying", "/docs/querying", class: "section"
-  - if render_subsection?("/docs/querying")
-    %li= link_to_active "criteria", "/docs/querying/criteria", class: "subsection"
-    %li= link_to_active "scopes", "/docs/querying/scopes", class: "subsection"
 
   %li= link_to_active "callbacks", "/docs/callbacks", class: "section"
 
