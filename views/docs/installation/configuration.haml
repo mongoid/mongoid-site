@@ -99,6 +99,17 @@
 
 :coderay
   #!ruby
+  max_retries_on_connection_failure [0]
+
+%p
+  If you would like Mongoid to retry operations if a
+  <tt>Mongo::ConnectionFailure</tt> occurs you may specify this option
+  in your config. Mongoid will retry the operation every half second up
+  to the limit that is set. This is particularly useful when using
+  replica sets.
+
+:coderay
+  #!ruby
   parameterize_keys [true]
 
 %p

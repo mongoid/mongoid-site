@@ -5,7 +5,7 @@
 %p
   Configuring Mongoid to use a replica set is easy. Simply add an array of
   host/port pairs to your <tt>mongoid.yml</tt> with an optional
-  <tt>read_secondary</tt> option if you want to send reads to slaves.
+  <tt>read_secondary</tt> option if you want to send reads to slaves. If
 
 :coderay
   #!ruby
@@ -15,6 +15,16 @@
     - - db2.mongoid.org
         27018
   read_secondary: true
+
+%p
+  If you would also like Mongoid to retry operations if a
+  <tt>Mongo::ConnectionFailure</tt> occurs you may specify this option
+  in your config. Mongoid will retry the operation every half second up
+  to the limit that is set. This defaults to 0.
+
+:coderay
+  #!ruby
+  max_retries_on_connection_failure: 3
 
 %p
   Note that Mongoid does not handle reconnection at the time of this
