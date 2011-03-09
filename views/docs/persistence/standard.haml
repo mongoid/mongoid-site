@@ -18,7 +18,7 @@
     %li <a href="#destroy_all"><tt>Model.destroy_all</tt></a>
 
 %a{name: "create"}
-%h3 create
+%h4 <tt>Model.create</tt>
 
 %p
   Inserts a new document into the database given the provided attributes.
@@ -46,7 +46,7 @@
   })
 
 %a{name: "create!"}
-%h3 create!
+%h4 <tt>Model.create!</tt>
 
 %p
   Inserts a new document into the database given the provided attributes.
@@ -74,7 +74,7 @@
   })
 
 %a{name: "save"}
-%h3 save
+%h4 <tt>Model#save</tt>
 
 %p
   Saves the document to the database. If the document is new then the
@@ -115,7 +115,7 @@
   })
 
 %a{name: "save!"}
-%h3 save!
+%h4 <tt>Model#save!</tt>
 
 %p
   Saves the document to the database. If the document is new then the
@@ -151,7 +151,7 @@
   })
 
 %a{name: "update_attributes"}
-  %h3 update_attributes
+%h4 <tt>Model#update_attributes</tt>
 
 %p
   Modifies the provided attributes to new values and persists them in
@@ -176,7 +176,7 @@
   })
 
 %a{name: "update_attributes!"}
-  %h3 update_attributes!
+%h4 <tt>Model#update_attributes!</tt>
 
 %p
   Modifies the provided attributes to new values and persists them in
@@ -201,7 +201,7 @@
   })
 
 %a{name: "update_attribute"}
-  %h3 update_attribute
+%h4 <tt>Model#update_attribute</tt>
 
 %p
   Updates a single attribute in the database while running validations.
@@ -225,7 +225,7 @@
   })
 
 %a{name: "delete"}
-  %h3 delete
+%h4 <tt>Model#delete</tt>
 
 %p
   Deletes the document from the database without running callbacks.
@@ -243,7 +243,7 @@
   collections["people"].remove("_id" : ... )
 
 %a{name: "destroy"}
-  %h3 destroy
+%h4 <tt>Model#destroy</tt>
 
 %p
   Deletes the document from the database while running destroy callbacks.
@@ -261,7 +261,7 @@
   collections["people"].remove("_id" : ... )
 
 %a{name: "delete_all"}
-  %h3 delete_all
+%h4 <tt>Model.delete_all</tt>
 
 %p
   Deletes all matching documents in the database given the supplied
@@ -290,7 +290,7 @@
   collections["people"].remove("first_name" : "Heinrich")
 
 %a{name: "destroy_all"}
-  %h3 destroy_all
+%h4 <tt>Model.destroy_all</tt>
 
 %p
   Deletes all matching documents in the database given the supplied
