@@ -27,12 +27,26 @@
   Returns a chainable criteria object with the provided conditions
   applied.
 
+:coderay
+  #!ruby
+  # Find all people by MongoDB compatible conditions and options.
+  Person.all
+  Person.all(conditions: { first_name: /^dur/i, "addresses.city" => "Berlin" })
+  Person.all(conditions: { title: "Sir" }, limit: 5)
+  Person.all(sort: [[ :first_name, :asc ]])
+
 %a{name: "count"}
 %h4 <tt>Model.count</tt>
 
 %p
   Returns the number of documents in the database given the provided
   conditions.
+
+:coderay
+  #!ruby
+  # Get the count of documents given the provided conditions.
+  Person.count
+  Person.count(conditions: { title: "Sir" })
 
 %a{name: "exists?"}
 %h4 <tt>Model.exists?</tt>
@@ -41,13 +55,46 @@
   Returns true if any documents in the database exist given the provided
   conditions and false if there are none.
 
+:coderay
+  #!ruby
+  # Do any documents exist in the database for the provided conditions?
+  Person.exists?
+  Person.exists?(conditions: { title: "Sir" })
+
 %a{name: "find"}
-%h4 <tt>Model.find</tt>
+%h4 <tt>Model.find</tt> | <tt>Criteria#find</tt>
 
 %p
   Provides the ability to find a document or documents given a set of
   conditions or ids. This either returns a criteria, an array of
   documents, or a single document depending on the arguments passed.
+
+%p
+  The first way to use this method is for finding a single
+  document given the provided ID. If no document is found
+  this will raise an error unless the configuration option is
+  changed. You can provide a <tt>BSON::ObjectId</tt> or its string
+  representation (Mongoid will convert to the appropriate type).
+  This can also be placed at the end of a criteria chain to limit
+  by a single document.
+
+:coderay
+  #!ruby
+  Person.find(id)
+  Person.find("4baa56f1230048567300485c")
+  Person.where(last_name: "Black").find(id)
+
+%p
+  You may find multiple documents given the provided array of ids.
+  If a single document is not found the error will get raised. You
+  may provide object ids or string representations. This can also
+  be placed at the end of a criteria chain to find specific documents.
+
+:coderay
+  #!ruby
+  Person.find([id_one, id_two])
+  Person.find(["4baa56f1230048567300485c","4baa56f1230048567300485d"])
+  Person.where(last_name: "Black").find([ id_one, id_two ])
 
 %a{name: "find_or_create_by"}
 %h4 <tt>Model.find_or_create_by</tt>
