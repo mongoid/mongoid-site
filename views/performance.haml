@@ -23,18 +23,18 @@
 
 %table#performance
   %tr
-    %td.green insert 1 million docs<br/>449.81 sec
-    %td.green iterate and load 1 million docs<br/>52.00 sec
-    %td.green update 1 million docs<br/>426.10 sec
-    %td.green push 1,000 embedded docs (1-n)<br/>0.50 sec
+    %td.green insert 1 million docs<br/>449.81 sec<br/>2,223/sec
+    %td.green iterate and load 1 million docs<br/>52.00 sec<br/>19,230/sec
+    %td.green update 1 million docs<br/>426.10 sec<br/>2,346/sec
+    %td.green push 1,000 embedded docs (1-n)<br/>0.50 sec<br/>2,000/sec
   %tr
-    %td.green update 1,000 embedded docs (1-n)<br/>0.23 sec
-    %td.yellow delete 1,000 embedded docs (1-n)<br/>10.30 sec
-    %td.green replace embedded doc 1,000 times (1-1)<br/>0.41 sec
-    %td.yellow push 100,000 referenced docs (1-n)<br/>52.84 sec
+    %td.green update 1,000 embedded docs (1-n)<br/>0.23 sec<br/>4,347/sec
+    %td.red delete 1,000 embedded docs (1-n)<br/>10.30 sec<br/>97/sec
+    %td.green replace embedded doc 1,000 times (1-1)<br/>0.41 sec<br/>2,439/sec
+    %td.yellow push 100,000 referenced docs (1-n)<br/>52.84 sec<br/>1,892/sec
   %tr
-    %td.green update 100,000 referenced docs (1-n)<br/>28.89 sec
-    %td.green delete 100,000 referenced docs (1-n)<br/>0.08 sec
+    %td.green update 100,000 referenced docs (1-n)<br/>28.89 sec<br/>3,461/sec
+    %td.green delete 100,000 referenced docs (1-n)<br/>0.08 sec<br/>
     %td.green replace referenced doc 100,000 times (1-1)<br/>40.25 sec
     %td.red push 10,000 referenced docs (n-n)<br/>116.85 sec
   %tr

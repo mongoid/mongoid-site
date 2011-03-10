@@ -1,0 +1,83 @@
+%h1 finders
+
+%p
+  Mongoid supports more traditional-style finders for those who prefer an
+  Active Record 2 type syntax. Note that unlike criteria, these methods are
+  not chainable and return actual arrays of documents, or a single document,
+  with the exception of those noted in their individual sections.
+
+%h3 finder methods
+
+%p
+  %ul
+    %li <a href="#all"><tt>Model.all</tt></a>
+    %li <a href="#count"><tt>Model.count</tt></a>
+    %li <a href="#exists?"><tt>Model.exists?</tt></a>
+    %li <a href="#find"><tt>Model.find</tt></a>
+    %li <a href="#find_or_create_by"><tt>Model.find_or_create_by</tt></a>
+    %li <a href="#find_or_initialize_by"><tt>Model.find_or_initialize_by</tt></a>
+    %li <a href="#first"><tt>Model.first</tt></a>
+    %li <a href="#last"><tt>Model.last</tt></a>
+    %li <a href="#paginate"><tt>Model.paginate</tt></a>
+
+%a{name: "all"}
+%h4 <tt>Model.all</tt>
+
+%p
+  Returns a chainable criteria object with the provided conditions
+  applied.
+
+%a{name: "count"}
+%h4 <tt>Model.count</tt>
+
+%p
+  Returns the number of documents in the database given the provided
+  conditions.
+
+%a{name: "exists?"}
+%h4 <tt>Model.exists?</tt>
+
+%p
+  Returns true if any documents in the database exist given the provided
+  conditions and false if there are none.
+
+%a{name: "find"}
+%h4 <tt>Model.find</tt>
+
+%p
+  Provides the ability to find a document or documents given a set of
+  conditions or ids. This either returns a criteria, an array of
+  documents, or a single document depending on the arguments passed.
+
+%a{name: "find_or_create_by"}
+%h4 <tt>Model.find_or_create_by</tt>
+
+%p
+  Find a document given the provided conditions, or create a new one
+  if nothing is persisted.
+
+%a{name: "find_or_initialize_by"}
+%h4 <tt>Model.find_or_initialize_by</tt>
+
+%p
+  Find a document given the provided conditions, or instantiate a new one
+  if nothing is persisted.
+
+%a{name: "first"}
+%h4 <tt>Model.first</tt>
+
+%p
+  Find the first document in the database given the provided conditions.
+
+%a{name: "last"}
+%h4 <tt>Model.last</tt>
+
+%p
+  Find the last document in the database given the provided conditions.
+
+%a{name: "paginate"}
+%h4 <tt>Model.paginate</tt>
+
+%p
+  Return all documents in the database that match the provided conditions,
+  and paginate them according to the provided options.
