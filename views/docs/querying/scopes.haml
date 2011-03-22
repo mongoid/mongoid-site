@@ -34,3 +34,102 @@
 
   # Find a criteria with Keith Richards in it.
   Person.rock_n_rolla.over(60)
+
+%h3 class methods
+
+%p
+  For those who prefer a Data Mapper style syntax, class methods that
+  return criteria can be treated as chainable scopes as well.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    class << self
+
+      def rock_n_rolla
+        where(occupation: "Rockstar")
+      end
+
+      def washed_up
+        where(:age.gt => 30)
+      end
+
+      def over(limit)
+        where(:age.gt => limit)
+      end
+    end
+  end
+
+  # Find all the rockstars.
+  Person.rock_n_rolla
+
+  # Find all rockstars that should probably quit.
+  Person.washed_up.rock_n_rolla
+
+  # Find a criteria with Keith Richards in it.
+  Person.rock_n_rolla.over(60)
+
+%p
+  Named scopes and class methods that return a criteria can be chained
+  together - that's the beauty of Mongoid's powerful criteria API.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    scope :washed_up, where(:age.gt => 30)
+    scope :over, ->(limit) { where(:age.gt => limit) }
+
+    def self.rock_n_rolla
+      where(occupation: "Rockstar")
+    end
+  end
+
+  # Same queries apply here as well.
+  Person.rock_n_rolla
+  Person.washed_up.rock_n_rolla
+  Person.rock_n_rolla.over(60)
+
+%h3 default scopes
+
+%p
+  You can supply a default scope at the class level to tell Mongoid that
+  all queries need to filter by the provided criteria without needing
+  to specify it for every query. This is very useful when you find
+  yourself filtering by a particular criterion many times througout an
+  application.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    default_scope :rock_n_rolla, where(occupation: "Rockstar")
+    scope :washed_up, where(:age.gt => 30)
+    scope :over, ->(limit) { where(:age.gt => limit) }
+  end
+
+  # We seem to search for rockstars all the time, so just make that
+  # included by default. The following query applies the rock_n_rolla
+  # scope to it by default.
+  Person.washed_up
+
+%p
+  When a default scope is defined, you may find yourself executing
+  queries that do not need the default applied. This is where Mongoid's
+  familiar <tt>unscoped</tt> method comes in.
+
+:coderay
+  #!ruby
+
+  # We just want some old people who aren't rockstars.
+  Person.unscoped.washed_up
