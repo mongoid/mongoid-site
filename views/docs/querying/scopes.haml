@@ -115,7 +115,6 @@
 
     default_scope :rock_n_rolla, where(occupation: "Rockstar")
     scope :washed_up, where(:age.gt => 30)
-    scope :over, ->(limit) { where(:age.gt => limit) }
   end
 
   # We seem to search for rockstars all the time, so just make that

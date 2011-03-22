@@ -47,6 +47,9 @@
     %li Use <tt>context</tt> blocks for conditions.
     %li Prefer <tt>let</tt> over the use of instance variables.
     %li 1 assertion per example block.
+    %li
+      When describing methods, prefix with <tt>#</tt> for instance methods,
+      <tt>.</tt> for class methods.
 
 :coderay
   #!ruby
@@ -79,12 +82,19 @@
         end
       end
     end
+
+    describe ".macro" do
+
+      it "returns :embeds_many" do
+        described_class.macro.should == :embeds_many
+      end
+    end
   end
 
 %h3 coding guidelines
 
 %p
-  Mongoid has the design philosophy of having many fine grained, single pupose
+  Mongoid has the design philosophy of having many fine grained, single purpose
   objects in its domain. It makes the design more flexible and much easier to
   test. If you find yourself refactoring at all, <a href="">extract class</a>
   is always a good refactoring technique to have in mind.
