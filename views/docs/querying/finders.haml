@@ -103,6 +103,10 @@
   Find a document given the provided conditions, or create a new one
   if nothing is persisted.
 
+:coderay
+  #!ruby
+  Person.find_or_create_by(first_name: "Syd", last_name: "Vicious")
+
 %a{name: "find_or_initialize_by"}
 %h4 <tt>Model.find_or_initialize_by</tt>
 
@@ -110,21 +114,53 @@
   Find a document given the provided conditions, or instantiate a new one
   if nothing is persisted.
 
+:coderay
+  #!ruby
+  Person.find_or_initialize_by(first_name: "Syd", last_name: "Vicious")
+
 %a{name: "first"}
 %h4 <tt>Model.first</tt>
 
 %p
   Find the first document in the database given the provided conditions.
+  Will return a document or <tt>nil</tt> if nothing is found and defaults
+  to the natural sorting of documents in the database. You can provide
+  sort criteria as well if you want to dictate the exact document that
+  would be returned first.
+
+:coderay
+  #!ruby
+  Person.first(conditions: { first_name: "Syd" })
+  Person.first(sort: [[ :first_name, :asc ]])
 
 %a{name: "last"}
 %h4 <tt>Model.last</tt>
 
 %p
   Find the last document in the database given the provided conditions.
+  Will return a document or <tt>nil</tt> if nothing is found and defaults
+  to to sorting by id in descending order. You may provide
+  sort criteria as well if you want to dictate the exact document that
+  would be returned - Mongoid will invert the sort criteria you provide.
+
+:coderay
+  #!ruby
+  Person.last(conditions: { first_name: "Syd" })
+  Person.last(sort: [[ :first_name, :asc ]])
 
 %a{name: "paginate"}
 %h4 <tt>Model.paginate</tt>
 
 %p
   Return all documents in the database that match the provided conditions,
-  and paginate them according to the provided options.
+  and paginate them according to the provided options. This will return a
+  <tt>WillPaginate::Collection</tt> and the options conform to the
+  <a href="#">Will Paginate</a> API.
+
+:coderay
+  #!ruby
+  Person.paginate(
+    conditions: { first_name: "Syd" },
+    page: 2,
+    per_page: 20
+  )
