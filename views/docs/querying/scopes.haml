@@ -1,1 +1,36 @@
 %h1 scopes
+
+%p
+  Similar to Active Record, Mongoid allows you to define scopes on your
+  models as a convenience for filtering result sets. Scopes are defined
+  at the class level, either using the <tt>scope</tt> macro or by
+  defining class methods that return a criteria object. All scopes are
+  chainable and can be applied to associations as well, the later being
+  discussed in the relations section.
+
+%h3 named scopes
+
+%p
+  Named scopes are defined at the class level using a <tt>scope</tt>
+  macro and can be chained to create result sets in a nice DSL.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    scope :rock_n_rolla, where(occupation: "Rockstar")
+    scope :washed_up, where(:age.gt => 30)
+    scope :over, ->(limit) { where(:age.gt => limit) }
+  end
+
+  # Find all the rockstars.
+  Person.rock_n_rolla
+
+  # Find all rockstars that should probably quit.
+  Person.washed_up.rock_n_rolla
+
+  # Find a criteria with Keith Richards in it.
+  Person.rock_n_rolla.over(60)
