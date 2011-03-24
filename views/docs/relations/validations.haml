@@ -1,0 +1,26 @@
+%h1 validations
+
+%p
+  It is important to note that by default, Mongoid will validate the
+  children of any relation that are loaded into memory. The relations that
+  this applies to are:
+
+  %ul
+    %li <tt>embeds_many</tt>
+    %li <tt>embeds_one</tt>
+    %li <tt>has_many</tt>
+    %li <tt>has_one</tt>
+    %li <tt>has_and_belongs_to_many</tt>
+
+%p
+  If you do not want this behaviour, you may turn it off when defining
+  the relation.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+
+    embeds_many :addresses, validate: false
+    has_many :posts, validate: false
+  end
