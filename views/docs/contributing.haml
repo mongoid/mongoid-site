@@ -5,8 +5,11 @@
   Here are some guidelines on contributing to the project and ensuring
   fast acceptance of your contributions.
 
+%h3 core contributions
+
 %p
-  Fork the repo on github and issue a pull request with your changes. No
+  Fork the <a href="http://github.com/mongoid/mongoid">repo on github</a>
+  and issue a pull request with your changes. No
   other means of supplying code to the team will be accepted.
 
 %p
@@ -153,3 +156,28 @@
       end
     end
   end
+
+%h3 website contributions
+
+%p
+  The Mongoid website is open source as well, and hosted on github. It
+  uses middleman as a static content generator, and additions to the
+  documentation are always welcome. The same rules apply here:
+
+%p
+  Fork the <a href="http://github.com/mongoid/mongoid-site">repo on github</a>
+  and issue a pull request with your changes. No
+  other means of supplying code to the team will be accepted.
+
+%p
+  Getting set up here is easy as well:
+
+  %ul
+    %li Fork and clone the repository.
+    %li Run <tt>gem install bundler</tt> to get the latest for the gemset.
+    %li Run <tt>bundle install</tt> for dependencies.
+    %li Run <tt>bundle exec mm-server</tt> to run the site with sinatra.
+
+%p
+  Pull requests will be merged in and regenerated to the mongoid.github.com
+  repo where you're contributions can be seen in all their glory.
