@@ -85,7 +85,7 @@
 
 :coderay
   #!ruby
-  validates_exclusion_of :employers, :in => ["Hashrocket"]
+  validates_exclusion_of :employers, in: ["Hashrocket"]
 
 %h4 <tt>validates_format_of</tt>
 
@@ -108,7 +108,7 @@
 
 :coderay
   #!ruby
-  validates_format_of :title, :with => /[A-Za-z]/
+  validates_format_of :title, with: /[A-Za-z]/
 
 %h4 <tt>validates_inclusion_of</tt>
 
@@ -127,7 +127,7 @@
 
 :coderay
   #!ruby
-  validates_inclusion_of :employers, :in => ["Hashrocket"]
+  validates_inclusion_of :employers, in: ["Hashrocket"]
 
 %h4 <tt>validates_length_of</tt>
 
@@ -160,7 +160,7 @@
 
 :coderay
   #!ruby
-  validates_length_of :password, :minimum => 8, :maximum => 16
+  validates_length_of :password, minimum: 8, maximum: 16
 
 %h4 <tt>validates_numericality_of</tt>
 
@@ -193,7 +193,7 @@
 
 :coderay
   #!ruby
-  validates_numericality_of :age, :even => true
+  validates_numericality_of :age, even: true
 
 %h4 <tt>validates_presence_of</tt>
 
