@@ -1,0 +1,18 @@
+%h1 extensions
+
+%h3 Fabrication
+
+%p
+  Paul Elliott's
+  <a href="http://github.com/paulelliott/fabrication">Fabrication</a> gem is
+  a slick object generation library. It support's Mongoid out of the box and
+  provides a nice syntax for creating objects with ease for testing.
+
+:coderay
+  #!ruby
+  Fabricator(:person) do
+    title "Grand Poobah"
+    addresses(count: 2) do |address, i|
+      Fabricate(:address, streeet: "\#{i} Bond St.")
+    end
+  end
