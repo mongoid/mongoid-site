@@ -15,6 +15,15 @@
     %li <tt>belongs_to</tt>
     %li <tt>has_and_belongs_to_many</tt>
 
+%p
+  The <tt>id</tt> method on <tt>criteria</tt> has been removed in favour of
+  <tt>for_ids</tt>.
+
+:coderay
+  #!ruby
+  Person.criteria.for_ids("4ab2bc4b8ad548971900005c")
+  Person.criteria.for_ids(["4ab2bc4b8ad548971900005c", "..."])
+
 %h3 Upgrading to 2.0.0.rc.1 +
 
 %p
