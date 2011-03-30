@@ -1,3 +1,156 @@
 %h1 embedded one to one
 
 %p= image_tag "/images/embedded-1-1.png", class: "diagram"
+
+%p
+  One to one relationships where the children are embedded in the parent
+  document are defined using Mongoid's <tt>embeds_one</tt> and
+  <tt>embedded_in</tt> macros.
+
+%h3 defining
+
+%p
+  The parent document of the relation should use the <tt>embeds_one</tt>
+  macro to indicate is has 1 embedded child, where the document that
+  is embedded uses <tt>embedded_in</tt>.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    embeds_one :name
+  end
+
+  class Name
+    include Mongoid::Document
+    field :vorname, type: String
+    field :nachname, type: String
+    embedded_in :person
+  end
+
+%p
+  Definitions are required on both sides to the relation in order for it to
+  work properly.
+
+%h3 storage
+
+%p
+  Documents that are embedded using the <tt>embeds_one</tt> macro are stored
+  as a hash inside the parent in the parent's database collection.
+
+:coderay
+  #!javascript
+
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+    "name" : {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
+      "vorname" : "Heinrich",
+      "nachname" : "Heine"
+    }
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the child name.
+  person.name
+
+  # Set the child name.
+  person.name = [ Name.new ]
+
+  # Return the parent person.
+  name.person
+
+  # Set the parent person.
+  name.person = Person.new
+
+%h3 building and creating
+
+%p
+  From the parent side, documents in the embedded child can be initialized or
+  created using the specially defined methods.
+
+:coderay
+  #!ruby
+
+  # Create a new child name given the provided attributes.
+  person.build_name(vorname: "Heinrich", nachname: "Heine")
+
+  # Create a persisted child name.
+  person.create_name(vorname: "Heinrich", nachname: "Heine")
+
+  # Replace the parent with a new one from the attributes.
+  name.build_person(title: "Prince")
+
+  # Replace the parent with a newly saved one from the attributes.
+  name.create_person(title: "Prince")
+
+%h3 removal
+
+%p
+  Documents in the embedded many can be removed by either calling delete
+  on the child or setting it to nil.
+
+:coderay
+  #!ruby
+
+  # Delete the child document
+  person.name.delete
+  person.name.destroy
+  person.name = nil
+
+%h3 polymorphic behaviour
+
+%p
+  When a child embedded document can belong to more than one type of parent
+  document, you can tell Mongoid to support this by adding the <tt>as</tt>
+  option to the definition on the parents, and the <tt>polymorphic</tt>
+  option on the child.
+
+:coderay
+  #!ruby
+
+  class Doctor
+    include Mongoid::Document
+    embeds_one :name, as: :namable
+  end
+
+  class Nurse
+    include Mongoid::Document
+    embeds_one :name, as: :namable
+  end
+
+  class Name
+    include Mongoid::Document
+    embedded_in :namable, polymorphic: true
+  end
+
+%h3 custom relation names
+
+%p
+  You can name your relations whatever you like, but if the class cannot be
+  inferred by Mongoid from the name, and neither can the opposite side you'll
+  want to provide the macro with some additional options to tell Mongoid
+  how to hook them up.
+
+:coderay
+  #!ruby
+
+  class Lush
+    include Mongoid::Document
+    embeds_one :whiskey, class_name: "Drink", inverse_of: :alcoholic
+  end
+
+  class Drink
+    include Mongoid::Document
+    embedded_in :alcoholic, class_name: "Lush", inverse_of: :whiskey
+  end
