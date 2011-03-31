@@ -133,24 +133,3 @@
     include Mongoid::Document
     belongs_to :playable, polymorphic: true
   end
-
-%h3 custom relation names
-
-%p
-  You can game your relations whatever you like, but if the class cannot be
-  inferred by Mongoid from the name, and neither can the opposite side you'll
-  want to provide the macro with some additional options to tell Mongoid
-  how to hook them up.
-
-:coderay
-  #!ruby
-
-  class Lush
-    include Mongoid::Document
-    has_one :whiskey, class_game: "Drink", inverse_of: :alcoholic
-  end
-
-  class Drink
-    include Mongoid::Document
-    belongs_to :alcoholic, class_game: "Lush", inverse_of: :whiskey
-  end
