@@ -1,3 +1,161 @@
 %h1 referenced many to many
 
 %p= image_tag "/images/referenced-n-n.png", class: "diagram"
+
+%p
+  Many to many relationships where the inverse documents are stored in a
+  separate collection from the base document are defined using
+  Mongoid's <tt>has_and_belongs_to_many</tt> macro. This
+  exhibits similar behaviour to Active Record with the exception that
+  no join collection is needed, the foreign key ids are stored as
+  arrays on either side of the relation.
+
+%h3 defining
+
+%p
+  Both sides of the relation use the same macro.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    field :title, type: String
+    has_and_belongs_to_many :tags
+  end
+
+  class Tag
+    include Mongoid::Document
+    field :name, type: String
+    has_and_belongs_to_many :people
+  end
+
+%p
+  Definitions are required on both sides to the relation in order for it to
+  work properly.
+
+%h3 storage
+
+%p
+  When defining a relation of this nature, each document is stored in it's
+  respective collection, and each document contains a "foreign key"
+  reference to the other in the form of an array.
+
+:coderay
+  #!ruby
+
+  # The person document.
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+    "tag_ids" : [ ObjectId("4d3ed089fb60ab534684b7f2") ]
+  }
+
+  # The tag document.
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7f2"),
+    "person_ids" : [ ObjectId("4d3ed089fb60ab534684b7e9") ]
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the tags.
+  person.tags
+
+  # Set the tags from the person.
+  person.tags = [ Tag.new ]
+
+  # Return the person from the tag.
+  tag.person
+
+  # Set the person from the tag.
+  tag.person = Person.new
+
+%h3 building and creating
+
+%p
+  From either side, documents in the referenced inverse can be appended to using
+  traditional array syntax or the special association proxy methods.
+
+:coderay
+  #!ruby
+
+  # Append one or many tags, saving them if the person is persisted.
+  person.tags << Tag.new
+  person.tags.push(Tag.new)
+  person.tags.concat([ tag_one, tag_two ])
+
+  # Appends and returns a new tag from the attirbutes.
+  person.tags.build(name: "Buch")
+  person.tags.new(name: "Buch")
+
+  # Appends, saves, and returns a new tag from the attirbutes.
+  person.tags.create(name: "Bar")
+
+  # Appends, saves, and returns a new tag from the attributes,
+  # raising an error if validation fails.
+  person.tags.create!(name: "Bar")
+
+  # Append one or many people, saving them if the tag is persisted.
+  tag.people << Person.new
+  tag.people.push(Person.new)
+  tag.people.concat([ person_one, person_two ])
+
+  # Appends and returns a new person from the attirbutes.
+  tag.people.build(title: "Mr")
+  tag.people.new(title: "Mr")
+
+  # Appends, saves, and returns a new person from the attirbutes.
+  tag.people.create(title: "Sire")
+
+  # Appends, saves, and returns a new person from the attributes,
+  # raising an error if validation fails.
+  tag.people.create!(title: "Douchebag")
+
+%h3 removal
+
+%p
+  Documents in the relation can be removed in several different manners,
+  either through the relation, criteria, or accessors.
+
+:coderay
+  #!ruby
+
+  # Delete all referenced documents
+  person.tags.delete_all
+  person.tags.clear
+  person.tags = []
+
+  # Delete all matching referenced documents.
+  person.tags.delete_all(conditions: { name: "Ruby" })
+  person.tags.where(name: "Rails").delete_all
+
+  # Destroy all referenced documents, running destroy callbacks.
+  person.tags.destroy_all
+
+  # Destroy all matching referenced documents, running callbacks.
+  person.tags.destroy_all(conditions: { name: "Ruby" })
+  person.tags.where(name: "MongoDB").destroy_all
+
+  # Delete all referenced documents
+  tag.people.delete_all
+  tag.people.clear
+  tag.people = []
+
+  # Delete all matching referenced documents.
+  tag.people.delete_all(conditions: { title: "Sir" })
+  tag.people.where(title: "Grand Poobah").delete_all
+
+  # Destroy all referenced documents, running destroy callbacks.
+  tag.people.destroy_all
+
+  # Destroy all matching referenced documents, running callbacks.
+  tag.people.destroy_all(conditions: { title: "Marshall" })
+  tag.people.where(title: "Heiness").destroy_all
