@@ -37,6 +37,25 @@
     %li <tt>Symbol</tt>
     %li <tt>Time</tt>
 
+%p
+  If you decide not to specify the type of field with the definition, Mongoid
+  will treat it as an object and not try to typecast it when sending the
+  values to the database. This can be advantageous in 2 places, since
+  the lack of attempted conversion will yield a slight performance gain.
+
+  %ul
+    %li You're not using a web front end and values are already properly cast.
+    %li All of your fields are strings.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :first_name
+    field :middle_name
+    field :last_name
+  end
+
 %h3 getting and setting field values
 
 %p
