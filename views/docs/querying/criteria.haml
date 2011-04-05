@@ -32,6 +32,7 @@
     %li <a href="#order_by"><tt>Model.order_by</tt></a>
     %li <a href="#skip"><tt>Model.skip</tt></a>
     %li <a href="#where"><tt>Model.where</tt></a>
+    %li <a href="#or"><tt>Model.where().or</tt></a>
     %li <a href="#without"><tt>Model.without</tt></a>
 
 %a{name: "all_in"}
@@ -371,6 +372,23 @@
   { "aliases" : { "$size" : 2 } }
   { "location" : { "$near" : [ 22.50, -21.33 ] } }
   { "location" : { "$within" : { "$center" => [ [ 50, -40 ], 1 ] } } }
+
+%a{name: "or"}
+%h4 <tt>Model.where().or</tt> | <tt>Criteria#???</tt>
+
+%p
+  Adds a criterion that can match in order to return results - muliple
+  or's chained together create the or conditons
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with first name Emmanuel or Judy
+
+  Person.all.or(first_name: "Emmanuel").or(first_name: "Judy")
+
+  # Get the first Log from a Steward where either the title can be empty or the image can be empty - but not both
+  Steward.logs.all.or(:image_filename.exists => true, :image_filename.ne => '').or(:title.exists => true,:title.ne => '').first
 
 %a{name: "without"}
 %h4 <tt>Model.without</tt> | <tt>Criteria#without</tt>
