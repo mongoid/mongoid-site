@@ -34,7 +34,7 @@ helpers do
 end
 
 get "/" do
-  redirect "/home"
+  render :index, layout: false
 end
 
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
