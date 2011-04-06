@@ -6,3 +6,4 @@ output/*
 .rvmrc
 Gemfile.lock
 .sass-cache
+build/*
