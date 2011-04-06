@@ -1,72 +1,67 @@
-= image_tag "/images/mongoid-logo-small.png"
+= link_to "/" do
+  = image_tag "/images/mongoid-logo-small.png"
 
 %ul.navigation
-  %li.area= link_to_active "home", "/home", class: "area"
+  %li.area= link_to_active "home", "/", class: "area"
+  %li.area= link_to_active "docs", "/docs.html", class: "area"
 
-  %li.area= link_to_active "docs", "/docs", class: "area"
-
-  %li= link_to_active "installation", "/docs/installation", class: "section"
+  %li= link_to_active "installation", "/docs/installation.html", class: "section"
   - if render_subsection?("/docs/installation")
-    %li= link_to_active "configuration", "/docs/installation/configuration", class: "subsection"
-    %li= link_to_active "languages", "/docs/installation/languages", class: "subsection"
-    %li= link_to_active "replication", "/docs/installation/replication", class: "subsection"
+    %li= link_to_active "configuration", "/docs/installation/configuration.html", class: "subsection"
+    %li= link_to_active "languages", "/docs/installation/languages.html", class: "subsection"
+    %li= link_to_active "replication", "/docs/installation/replication.html", class: "subsection"
 
-  %li= link_to_active "documents", "/docs/documents", class: "section"
+  %li= link_to_active "documents", "/docs/documents.html", class: "section"
   - if render_subsection?("/docs/documents")
-    %li= link_to_active "fields", "/docs/documents/fields", class: "subsection"
-    %li= link_to_active "dynamic fields", "/docs/documents/dynamic", class: "subsection"
-    %li= link_to_active "access", "/docs/documents/access", class: "subsection"
-    %li= link_to_active "dirty tracking", "/docs/documents/dirty", class: "subsection"
-    %li= link_to_active "inheritance", "/docs/documents/inheritance", class: "subsection"
+    %li= link_to_active "fields", "/docs/documents/fields.html", class: "subsection"
+    %li= link_to_active "dynamic fields", "/docs/documents/dynamic.html", class: "subsection"
+    %li= link_to_active "access", "/docs/documents/access.html", class: "subsection"
+    %li= link_to_active "dirty tracking", "/docs/documents/dirty.html", class: "subsection"
+    %li= link_to_active "inheritance", "/docs/documents/inheritance.html", class: "subsection"
 
-  %li= link_to_active "persistence", "/docs/persistence", class: "section"
+  %li= link_to_active "persistence", "/docs/persistence.html", class: "section"
   - if render_subsection?("/docs/persistence")
-    %li= link_to_active "standard", "/docs/persistence/standard", class: "subsection"
-    %li= link_to_active "atomic", "/docs/persistence/atomic", class: "subsection"
+    %li= link_to_active "standard", "/docs/persistence/standard.html", class: "subsection"
+    %li= link_to_active "atomic", "/docs/persistence/atomic.html", class: "subsection"
 
-  %li= link_to_active "querying", "/docs/querying", class: "section"
+  %li= link_to_active "querying", "/docs/querying.html", class: "section"
   - if render_subsection?("/docs/querying")
-    %li= link_to_active "criteria", "/docs/querying/criteria", class: "subsection"
-    %li= link_to_active "criteria + mod", "/docs/querying/modification", class: "subsection"
-    %li= link_to_active "finders", "/docs/querying/finders", class: "subsection"
-    %li= link_to_active "scopes", "/docs/querying/scopes", class: "subsection"
+    %li= link_to_active "criteria", "/docs/querying/criteria.html", class: "subsection"
+    %li= link_to_active "criteria + mod", "/docs/querying/modification.html", class: "subsection"
+    %li= link_to_active "finders", "/docs/querying/finders.html", class: "subsection"
+    %li= link_to_active "scopes", "/docs/querying/scopes.html", class: "subsection"
 
-  %li= link_to_active "relations", "/docs/relations", class: "section"
+  %li= link_to_active "relations", "/docs/relations.html", class: "section"
   - if render_subsection?("/docs/relations")
 
-    %li= link_to_active "embedded", "/docs/relations/embedded", class: "subsection"
+    %li= link_to_active "embedded", "/docs/relations/embedded.html", class: "subsection"
     - if render_subsection?("/docs/relations/embedded")
-      %li= link_to_active "1...n", "/docs/relations/embedded/1-n", class: "chapter"
-      %li= link_to_active "1...1", "/docs/relations/embedded/1-1", class: "chapter"
+      %li= link_to_active "1...n", "/docs/relations/embedded/1-n.html", class: "chapter"
+      %li= link_to_active "1...1", "/docs/relations/embedded/1-1.html", class: "chapter"
 
-    %li= link_to_active "referenced", "/docs/relations/referenced", class: "subsection"
+    %li= link_to_active "referenced", "/docs/relations/referenced.html", class: "subsection"
     - if render_subsection?("/docs/relations/referenced")
-      %li= link_to_active "1...n", "/docs/relations/referenced/1-n", class: "chapter"
-      %li= link_to_active "1...1", "/docs/relations/referenced/1-1", class: "chapter"
-      %li= link_to_active "n...n", "/docs/relations/referenced/n-n", class: "chapter"
+      %li= link_to_active "1...n", "/docs/relations/referenced/1-n.html", class: "chapter"
+      %li= link_to_active "1...1", "/docs/relations/referenced/1-1.html", class: "chapter"
+      %li= link_to_active "n...n", "/docs/relations/referenced/n-n.html", class: "chapter"
 
-    %li= link_to_active "metadata", "/docs/relations/metadata", class: "subsection"
-    %li= link_to_active "validations", "/docs/relations/validations", class: "subsection"
+    %li= link_to_active "metadata", "/docs/relations/metadata.html", class: "subsection"
+    %li= link_to_active "validations", "/docs/relations/validations.html", class: "subsection"
 
-  %li= link_to_active "callbacks", "/docs/callbacks", class: "section"
+  %li= link_to_active "callbacks", "/docs/callbacks.html", class: "section"
+  %li= link_to_active "validation", "/docs/validation.html", class: "section"
+  %li= link_to_active "indexing", "/docs/indexing.html", class: "section"
+  %li= link_to_active "extras", "/docs/extras.html", class: "section"
 
-  %li= link_to_active "validation", "/docs/validation", class: "section"
-
-  %li= link_to_active "indexing", "/docs/indexing", class: "section"
-
-  %li= link_to_active "extras", "/docs/extras", class: "section"
-
-  %li= link_to_active "rails", "/docs/rails", class: "section"
+  %li= link_to_active "rails", "/docs/rails.html", class: "section"
   - if render_subsection?("/docs/rails")
-    %li= link_to_active "rake tasks", "/docs/rails/rake", class: "subsection"
-    %li= link_to_active "railties", "/docs/rails/railties", class: "subsection"
+    %li= link_to_active "rake tasks", "/docs/rails/rake.html", class: "subsection"
+    %li= link_to_active "railties", "/docs/rails/railties.html", class: "subsection"
 
-  %li= link_to_active "extensions", "/docs/extensions", class: "section"
+  %li= link_to_active "extensions", "/docs/extensions.html", class: "section"
+  %li= link_to_active "upgrading", "/docs/upgrading.html", class: "section"
+  %li= link_to_active "contributing", "/docs/contributing.html", class: "section"
 
-  %li= link_to_active "upgrading", "/docs/upgrading", class: "section"
-
-  %li= link_to_active "contributing", "/docs/contributing", class: "section"
-
-  %li.area= link_to_active "performance", "/performance", class: "area"
-  %li.area= link_to_active "credits", "/credits", class: "area"
-  %li.area= link_to_active "links", "/links", class: "area"
+  %li.area= link_to_active "performance", "/performance.html", class: "area"
+  %li.area= link_to_active "credits", "/credits.html", class: "area"
+  %li.area= link_to_active "links", "/links.html", class: "area"

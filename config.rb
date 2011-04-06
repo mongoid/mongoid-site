@@ -33,10 +33,6 @@ helpers do
   end
 end
 
-get "/" do
-  render :index, layout: false
-end
-
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
 configure :build do
