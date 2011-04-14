@@ -21,7 +21,6 @@
     %li <a href="#find_or_initialize_by"><tt>Model.find_or_initialize_by</tt></a>
     %li <a href="#first"><tt>Model.first</tt></a>
     %li <a href="#last"><tt>Model.last</tt></a>
-    %li <a href="#paginate"><tt>Model.paginate</tt></a>
 
 %a{name: "all"}
 %h4 <tt>Model.all</tt>
@@ -150,20 +149,3 @@
   #!ruby
   Person.last(conditions: { first_name: "Syd" })
   Person.last(sort: [[ :first_name, :asc ]])
-
-%a{name: "paginate"}
-%h4 <tt>Model.paginate</tt>
-
-%p
-  Return all documents in the database that match the provided conditions,
-  and paginate them according to the provided options. This will return a
-  <tt>WillPaginate::Collection</tt> and the options conform to the
-  <a href="#">Will Paginate</a> API.
-
-:coderay
-  #!ruby
-  Person.paginate(
-    conditions: { first_name: "Syd" },
-    page: 2,
-    per_page: 20
-  )

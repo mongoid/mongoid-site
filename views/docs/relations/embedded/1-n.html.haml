@@ -168,9 +168,6 @@
   # Do any children exist that are persisted?
   person.addresses.exists?
 
-  # Paginate the child documents.
-  person.addresses.paginate(page: 2, per_page: 20)
-
 %h3 polymorphic behaviour
 
 %p
