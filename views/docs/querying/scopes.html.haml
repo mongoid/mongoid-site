@@ -116,7 +116,7 @@
     field :occupation, type: String
     field :age, type: Integer
 
-    default_scope :rock_n_rolla, where(occupation: "Rockstar")
+    default_scope where(occupation: "Rockstar")
     scope :washed_up, where(:age.gt => 30)
   end
 
