@@ -19,9 +19,9 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :first_name, type: String
-    field :middle_name, type: String
-    field :last_name, type: String
+    field :first_name, :type => String
+    field :middle_name, :type => String
+    field :last_name, :type => String
   end
 
 %p
@@ -89,11 +89,11 @@
   person.attributes
 
   # Set the field values in the document.
-  Person.new(first_name: "Jean-Baptiste", middle_name: "Emmanuel")
-  person.attributes = { first_name: "Jean-Baptiste", middle_name: "Emmanuel" }
+  Person.new(:first_name => "Jean-Baptiste", :middle_name => "Emmanuel")
+  person.attributes = { :first_name => "Jean-Baptiste", :middle_name => "Emmanuel" }
   person.write_attributes(
-    first_name: "Jean-Baptiste",
-    middle_name: "Emmanuel"
+    :first_name => "Jean-Baptiste",
+    :middle_name => "Emmanuel"
   )
 
 %h3 defaults
@@ -107,8 +107,8 @@
 
   class Person
     include Mongoid::Document
-    field :blood_alcohol_level, type: Float, default: 0.40
-    field :last_drink, type: Time, default: -> { 10.minutes.ago }
+    field :blood_alcohol_level, :type => Float, :default => 0.40
+    field :last_drink, :type => Time, :default => lambda { 10.minutes.ago }
   end
 
 %h3 reserved names

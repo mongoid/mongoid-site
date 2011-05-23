@@ -27,8 +27,8 @@
 
   class Name
     include Mongoid::Document
-    field :vorname, type: String
-    field :nachname, type: String
+    field :vorname, :type => String
+    field :nachname, :type => String
     embedded_in :person
   end
 
@@ -86,16 +86,16 @@
   #!ruby
 
   # Create a new child name given the provided attributes.
-  person.build_name(vorname: "Heinrich", nachname: "Heine")
+  person.build_name(:vorname => "Heinrich", :nachname => "Heine")
 
   # Create a persisted child name.
-  person.create_name(vorname: "Heinrich", nachname: "Heine")
+  person.create_name(:vorname => "Heinrich", :nachname => "Heine")
 
   # Replace the parent with a new one from the attributes.
-  name.build_person(title: "Prince")
+  name.build_person(:title => "Prince")
 
   # Replace the parent with a newly saved one from the attributes.
-  name.create_person(title: "Prince")
+  name.create_person(:title => "Prince")
 
 %h3 removal
 
@@ -134,5 +134,5 @@
 
   class Name
     include Mongoid::Document
-    embedded_in :namable, polymorphic: true
+    embedded_in :namable, :polymorphic => true
   end

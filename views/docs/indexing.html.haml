@@ -12,7 +12,7 @@
   class Person
     include Mongoid::Document
     field :ssn
-    index :ssn, unique: true
+    index :ssn, :unique => true
   end
 
 %p
@@ -40,7 +40,7 @@
         [ :first_name, Mongo::ASCENDING ],
         [ :last_name, Mongo::ASCENDING ]
       ],
-      unique: true
+      :unique => true
     )
   end
 
@@ -52,7 +52,7 @@
   class Person
     include Mongoid::Document
     field :ssn
-    index :ssn, unique: true, background: true
+    index :ssn, :unique => true, :background => true
   end
 
 %p
@@ -62,7 +62,7 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :location, type: Array
+    field :location, :type => Array
     index [[ :location, Mongo::GEO2D ]], min: 200, max: 200
   end
 
@@ -74,8 +74,8 @@
   #!ruby
   class Comment
     include Mongoid::Document
-    belongs_to :post, index: true
-    has_many :users, index: true
+    belongs_to :post, :index => true
+    has_many :users, :index => true
   end
 
 %p

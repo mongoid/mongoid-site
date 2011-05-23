@@ -24,6 +24,6 @@
   class Person
     include Mongoid::Document
 
-    embeds_many :addresses, validate: false
-    has_many :posts, validate: false
+    embeds_many :addresses, :validate => false
+    has_many :posts, :validate => false
   end

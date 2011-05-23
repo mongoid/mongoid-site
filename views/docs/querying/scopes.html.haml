@@ -21,12 +21,12 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :occupation, type: String
-    field :age, type: Integer
+    field :occupation, :type => String
+    field :age, :type => Integer
 
-    scope :rock_n_rolla, where(occupation: "Rockstar")
+    scope :rock_n_rolla, where(:occupation => "Rockstar")
     scope :washed_up, where(:age.gt => 30)
-    scope :over, ->(limit) { where(:age.gt => limit) }
+    scope :over, lambda{ |limit| where(:age.gt => limit) }
   end
 
   # Find all the rockstars.
@@ -48,13 +48,13 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :occupation, type: String
-    field :age, type: Integer
+    field :occupation, :type => String
+    field :age, :type => Integer
 
     class << self
 
       def rock_n_rolla
-        where(occupation: "Rockstar")
+        where(:occupation => "Rockstar")
       end
 
       def washed_up
@@ -84,14 +84,14 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :occupation, type: String
-    field :age, type: Integer
+    field :occupation, :type => String
+    field :age, :type => Integer
 
     scope :washed_up, where(:age.gt => 30)
-    scope :over, ->(limit) { where(:age.gt => limit) }
+    scope :over, lambda{ |limit| where(:age.gt => limit) }
 
     def self.rock_n_rolla
-      where(occupation: "Rockstar")
+      where(:occupation => "Rockstar")
     end
   end
 
@@ -113,10 +113,10 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :occupation, type: String
-    field :age, type: Integer
+    field :occupation, :type => String
+    field :age, :type => Integer
 
-    default_scope :rock_n_rolla, where(occupation: "Rockstar")
+    default_scope :rock_n_rolla, where(:occupation => "Rockstar")
     scope :washed_up, where(:age.gt => 30)
   end
 

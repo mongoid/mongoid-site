@@ -27,7 +27,7 @@
 
   class Game
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
     belongs_to :person
   end
 
@@ -86,16 +86,16 @@
   #!ruby
 
   # Create a new child game given the provided attributes.
-  person.build_game(name: "Tron")
+  person.build_game(:name => "Tron")
 
   # Create a persisted child game.
-  person.create_game(name: "Tron")
+  person.create_game(:name => "Tron")
 
   # Replace the parent with a new one from the attributes.
-  game.build_person(title: "Prince")
+  game.build_person(:title => "Prince")
 
   # Replace the parent with a newly saved one from the attributes.
-  game.create_person(title: "Prince")
+  game.create_person(:title => "Prince")
 
 %h3 removal
 
@@ -134,5 +134,5 @@
 
   class Game
     include Mongoid::Document
-    belongs_to :playable, polymorphic: true
+    belongs_to :playable, :polymorphic => true
   end

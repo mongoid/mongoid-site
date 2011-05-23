@@ -23,13 +23,13 @@
 
   class Person
     include Mongoid::Document
-    field :title, type: String
+    field :title, :type => String
     has_and_belongs_to_many :tags
   end
 
   class Tag
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
     has_and_belongs_to_many :people
   end
 
@@ -96,15 +96,15 @@
   person.tags.concat([ tag_one, tag_two ])
 
   # Appends and returns a new tag from the attirbutes.
-  person.tags.build(name: "Buch")
-  person.tags.new(name: "Buch")
+  person.tags.build(:name => "Buch")
+  person.tags.new(:name => "Buch")
 
   # Appends, saves, and returns a new tag from the attirbutes.
-  person.tags.create(name: "Bar")
+  person.tags.create(:name => "Bar")
 
   # Appends, saves, and returns a new tag from the attributes,
   # raising an error if validation fails.
-  person.tags.create!(name: "Bar")
+  person.tags.create!(:name => "Bar")
 
   # Append one or many people, saving them if the tag is persisted.
   tag.people << Person.new
@@ -112,15 +112,15 @@
   tag.people.concat([ person_one, person_two ])
 
   # Appends and returns a new person from the attirbutes.
-  tag.people.build(title: "Mr")
-  tag.people.new(title: "Mr")
+  tag.people.build(:title => "Mr")
+  tag.people.new(:title => "Mr")
 
   # Appends, saves, and returns a new person from the attirbutes.
-  tag.people.create(title: "Sire")
+  tag.people.create(:title => "Sire")
 
   # Appends, saves, and returns a new person from the attributes,
   # raising an error if validation fails.
-  tag.people.create!(title: "Douchebag")
+  tag.people.create!(:title => "Douchebag")
 
 %h3 removal
 
@@ -137,15 +137,15 @@
   person.tags = []
 
   # Delete all matching referenced documents.
-  person.tags.delete_all(conditions: { name: "Ruby" })
-  person.tags.where(name: "Rails").delete_all
+  person.tags.delete_all(:conditions => { :name => "Ruby" })
+  person.tags.where(:name => "Rails").delete_all
 
   # Destroy all referenced documents, running destroy callbacks.
   person.tags.destroy_all
 
   # Destroy all matching referenced documents, running callbacks.
-  person.tags.destroy_all(conditions: { name: "Ruby" })
-  person.tags.where(name: "MongoDB").destroy_all
+  person.tags.destroy_all(:conditions => { :name => "Ruby" })
+  person.tags.where(:name => "MongoDB").destroy_all
 
   # Delete all referenced documents
   tag.people.delete_all
@@ -153,12 +153,12 @@
   tag.people = []
 
   # Delete all matching referenced documents.
-  tag.people.delete_all(conditions: { title: "Sir" })
-  tag.people.where(title: "Grand Poobah").delete_all
+  tag.people.delete_all(:conditions => { :title => "Sir" })
+  tag.people.where(:title => "Grand Poobah").delete_all
 
   # Destroy all referenced documents, running destroy callbacks.
   tag.people.destroy_all
 
   # Destroy all matching referenced documents, running callbacks.
-  tag.people.destroy_all(conditions: { title: "Marshall" })
-  tag.people.where(title: "Heiness").destroy_all
+  tag.people.destroy_all(:conditions => { :title => "Marshall" })
+  tag.people.where(:title => "Heiness").destroy_all
