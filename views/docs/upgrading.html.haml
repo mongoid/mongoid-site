@@ -48,8 +48,8 @@
   #!ruby
   class Person
     include Mongoid::Document
-    references_many :posts, autosave: true
-    references_one :game, autosave: true
+    references_many :posts, :autosave => true
+    references_one :game, :autosave => true
   end
 
 %p
@@ -86,7 +86,7 @@
   #!ruby
   class Person
     include Mongoid::Document
-    embeds_many :addresses, validate: false
+    embeds_many :addresses, :validate => false
   end
 
 %p
@@ -115,7 +115,7 @@
   #!ruby
   class Person
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
     default_scope asc(:name)
   end
 
@@ -166,7 +166,7 @@
   #!ruby
   class Role
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
     recursively_embeds_many
   end
 
@@ -175,7 +175,7 @@
 
   class Role
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
     recursively_embeds_one
   end
 
@@ -243,7 +243,7 @@
   #!ruby
   class Person
     include Mongoid::Document
-    identity type: String
+    identity :type => String
   end
 
 %p

@@ -31,9 +31,9 @@
   #!ruby
   class Article
     include Mongoid::Document
-    field :name, type: String
-    field :body, type: String
-    field :slug, type: String
+    field :name, :type => String
+    field :body, :type => String
+    field :slug, :type => String
 
     before_create :generate_slug
 
@@ -51,7 +51,7 @@
   #!ruby
   class Article
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
 
     set_callback(:save, :before) do |document|
       document.generate_slug
