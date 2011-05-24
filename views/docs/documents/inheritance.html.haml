@@ -13,12 +13,12 @@
   #!ruby
   class Canvas
     include Mongoid::Document
-    field :name, type: String
+    field :name, :type => String
     embeds_many :shapes
   end
 
   class Browser < Canvas
-    field :version, type: Integer
+    field :version, :type => Integer
     scope :recent, where(:version.gt => 3)
   end
 
@@ -27,18 +27,18 @@
 
   class Shape
     include Mongoid::Document
-    field :x, type: Integer
-    field :y, type: Integer
+    field :x, :type => Integer
+    field :y, :type => Integer
     embedded_in :canvas
   end
 
   class Circle < Shape
-    field :radius, type: Float
+    field :radius, :type => Float
   end
 
   class Rectangle < Shape
-    field :width, type: Float
-    field :height, type: Float
+    field :width, :type => Float
+    field :height, :type => Float
   end
 
 %p

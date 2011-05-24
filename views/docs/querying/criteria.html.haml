@@ -48,7 +48,7 @@
 :coderay
   #!ruby
   # Match all people with Bond and 007 as aliases.
-  Person.all_in(aliases: [ "Bond", "007" ])
+  Person.all_in(:aliases => [ "Bond", "007" ])
 
 %mongodb mongodb query selector
 :coderay
@@ -69,8 +69,8 @@
 :coderay
   #!ruby
   # Match all people with either Bond or 007 as aliases.
-  Person.also_in(aliases: [ "Bond", "007" ])
-  Person.any_in(aliases: [ "Bond" ]).also_in(aliases: [ "007" ])
+  Person.also_in(:aliases => [ "Bond", "007" ])
+  Person.any_in(:aliases => [ "Bond" ]).also_in(:aliases => [ "007" ])
 
 %mongodb mongodb query selector
 :coderay
@@ -89,7 +89,7 @@
 :coderay
   #!ruby
   # Match all people with last name Jordan and first name starting with d.
-  Person.where(last_name: "Jordan").and(first_name: /^d/i)
+  Person.where(:last_name => "Jordan").and(:first_name => /^d/i)
 
 %mongodb mongodb query selector
 :coderay
@@ -110,10 +110,10 @@
 :coderay
   #!ruby
   # Match all people with either Bond or 007 as aliases.
-  Person.any_in(aliases: [ "Bond", "007" ])
+  Person.any_in(:aliases => [ "Bond", "007" ])
   Person.
-    any_in(aliases: [ "Bond", "007", "James" ]).
-    any_in(aliases: [ "Bond", "007" ])
+    any_in(:aliases => [ "Bond", "007", "James" ]).
+    any_in(:aliases => [ "Bond", "007" ])
 
 %mongodb mongodb query selector
 :coderay
@@ -132,7 +132,7 @@
 :coderay
   #!ruby
   # Match all people with either last name Penn or Teller
-  Person.any_of({ last_name: "Penn" }, { last_name: "Teller" })
+  Person.any_of({ :last_name => "Penn" }, { :last_name => "Teller" })
 
 %mongodb mongodb query selector
 :coderay
@@ -195,7 +195,7 @@
 :coderay
   #!ruby
   # Match all people without either last name Teller and first name Bob.
-  Person.excludes(last_name: "Teller", first_name: "Bob")
+  Person.excludes(:last_name => "Teller", :first_name => "Bob")
 
 %mongodb mongodb query selector
 :coderay
@@ -231,7 +231,7 @@
 :coderay
   #!ruby
   # Match all bars near Berlin
-  Bar.near(location: [ 52.30, 13.25 ])
+  Bar.near(:location => [ 52.30, 13.25 ])
 
 %mongodb mongodb query selector
 :coderay
@@ -250,7 +250,7 @@
 :coderay
   #!ruby
   # Match all people without last names Zorg and Dallas
-  Person.not_in(last_name: [ "Zorg", "Dallas" ])
+  Person.not_in(:last_name => [ "Zorg", "Dallas" ])
 
 %mongodb mongodb query selector
 :coderay
@@ -327,7 +327,7 @@
 :coderay
   #!ruby
   # Match all people with first name Emmanuel
-  Person.where(first_name: "Emmanuel")
+  Person.where(:first_name => "Emmanuel")
 
   # Match all people with first name Emmanuel using Javascript.
   Person.where("this.first_name == 'Emmanuel'")

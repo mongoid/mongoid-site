@@ -27,8 +27,8 @@
 
   class Address
     include Mongoid::Document
-    field :city, type: String
-    field :country, type: String
+    field :city, :type => String
+    field :country, :type => String
     embedded_in :person
   end
 
@@ -96,21 +96,21 @@
   person.addresses.concat([ address ])
 
   # Appends and returns a new child address from the attirbutes.
-  person.addresses.build(city: "Berlin")
-  person.addresses.new(city: "Berlin")
+  person.addresses.build(:city => "Berlin")
+  person.addresses.new(:city => "Berlin")
 
   # Appends, saves, and returns a new child address from the attirbutes.
-  person.addresses.create(city: "Berlin")
+  person.addresses.create(:city => "Berlin")
 
   # Appends, saves, and returns a new child address from the attributes,
   # raising an error if validation fails.
-  person.addresses.create!(city: "Berlin")
+  person.addresses.create!(:city => "Berlin")
 
   # Replace the parent with a new one from the attributes.
-  address.build_person(title: "Prince")
+  address.build_person(:title => "Prince")
 
   # Replace the parent with a newly saved one from the attributes.
-  address.create_person(title: "Prince")
+  address.create_person(:title => "Prince")
 
 %h3 removal
 
@@ -127,15 +127,15 @@
   person.addresses = []
 
   # Delete all matching documents.
-  person.addresses.delete_all(conditions: { city: "Berlin" })
-  person.addresses.where(city: "Berlin").delete_all
+  person.addresses.delete_all(:conditions => { :city => "Berlin" })
+  person.addresses.where(:city => "Berlin").delete_all
 
   # Destroy all documents, running destroy callbacks.
   person.addresses.destroy_all
 
   # Destroy all matching documents, running callbacks.
-  person.addresses.destroy_all(conditions: { city: "Berlin" })
-  person.addresses.where(city: "Berlin").destroy_all
+  person.addresses.destroy_all(:conditions => { :city => "Berlin" })
+  person.addresses.where(:city => "Berlin").destroy_all
 
   # Delete the parent document (Note this also deletes all children.)
   address.person.delete
@@ -157,19 +157,19 @@
   person.addresses.find([ id_one, id_two ])
 
   # Find matching children.
-  person.addresses.where(city: "Berlin")
+  person.addresses.where(:city => "Berlin")
 
   # Find or create a matching (saved) child.
-  person.addresses.find_or_create_by(city: "Berlin")
+  person.addresses.find_or_create_by(:city => "Berlin")
 
   # Find or initialize a matching (new) child.
-  person.addresses.find_or_initialize_by(city: "Berlin")
+  person.addresses.find_or_initialize_by(:city => "Berlin")
 
   # Do any children exist that are persisted?
   person.addresses.exists?
 
   # Paginate the child documents.
-  person.addresses.paginate(page: 2, per_page: 20)
+  person.addresses.paginate(:page => 2, :per_page => 20)
 
 %h3 polymorphic behaviour
 
@@ -194,5 +194,5 @@
 
   class Address
     include Mongoid::Document
-    embedded_in :locatable, polymorphic: true
+    embedded_in :locatable, :polymorphic => true
   end

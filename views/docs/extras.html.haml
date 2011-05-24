@@ -31,7 +31,7 @@
 
 :coderay
   #!ruby
-  Person.where(first_name: "Omar").enslave
+  Person.where(:first_name => "Omar").enslave
 
 %h3 Caching
 
@@ -57,7 +57,7 @@
 
 :coderay
   #!ruby
-  Person.where(first_name: "Franziska").cache
+  Person.where(:first_name => "Franziska").cache
 
 %h3 Paranoid Documents
 
@@ -115,7 +115,7 @@
 :coderay
   #!ruby
   person.versionless do |doc|
-    doc.update_attributes(name: "Theodore")
+    doc.update_attributes(:name => "Theodore")
   end
 
 %h3 Timestamping
@@ -162,5 +162,5 @@
     key :first_name, :last_name
   end
 
-  person = Person.new(first_name: "Syd", last_name: "Vicious")
+  person = Person.new(:first_name => "Syd", :last_name => "Vicious")
   person.id # returns "syd-vicious"

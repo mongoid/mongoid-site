@@ -34,9 +34,9 @@
   #!ruby
   # Find all people by MongoDB compatible conditions and options.
   Person.all
-  Person.all(conditions: { first_name: /^dur/i, "addresses.city" => "Berlin" })
-  Person.all(conditions: { title: "Sir" }, limit: 5)
-  Person.all(sort: [[ :first_name, :asc ]])
+  Person.all(:conditions => { :first_name => /^dur/i, "addresses.city" => "Berlin" })
+  Person.all(:conditions => { :title => "Sir" }, :limit => 5)
+  Person.all(:sort => [[ :first_name, :asc ]])
 
 %a{name: "count"}
 %h4 <tt>Model.count</tt>
@@ -49,7 +49,7 @@
   #!ruby
   # Get the count of documents given the provided conditions.
   Person.count
-  Person.count(conditions: { title: "Sir" })
+  Person.count(:conditions => { :title => "Sir" })
 
 %a{name: "exists?"}
 %h4 <tt>Model.exists?</tt>
@@ -62,7 +62,7 @@
   #!ruby
   # Do any documents exist in the database for the provided conditions?
   Person.exists?
-  Person.exists?(conditions: { title: "Sir" })
+  Person.exists?(:conditions => { :title => "Sir" })
 
 %a{name: "find"}
 %h4 <tt>Model.find</tt> | <tt>Criteria#find</tt>
@@ -85,7 +85,7 @@
   #!ruby
   Person.find(id)
   Person.find("4baa56f1230048567300485c")
-  Person.where(last_name: "Black").find(id)
+  Person.where(:last_name => "Black").find(id)
 
 %p
   You may find multiple documents given the provided array of ids.
@@ -97,7 +97,7 @@
   #!ruby
   Person.find([id_one, id_two])
   Person.find(["4baa56f1230048567300485c","4baa56f1230048567300485d"])
-  Person.where(last_name: "Black").find([ id_one, id_two ])
+  Person.where(:last_name => "Black").find([ id_one, id_two ])
 
 %a{name: "find_or_create_by"}
 %h4 <tt>Model.find_or_create_by</tt>
@@ -108,7 +108,7 @@
 
 :coderay
   #!ruby
-  Person.find_or_create_by(first_name: "Syd", last_name: "Vicious")
+  Person.find_or_create_by(:first_name => "Syd", :last_name => "Vicious")
 
 %a{name: "find_or_initialize_by"}
 %h4 <tt>Model.find_or_initialize_by</tt>
@@ -119,7 +119,7 @@
 
 :coderay
   #!ruby
-  Person.find_or_initialize_by(first_name: "Syd", last_name: "Vicious")
+  Person.find_or_initialize_by(:first_name => "Syd", :last_name => "Vicious")
 
 %a{name: "first"}
 %h4 <tt>Model.first</tt>
@@ -133,8 +133,8 @@
 
 :coderay
   #!ruby
-  Person.first(conditions: { first_name: "Syd" })
-  Person.first(sort: [[ :first_name, :asc ]])
+  Person.first(:conditions => { :first_name => "Syd" })
+  Person.first(:sort => [[ :first_name, :asc ]])
 
 %a{name: "last"}
 %h4 <tt>Model.last</tt>
@@ -148,8 +148,8 @@
 
 :coderay
   #!ruby
-  Person.last(conditions: { first_name: "Syd" })
-  Person.last(sort: [[ :first_name, :asc ]])
+  Person.last(:conditions => { :first_name => "Syd" })
+  Person.last(:sort => [[ :first_name, :asc ]])
 
 %a{name: "paginate"}
 %h4 <tt>Model.paginate</tt>
@@ -163,7 +163,7 @@
 :coderay
   #!ruby
   Person.paginate(
-    conditions: { first_name: "Syd" },
-    page: 2,
-    per_page: 20
+    :conditions => { :first_name => "Syd" },
+    :page => 2,
+    :per_page => 20
   )

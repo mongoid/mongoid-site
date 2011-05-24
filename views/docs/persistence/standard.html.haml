@@ -34,10 +34,10 @@
   #!ruby
 
   # Insert a new German poet to the db.
-  Person.create(first_name: "Heinrich", last_name: "Heine")
+  Person.create(:first_name => "Heinrich", :last_name => "Heine")
 
   # This can also take a block.
-  Person.create(first_name: "Heinrich") do |doc|
+  Person.create(:first_name => "Heinrich") do |doc|
     doc.last_name = "Heine"
   end
 

@@ -28,7 +28,7 @@
 
   class Post
     include Mongoid::Document
-    field :title, type: String
+    field :title, :type => String
     belongs_to :person
   end
 
@@ -94,21 +94,21 @@
   person.posts.concat([ post ])
 
   # Appends and returns a new child post from the attirbutes.
-  person.posts.build(title: "Berlin never sleeps.")
-  person.posts.new(title: "Berlin never sleeps.")
+  person.posts.build(:title => "Berlin never sleeps.")
+  person.posts.new(:title => "Berlin never sleeps.")
 
   # Appends, saves, and returns a new child post from the attirbutes.
-  person.posts.create(title: "Berlin is far cooler than New York.")
+  person.posts.create(:title => "Berlin is far cooler than New York.")
 
   # Appends, saves, and returns a new child post from the attributes,
   # raising an error if validation fails.
-  person.posts.create!(title: "Berlin is bad for the liver.")
+  person.posts.create!(:title => "Berlin is bad for the liver.")
 
   # Replace the parent with a new one from the attributes.
-  post.build_person(title: "Prince")
+  post.build_person(:title => "Prince")
 
   # Replace the parent with a newly saved one from the attributes.
-  post.create_person(title: "Prince")
+  post.create_person(:title => "Prince")
 
 %h3 removal
 
@@ -125,15 +125,15 @@
   person.posts = []
 
   # Delete all matching referenced documents.
-  person.posts.delete_all(conditions: { title: "Berlin" })
-  person.posts.where(title: "Berlin").delete_all
+  person.posts.delete_all(:conditions => { :title => "Berlin" })
+  person.posts.where(:title => "Berlin").delete_all
 
   # Destroy all referenced documents, running destroy callbacks.
   person.posts.destroy_all
 
   # Destroy all matching referenced documents, running callbacks.
-  person.posts.destroy_all(conditions: { title: "Berlin" })
-  person.posts.where(title: "Berlin").destroy_all
+  person.posts.destroy_all(:conditions => { :title => "Berlin" })
+  person.posts.where(:title => "Berlin").destroy_all
 
   # Delete the parent referenced document.
   post.person.delete
@@ -155,19 +155,19 @@
   person.posts.find([ id_one, id_two ])
 
   # Find matching referenced children.
-  person.posts.where(title: "Berlin")
+  person.posts.where(:title => "Berlin")
 
   # Find or create a matching (saved) child.
-  person.posts.find_or_create_by(title: "Berlin")
+  person.posts.find_or_create_by(:title => "Berlin")
 
   # Find or initialize a matching (new) child.
-  person.posts.find_or_initialize_by(title: "Berlin")
+  person.posts.find_or_initialize_by(:title => "Berlin")
 
   # Do any children exist that are persisted?
   person.posts.exists?
 
   # Paginate the referenced child documents.
-  person.posts.paginate(page: 2, per_page: 20)
+  person.posts.paginate(:page => 2, :per_page => 20)
 
 %h3 polymorphic behaviour
 
@@ -192,5 +192,5 @@
 
   class Post
     include Mongoid::Document
-    belongs_to :postable, polymorphic: true
+    belongs_to :postable, :polymorphic => true
   end
