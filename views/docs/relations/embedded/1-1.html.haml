@@ -136,3 +136,20 @@
     include Mongoid::Document
     embedded_in :namable, polymorphic: true
   end
+
+
+%h3 inheritance
+%p
+  When embedding models that inherit from a different class, monogid will store the class of this object in the field <tt>_type</tt>.
+
+:coderay
+  #!ruby
+  class Person
+    embeds_one :profession
+  end
+  class Profession
+    include Mongoid::Document
+    embedded_in :person
+  end
+  class Doctor < Person; end;
+  class Nurse < Person; end;
