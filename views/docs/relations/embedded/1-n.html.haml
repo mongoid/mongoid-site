@@ -196,3 +196,26 @@
     include Mongoid::Document
     embedded_in :locatable, polymorphic: true
   end
+
+%h3 recursive embedding / cyclic relations
+
+%p
+  A document can recursively embed itself using <tt>recursively_embeds_many</tt>, which
+  provides accessors for the parent and children.
+
+:coderay
+  #!ruby
+
+  class Tag
+    include Mongoid::Document
+    recursively_embeds_many
+    field :name
+  end
+
+  programming = Tag.new(:name => 'programming')
+  ruby = programming.child_tags.build(:name => 'ruby')
+  python = programming.child_tags.build(:name => 'python')
+
+  programming.child_tags  # [ruby, python]
+  ruby.parent_tag         # [programming]
+  python.parent_tag       # [programming]
