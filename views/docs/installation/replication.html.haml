@@ -20,6 +20,29 @@
   read_secondary: true
 
 %p
+  If you use Sinatra (or anything other than rails) you need to do make a mongoid.yml like this:
+:coderay
+  #!ruby
+  production:
+    hosts: [[db1.mongoid.org, 27017], [db2.mongoid.org, 27017], [db3.mongoid.org, 27017]]
+    database: project_production
+  development:
+    hosts: [[db1.mongoid.org, 27017], [db2.mongoid.org, 27017], [db3.mongoid.org, 27017]]
+    database: project_development
+
+%p Then in your application load in the settings and configure the connection.
+:coderay
+  #!ruby
+  Mongoid.load!("config/mongoid.yml")
+
+%p To automagically have your models loaded you could do something like this as well:
+:coderay
+  #!ruby
+  # load models
+  $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
+  Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |lib| require File.basename(lib, '.*') }
+
+%p
   If you would also like Mongoid to retry operations if a
   <tt>Mongo::ConnectionFailure</tt> occurs you may specify this option
   in your config. Mongoid will retry the operation every half second up
