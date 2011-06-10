@@ -21,12 +21,12 @@
   #!ruby
 
   # Create a saved person with a title of Sir and first name Lancelot.
-  Person.where(title: "Sir", first_name: "Lancelot").create
-  Person.where(title: "Sir").create(first_name: "Lancelot")
+  Person.where(:title => "Sir", :first_name => "Lancelot").create
+  Person.where(:title => "Sir").create(:first_name => "Lancelot")
 
   # Build an unsaved person with a title of Sir and first name Lancelot.
-  Person.where(title: "Sir", first_name: "Lancelot").build
-  Person.where(title: "Sir").build(first_name: "Lancelot")
+  Person.where(:title => "Sir", :first_name => "Lancelot").build
+  Person.where(:title => "Sir").build(:first_name => "Lancelot")
 
 %p
   Note that for obvious reasons certain criterion cannot be translated
@@ -50,8 +50,8 @@
   #!ruby
 
   # Update all people with last name Oldman with new first name.
-  Person.where(last_name: "Oldman").update_all(
-    first_name: "Pappa Gary"
+  Person.where(:last_name => "Oldman").update_all(
+    :first_name => "Pappa Gary"
   )
 
 %h3 removal
@@ -66,5 +66,5 @@
   #!ruby
 
   # Delete all of Arthur's knight's from the db.
-  Person.where(title: "Sir").and(king: "Arthur").delete_all
-  Person.where(title: "Sir", king: "Arthur").destroy_all
+  Person.where(:title => "Sir").and(:king => "Arthur").delete_all
+  Person.where(:title => "Sir", :king => "Arthur").destroy_all

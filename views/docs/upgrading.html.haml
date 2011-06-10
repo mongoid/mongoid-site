@@ -104,7 +104,7 @@
 
 :coderay
   #!ruby
-  Person.where(title: "Prince").create # => Creates one
+  Person.where(:title => "Prince").create # => Creates one
   Person.where(:age.gt => 40).delete_all # => Delete all matching
   Person.where(:age.gt => 40).destroy_all # => Destroy all matching
 

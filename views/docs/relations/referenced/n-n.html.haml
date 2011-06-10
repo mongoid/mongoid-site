@@ -138,14 +138,14 @@
 
   # Delete all matching referenced documents.
   person.tags.delete_all(conditions: { name: "Ruby" })
-  person.tags.where(name: "Rails").delete_all
+  person.tags.where(:name => "Rails").delete_all
 
   # Destroy all referenced documents, running destroy callbacks.
   person.tags.destroy_all
 
   # Destroy all matching referenced documents, running callbacks.
   person.tags.destroy_all(conditions: { name: "Ruby" })
-  person.tags.where(name: "MongoDB").destroy_all
+  person.tags.where(:name => "MongoDB").destroy_all
 
   # Delete all referenced documents
   tag.people.delete_all
@@ -154,11 +154,11 @@
 
   # Delete all matching referenced documents.
   tag.people.delete_all(conditions: { title: "Sir" })
-  tag.people.where(title: "Grand Poobah").delete_all
+  tag.people.where(:title => "Grand Poobah").delete_all
 
   # Destroy all referenced documents, running destroy callbacks.
   tag.people.destroy_all
 
   # Destroy all matching referenced documents, running callbacks.
   tag.people.destroy_all(conditions: { title: "Marshall" })
-  tag.people.where(title: "Heiness").destroy_all
+  tag.people.where(:title => "Heiness").destroy_all

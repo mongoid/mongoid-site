@@ -85,7 +85,7 @@
   #!ruby
   Person.find(id)
   Person.find("4baa56f1230048567300485c")
-  Person.where(last_name: "Black").find(id)
+  Person.where(:last_name => "Black").find(id)
 
 %p
   You may find multiple documents given the provided array of ids.
@@ -97,7 +97,7 @@
   #!ruby
   Person.find([id_one, id_two])
   Person.find(["4baa56f1230048567300485c","4baa56f1230048567300485d"])
-  Person.where(last_name: "Black").find([ id_one, id_two ])
+  Person.where(:last_name => "Black").find([ id_one, id_two ])
 
 %a{name: "find_or_create_by"}
 %h4 <tt>Model.find_or_create_by</tt>

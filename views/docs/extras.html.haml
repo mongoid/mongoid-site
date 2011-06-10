@@ -31,7 +31,7 @@
 
 :coderay
   #!ruby
-  Person.where(first_name: "Omar").enslave
+  Person.where(:first_name => "Omar").enslave
 
 %h3 Caching
 
@@ -57,7 +57,7 @@
 
 :coderay
   #!ruby
-  Person.where(first_name: "Franziska").cache
+  Person.where(:first_name => "Franziska").cache
 
 %h3 Paranoid Documents
 
