@@ -126,14 +126,14 @@
 
   # Delete all matching referenced documents.
   person.posts.delete_all(conditions: { title: "Berlin" })
-  person.posts.where(title: "Berlin").delete_all
+  person.posts.where(:title => "Berlin").delete_all
 
   # Destroy all referenced documents, running destroy callbacks.
   person.posts.destroy_all
 
   # Destroy all matching referenced documents, running callbacks.
   person.posts.destroy_all(conditions: { title: "Berlin" })
-  person.posts.where(title: "Berlin").destroy_all
+  person.posts.where(:title => "Berlin").destroy_all
 
   # Delete the parent referenced document.
   post.person.delete
@@ -155,7 +155,7 @@
   person.posts.find([ id_one, id_two ])
 
   # Find matching referenced children.
-  person.posts.where(title: "Berlin")
+  person.posts.where(:title => "Berlin")
 
   # Find or create a matching (saved) child.
   person.posts.find_or_create_by(title: "Berlin")

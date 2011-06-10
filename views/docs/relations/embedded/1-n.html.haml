@@ -128,14 +128,14 @@
 
   # Delete all matching documents.
   person.addresses.delete_all(conditions: { city: "Berlin" })
-  person.addresses.where(city: "Berlin").delete_all
+  person.addresses.where(:city => "Berlin").delete_all
 
   # Destroy all documents, running destroy callbacks.
   person.addresses.destroy_all
 
   # Destroy all matching documents, running callbacks.
   person.addresses.destroy_all(conditions: { city: "Berlin" })
-  person.addresses.where(city: "Berlin").destroy_all
+  person.addresses.where(:city => "Berlin").destroy_all
 
   # Delete the parent document (Note this also deletes all children.)
   address.person.delete
@@ -157,7 +157,7 @@
   person.addresses.find([ id_one, id_two ])
 
   # Find matching children.
-  person.addresses.where(city: "Berlin")
+  person.addresses.where(:city => "Berlin")
 
   # Find or create a matching (saved) child.
   person.addresses.find_or_create_by(city: "Berlin")

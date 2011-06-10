@@ -24,7 +24,7 @@
     field :occupation, type: String
     field :age, type: Integer
 
-    scope :rock_n_rolla, where(occupation: "Rockstar")
+    scope :rock_n_rolla, where(:occupation => "Rockstar")
     scope :washed_up, where(:age.gt => 30)
     scope :over, ->(limit) { where(:age.gt => limit) }
   end
@@ -54,7 +54,7 @@
     class << self
 
       def rock_n_rolla
-        where(occupation: "Rockstar")
+        where(:occupation => "Rockstar")
       end
 
       def washed_up
@@ -91,7 +91,7 @@
     scope :over, ->(limit) { where(:age.gt => limit) }
 
     def self.rock_n_rolla
-      where(occupation: "Rockstar")
+      where(:occupation => "Rockstar")
     end
   end
 
@@ -116,7 +116,7 @@
     field :occupation, type: String
     field :age, type: Integer
 
-    default_scope where(occupation: "Rockstar")
+    default_scope where(:occupation => "Rockstar")
     scope :washed_up, where(:age.gt => 30)
   end
 
