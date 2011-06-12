@@ -7,17 +7,21 @@
   Mongoid supports the following callbacks:
 
   %ul
-    %li <tt>before_create</tt>
-    %li <tt>before_destroy</tt>
-    %li <tt>before_save</tt>
-    %li <tt>before_update</tt>
-    %li <tt>before_validation</tt>
-    %li <tt>after_create</tt>
     %li <tt>after_initialize</tt>
-    %li <tt>after_destroy</tt>
-    %li <tt>after_save</tt>
-    %li <tt>after_update</tt>
+    %li <tt>before_validation</tt>
     %li <tt>after_validation</tt>
+    %li <tt>before_create</tt>
+    %li <tt>around_create</tt>
+    %li <tt>after_create</tt>
+    %li <tt>before_update</tt>
+    %li <tt>around_update</tt>
+    %li <tt>after_update</tt>
+    %li <tt>before_save</tt>
+    %li <tt>around_save</tt>
+    %li <tt>after_save</tt>
+    %li <tt>before_destroy</tt>
+    %li <tt>around_destroy</tt>
+    %li <tt>after_destroy</tt>
 
 %p
   Callbacks are available on any document, whether it is embedded within

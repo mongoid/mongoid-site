@@ -49,6 +49,9 @@
     %li= link_to_active "validations", "/docs/relations/validations.html", class: "subsection"
 
   %li= link_to_active "callbacks", "/docs/callbacks.html", class: "section"
+  - if render_subsection?("/docs/callbacks")
+    %li= link_to_active "observers", "/docs/callbacks/observers.html", class: "subsection"
+
   %li= link_to_active "validation", "/docs/validation.html", class: "section"
   %li= link_to_active "indexing", "/docs/indexing.html", class: "section"
   %li= link_to_active "extras", "/docs/extras.html", class: "section"
