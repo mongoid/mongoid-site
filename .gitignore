@@ -3,7 +3,6 @@ log/*
 tmp/*
 .bundle/*
 output/*
-.rvmrc
 Gemfile.lock
 .sass-cache
 build/*
