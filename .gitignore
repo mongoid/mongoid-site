@@ -3,6 +3,5 @@ log/*
 tmp/*
 .bundle/*
 output/*
-Gemfile.lock
 .sass-cache
 build/*
