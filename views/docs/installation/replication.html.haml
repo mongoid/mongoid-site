@@ -39,8 +39,8 @@
 :coderay
   #!ruby
   # load models
-  $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
-  Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |lib| require File.basename(lib, '.*') }
+  $LOAD_PATH.unshift("\#{File.dirname(__FILE__)}/models")
+  Dir.glob("\#{File.dirname(__FILE__)}/models/*.rb") { |lib| require File.basename(lib, '.*') }
 
 %p
   If you would also like Mongoid to retry operations if a
