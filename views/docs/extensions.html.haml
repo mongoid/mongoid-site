@@ -31,16 +31,24 @@
 
 :coderay
   #!ruby
-  class Post
-    include Mongoid::Document
-    include Mongo::Voteable
-    voteable self, :up => 1, :down => -2
-  end
+class River
+  include Mongoid::Document
+  include Mongoid::Spacial::Document
 
-  class User
-    include Mongoid::Document
-    include Mongo::Voter
-  end
+  field :name,              type: String
+  field :length,            type: Integer
+  field :average_discharge, type: Integer
+  field :source,            type: Array,    spacial: true
+
+  # set return_array to true if you do not want a hash returned all the time
+  field :mouth,             type: Array,    spacial: {lat: :latitude, lng: :longitude, return_array: true }
+
+  # simplified spacial indexing
+  # you can only index one point in mongodb version below 1.9
+  # if you want something besides the defaults {bit: 24, min: -180, max: 180} just set index to the options on the index
+  spacial_index :source
+  # alternative 
+end
 
   @user.vote(@post, :down)
   # => <Post .. votes: {"up"=>[], "down"=>[..], "count"=>1, "point"=>-2, ..}>
@@ -48,3 +56,42 @@
   # => true
   @user.vote_value(@post)
   # => :down
+
+%h3 Geo Spacial Search
+
+%p
+  Ryan Ong's
+  <a href="http://github.com/ryanong/mongoid_spacial">mongoid_spacial</a> gem extends complex criteria options and
+  simplifies geo spacial row creation, search and return. It adds a few helpers 
+  It also adds a wrapper around the geoNear function that has support for pagination and automatic unit conversion.
+
+:coderay
+  #!ruby
+  class River
+    include Mongoid::Document
+    include Mongoid::Spacial::Document
+  
+    field :name,              type: String
+    field :source,            type: Array,    spacial: true
+  
+    # set return_array to true if you do not want a hash returned all the time
+    field :mouth,             type: Array,    spacial: {lat: :latitude, lng: :longitude, return_array: true }
+
+    spacial_index :source
+
+  end
+  @hudson = River.create(
+    name: 'Hudson',
+    # order agnostic
+    source: {:lat => 44.106667, :lng => -73.935833},
+    mouth: {:latitude => 40.703056, :longitude => -74.026667}
+  )
+
+  @hudson.distance_from(:mouth, [-74,40], :mi)
+
+  # automatic unit conversion for spherical query, support for $near and $within
+  River.where(:source.near(:sphere) => {:point => [-73.98, 40.77], :max => 5, :unit => :km})
+
+  # adds chainable paginatable geo_near finder
+  # returns paginated sorted by distance list of rivers where name = Hudson and skips the first row with pagination
+  River.skip(1).where(name: 'Hudson').geo_near([-73.99756,40.73083], page: 1)
