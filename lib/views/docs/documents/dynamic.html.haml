@@ -1,0 +1,56 @@
+- content_for :head do
+  %title Mongoid: Documents [Dynamic Fields]
+
+%h1 dynamic fields
+
+%p
+  By default Mongoid supports dynamic fields - that is it will allow
+  attributes to get set and persisted on the document even if a field was not
+  defined for them. There is a slight 'gotcha' however when dealing with
+  dynamic attributes in that Mongoid is not completely lenient about the use of
+  <tt>method_missing</tt> and breaking the public interface of the Document
+  class.
+
+%p
+  When dealing with dynamic attributes the following rules apply:
+
+%p
+  If the attribute exists in the document, Mongoid will provide you with your
+  standard getter and setter methods. For example, consider a person who has an
+  attribute of "gender" set on the document:
+
+:coderay
+  #!ruby
+
+  # Set the person's gender to male.
+  person[:gender] = "Male"
+  person.gender = "Male"
+
+  # Get the person's gender.
+  person.gender
+
+%p
+  If the attribute does not already exist on the document, Mongoid will not
+  provide you with the getters and setters and will enforce normal
+  <tt>method_missing</tt> behavior. In this case you must use the other
+  provided accessor methods: (<tt>[]</tt> and <tt>[]=</tt>) or
+  (<tt>read_attribute</tt> and <tt>write_attribute</tt>).
+
+:coderay
+  #!ruby
+
+  # Raise a NoMethodError if value isn't set.
+  person.gender
+  person.gender = "Male"
+
+  # Retrieve a dynamic field safely.
+  person[:gender]
+  person.read_attribute(:gender)
+
+  # Write a dynamic field safely.
+  person[:gender] = "Male"
+  person.write_attribute(:gender, "Male")
+
+%p
+  Dynamic attributes can be completely turned off by setting the Mongoid
+  configuration option <tt>allow_dynamic_fields</tt> to <tt>false</tt>.

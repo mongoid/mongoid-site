@@ -1,0 +1,58 @@
+- content_for :head do
+  %title Mongoid: Documents
+
+%h1 documents
+
+%p
+  Documents are the core objects in Mongoid and any object that is to be
+  persisted to the database must include <tt>Mongoid::Document</tt>. The
+  representation of a Document in MongoDB is a BSON object that is very similar
+  to a Ruby hash or JSON object. Documents can be stored in their own
+  collections in the database, or can be embedded in other Documents n levels
+  deep.
+
+%h3 storage
+
+%p
+  Mongoid by default stores documents in a collection that is the pluralized
+  form of the class name. For the following <tt>Person</tt> class, the
+  collection the document would get stored in would be named <tt>people</tt>.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+  end
+
+%p
+  The collection the model's documents can be changed at the class level
+  if you would like them persisted elsewhere.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    store_in :citizens
+  end
+
+%p
+  When a document is stored in the database the ruby object will get
+  serialized into BSON and have a structure like so:
+
+:coderay
+  #!javascript
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+    "title" : "Sir",
+    "name" : {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7ff"),
+      "first_name" : "Durran"
+    },
+    "addresses" : [
+      {
+        "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
+        "city" : "Berlin",
+        "country" : "Deutschland"
+      }
+    ]
+  }

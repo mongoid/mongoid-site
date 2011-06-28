@@ -1,0 +1,395 @@
+- content_for :head do
+  %title Mongoid: Querying [Criteria]
+
+%h1 criteria
+
+%p
+  The following are a list of chainable criteria query methods in
+  Mongoid along with their corresponding database selectors or options.
+
+%p
+  Please note again that criteria are lazy evaluated, and with each
+  chained method it will be cloned and return a new criteria copy.
+
+%p
+  For more information on the underlying database selectors please refer to
+  <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries">MongoDB</a>
+  directly.
+
+%h3 query methods
+
+%p
+  %ul
+    %li <a href="#all_in"><tt>Model.all_in</tt></a>
+    %li <a href="#also_in"><tt>Model.also_in</tt></a>
+    %li <a href="#and"><tt>Criteria#and</tt></a>
+    %li <a href="#any_in"><tt>Model.any_in</tt></a>
+    %li <a href="#any_of"><tt>Model.any_of</tt></a>
+    %li <a href="#asc"><tt>Model.asc</tt></a>
+    %li <a href="#desc"><tt>Model.desc</tt></a>
+    %li <a href="#excludes"><tt>Model.excludes</tt></a>
+    %li <a href="#limit"><tt>Model.limit</tt></a>
+    %li <a href="#near"><tt>Model.near</tt></a>
+    %li <a href="#not_in"><tt>Model.not_in</tt></a>
+    %li <a href="#only"><tt>Model.only</tt></a>
+    %li <a href="#order_by"><tt>Model.order_by</tt></a>
+    %li <a href="#skip"><tt>Model.skip</tt></a>
+    %li <a href="#where"><tt>Model.where</tt></a>
+    %li <a href="#without"><tt>Model.without</tt></a>
+
+%a{name: "all_in"}
+%h4 <tt>Model.all_in</tt> | <tt>Criteria#all_in</tt>
+
+%p
+  Adds a criterion that specifies values that must all match in order to
+  return results. The corresponding MongoDB operation is <tt>$all</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with Bond and 007 as aliases.
+  Person.all_in(aliases: [ "Bond", "007" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "aliases" : { "$all" : [ "Bond", "007" ] }}
+
+%a{name: "also_in"}
+%h4 <tt>Model.also_in</tt> | <tt>Criteria#also_in</tt>
+
+%p
+  Adds a criterion that specifies values where any value can be matched in
+  order to return results. This is similar to <tt>Criteria#any_in</tt> with
+  the exception here that if if it chained with values for the same field
+  it performs a union of the values where <tt>any_in</tt> perform an
+  intersection. The underlying MongoDB expression is <tt>$in</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with either Bond or 007 as aliases.
+  Person.also_in(aliases: [ "Bond", "007" ])
+  Person.any_in(aliases: [ "Bond" ]).also_in(aliases: [ "007" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "aliases" : { "$in" : [ "Bond", "007" ] }}
+
+%a{name: "and"}
+%h4 <tt>Criteria#and</tt>
+
+%p
+  Adds another simple expression that must match in order to return results.
+  This is the same as <a href="#where">Criteria#where</a> and is mostly
+  here for syntactic sugar.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with last name Jordan and first name starting with d.
+  Person.where(last_name: "Jordan").and(first_name: /^d/i)
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "last_name" : "Jordan", "first_name" : /^d/i }
+
+%a{name: "any_in"}
+%h4 <tt>Model.any_in</tt> | <tt>Criteria#any_in</tt>
+
+%p
+  Adds a criterion that specifies values where any value can be matched in
+  order to return results. This is similar to <tt>Criteria#also_in</tt> with
+  the exception here that if if it chained with values for the same field
+  it performs an intersection of the values where <tt>also_in</tt> perform a
+  union. The underlying MongoDB expression is <tt>$in</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with either Bond or 007 as aliases.
+  Person.any_in(aliases: [ "Bond", "007" ])
+  Person.
+    any_in(aliases: [ "Bond", "007", "James" ]).
+    any_in(aliases: [ "Bond", "007" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "aliases" : { "$in" : [ "Bond", "007" ] }}
+
+%a{name: "any_of"}
+%h4 <tt>Model.any_of</tt> | <tt>Criteria#any_of</tt>
+
+%p
+  Adds a criterion that specifies a set of expressions that any can match
+  in order to return results. The underlying MongoDB expression is
+  <tt>$or</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with either last name Penn or Teller
+  Person.any_of({ last_name: "Penn" }, { last_name: "Teller" })
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "last_name" :
+    { "$or" :
+      [ { "last_name" : "Penn" }, { "last_name" : "Teller" } ]
+    }
+  }
+
+%a{name: "asc"}
+%h4 <tt>Model.asc</tt> | <tt>Criteria#asc</tt>
+
+%p
+  Adds ascending sort options for the provided fields.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Sort people by first and last name ascending.
+  Person.asc(:first_name, :last_name)
+  Person.ascending(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "sort" :
+      {[ [ "first_name", Mongo::ASCENDING ],
+        [ "last_name", Mongo::ASCENDING ] ]} }
+
+%a{name: "desc"}
+%h4 <tt>Model.desc</tt> | <tt>Criteria#desc</tt>
+
+%p
+  Adds descending sort options for the provided fields.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Sort people by first and last name descending.
+  Person.desc(:first_name, :last_name)
+  Person.descending(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "sort" :
+      {[ [ "first_name", Mongo::DESCENDING ],
+        [ "last_name", Mongo::DESCENDING ] ]} }
+
+%a{name: "excludes"}
+%h4 <tt>Model.excludes</tt> | <tt>Criteria#excludes</tt>
+
+%p
+  Adds a criterion that specifies a set of expressions that cannot match
+  in order to return results. The underlying MongoDB expression is
+  <tt>$ne</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people without either last name Teller and first name Bob.
+  Person.excludes(last_name: "Teller", first_name: "Bob")
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  {{ "last_name" : { "$ne" : "Teller" } }, { "first_name" : { "$ne" : "Bob" } }}
+
+%a{name: "limit"}
+%h4 <tt>Model.limit</tt> | <tt>Criteria#limit</tt>
+
+%p
+  Limits the number of returned results by the provided value.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Only return 20 documents.
+  Person.limit(20)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "limit" : 20 }
+
+%a{name: "near"}
+%h4 <tt>Model.near</tt> | <tt>Criteria#near</tt>
+
+%p
+  Adds a criterion to find locations that are near the supplied
+  coordinates. This performs a MongoDB <tt>$near</tt> selection and
+  requires a 2d index to be on the provided field.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all bars near Berlin
+  Bar.near(location: [ 52.30, 13.25 ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "location" : { "$near" : [ 52.30, 13.25 ] }}
+
+%a{name: "not_in"}
+%h4 <tt>Model.not_in</tt> | <tt>Criteria#not_in</tt>
+
+%p
+  Adds a criterion that specifies a set of expressions that cannot match
+  in order to return results. The underlying MongoDB expression is
+  <tt>$nin</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people without last names Zorg and Dallas
+  Person.not_in(last_name: [ "Zorg", "Dallas" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  {{ "last_name" : { "$nin" : [ "Zorg", "Dallas" ] } }}
+
+%a{name: "only"}
+%h4 <tt>Model.only</tt> | <tt>Criteria#only</tt>
+
+%p
+  Limits the fields returned from the database to those supplied to the
+  method. Extremely useful for list views where the entire documents
+  are not needed. Cannot be used in conjunction with #without.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Return only the first and last names of each person.
+  Person.only(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "fields" : { "first_name" : 1, "last_name" : 1 }}
+
+%a{name: "order_by"}
+%h4 <tt>Model.order_by</tt> | <tt>Criteria#order_by</tt>
+
+%p
+  Sorts the results given the arguments that must match the MongoDB
+  driver sorting syntax (key/value pairs of field and direction).
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Provide the sorting options.
+  Person.order_by([[:first_name, :asc], [:last_name, :desc]])
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "sort" :
+      {[ [ "first_name", Mongo::ASCENDING ],
+        [ "last_name", Mongo::DESCENDING ] ]} }
+
+%a{name: "skip"}
+%h4 <tt>Model.skip</tt> | <tt>Criteria#skip</tt>
+
+%p
+  Skips the number of the results given the provided value, similar to
+  a SQL "offset".
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Skip 20 documents.
+  Person.skip(20)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "skip" : 20 }
+
+%a{name: "where"}
+%h4 <tt>Model.where</tt> | <tt>Criteria#where</tt>
+
+%p
+  Adds a criterion that must match in order to return results. If provided
+  a string it interperets it as a javascript function and converts it to
+  the proper <tt>$where</tt> clause. Mongoid also provides convenience
+  h4s on <tt>Symbol</tt> to make advanced queries simpler to write.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with first name Emmanuel
+  Person.where(first_name: "Emmanuel")
+
+  # Match all people with first name Emmanuel using Javascript.
+  Person.where("this.first_name == 'Emmanuel'")
+
+  # Match all people who live in Berlin, where address is embedded.
+  Person.where("addresses.city" => "Berlin")
+
+  # Example queries using symbol h4s to perform more complex criteria.
+  Person.where(:title.all => ["Sir"])
+  Person.where(:age.exists => true)
+  Person.where(:age.gt => 18)
+  Person.where(:age.gte => 18)
+  Person.where(:title.in => ["Sir", "Madam"])
+  Person.where(:age.lt => 55)
+  Person.where(:age.lte => 55)
+  Person.where(:title.ne => "Mr")
+  Person.where(:title.nin => ["Esquire"])
+  Person.where(:aliases.size => 2)
+  Person.where(:location.near => [ 22.50, -21.33 ])
+  Person.where(:location.within => { "$center" => [ [ 50, -40 ], 1 ] })
+
+%mongodb mongodb query selectors
+:coderay
+  #!ruby
+  # Match all people with first name Emmanuel
+  { "first_name" : "Emmanuel" }
+
+  # Match all people with first name Emmanuel using Javascript.
+  { "$where" : "this.first_name == 'Emmanuel'" }
+
+  # Match all people who live in Berlin, where address is embedded.
+  { "addresses.city" : "Berlin" }
+
+  # Example queries using symbol h4s to perform more complex criteria.
+  { "title" : { "$all" : [ "Sir" ] } }
+  { "age" : { "$exists" : true } }
+  { "age" : { "$gt" : 18 } }
+  { "age" : { "$gte" : 18 } }
+  { "title" : { "$in" : [ "Sir", "Madam" ] } }
+  { "age" : { "$lt" : 55 } }
+  { "age" : { "$lte" : 55 } }
+  { "title" : { "$ne" : "Mr" } }
+  { "title" : { "$nin" : [ "Esquire" ] } }
+  { "aliases" : { "$size" : 2 } }
+  { "location" : { "$near" : [ 22.50, -21.33 ] } }
+  { "location" : { "$within" : { "$center" => [ [ 50, -40 ], 1 ] } } }
+
+%a{name: "without"}
+%h4 <tt>Model.without</tt> | <tt>Criteria#without</tt>
+
+%p
+  Limits the fields returned from the database to those NOT supplied to the
+  method. Extremely useful for list views where the entire documents
+  are not needed. Cannot be used in conjunction with #only.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Return all fields except first name and last name
+  Person.without(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "fields" : { "first_name" : 0, "last_name" : 0 }}

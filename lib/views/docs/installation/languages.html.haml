@@ -1,0 +1,44 @@
+- content_for :head do
+  %title Mongoid: Installation [Languages]
+
+%h1 languages
+
+%p
+  By default Mongoid adds the I18n translation file for English. However
+  adding new languages is easy. In your application initializer
+  (for Rails 3 it can be in <tt>config/initializers/mongoid.rb</tt>),
+  just add the code:
+
+:coderay
+  #!ruby
+  # Add the Spanish exception translations.
+  Mongoid.add_language("es")
+
+%p
+  Available languages for Mongoid are:
+
+  %ul
+    %li <tt>bg</tt>: Bulgarian
+    %li <tt>de</tt>: German
+    %li <tt>en</tt>: English
+    %li <tt>es</tt>: Spanish
+    %li <tt>fr</tt>: French
+    %li <tt>hu</tt>: Hungarian
+    %li <tt>id</tt>: Indonesian
+    %li <tt>it</tt>: Italian
+    %li <tt>kr</tt>: Korean
+    %li <tt>nl</tt>: Dutch
+    %li <tt>pl</tt>: Polish
+    %li <tt>pt-br</tt>: Brazilian Portuguese
+    %li <tt>pt</tt>: Portuguese
+    %li <tt>ro</tt>: Romanian
+    %li <tt>ru</tt>: Russian
+    %li <tt>sv</tt>: Swedish
+    %li <tt>vi</tt>: Vietnamese
+    %li <tt>zh-CN</tt>: Chinese
+
+%p You can also just include them all by:
+
+:coderay
+  #!ruby
+  Mongoid.add_language("*")

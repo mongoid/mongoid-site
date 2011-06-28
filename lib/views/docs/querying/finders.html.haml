@@ -1,0 +1,169 @@
+- content_for :head do
+  %title Mongoid: Querying [Finders]
+
+%h1 finders
+
+%p
+  Mongoid supports more traditional-style finders for those who prefer an
+  Active Record 2 type syntax. Note that unlike criteria, these methods are
+  not chainable and return actual arrays of documents, or a single document,
+  with the exception of those noted in their individual sections.
+
+%h3 finder methods
+
+%p
+  %ul
+    %li <a href="#all"><tt>Model.all</tt></a>
+    %li <a href="#count"><tt>Model.count</tt></a>
+    %li <a href="#exists?"><tt>Model.exists?</tt></a>
+    %li <a href="#find"><tt>Model.find</tt></a>
+    %li <a href="#find_or_create_by"><tt>Model.find_or_create_by</tt></a>
+    %li <a href="#find_or_initialize_by"><tt>Model.find_or_initialize_by</tt></a>
+    %li <a href="#first"><tt>Model.first</tt></a>
+    %li <a href="#last"><tt>Model.last</tt></a>
+    %li <a href="#paginate"><tt>Model.paginate</tt></a>
+
+%a{name: "all"}
+%h4 <tt>Model.all</tt>
+
+%p
+  Returns a chainable criteria object with the provided conditions
+  applied.
+
+:coderay
+  #!ruby
+  # Find all people by MongoDB compatible conditions and options.
+  Person.all
+  Person.all(conditions: { first_name: /^dur/i, "addresses.city" => "Berlin" })
+  Person.all(conditions: { title: "Sir" }, limit: 5)
+  Person.all(sort: [[ :first_name, :asc ]])
+
+%a{name: "count"}
+%h4 <tt>Model.count</tt>
+
+%p
+  Returns the number of documents in the database given the provided
+  conditions.
+
+:coderay
+  #!ruby
+  # Get the count of documents given the provided conditions.
+  Person.count
+  Person.count(conditions: { title: "Sir" })
+
+%a{name: "exists?"}
+%h4 <tt>Model.exists?</tt>
+
+%p
+  Returns true if any documents in the database exist given the provided
+  conditions and false if there are none.
+
+:coderay
+  #!ruby
+  # Do any documents exist in the database for the provided conditions?
+  Person.exists?
+  Person.exists?(conditions: { title: "Sir" })
+
+%a{name: "find"}
+%h4 <tt>Model.find</tt> | <tt>Criteria#find</tt>
+
+%p
+  Provides the ability to find a document or documents given a set of
+  conditions or ids. This either returns a criteria, an array of
+  documents, or a single document depending on the arguments passed.
+
+%p
+  The first way to use this method is for finding a single
+  document given the provided ID. If no document is found
+  this will raise an error unless the configuration option is
+  changed. You can provide a <tt>BSON::ObjectId</tt> or its string
+  representation (Mongoid will convert to the appropriate type).
+  This can also be placed at the end of a criteria chain to limit
+  by a single document.
+
+:coderay
+  #!ruby
+  Person.find(id)
+  Person.find("4baa56f1230048567300485c")
+  Person.where(last_name: "Black").find(id)
+
+%p
+  You may find multiple documents given the provided array of ids.
+  If a single document is not found the error will get raised. You
+  may provide object ids or string representations. This can also
+  be placed at the end of a criteria chain to find specific documents.
+
+:coderay
+  #!ruby
+  Person.find([id_one, id_two])
+  Person.find(["4baa56f1230048567300485c","4baa56f1230048567300485d"])
+  Person.where(last_name: "Black").find([ id_one, id_two ])
+
+%a{name: "find_or_create_by"}
+%h4 <tt>Model.find_or_create_by</tt>
+
+%p
+  Find a document given the provided conditions, or create a new one
+  if nothing is persisted.
+
+:coderay
+  #!ruby
+  Person.find_or_create_by(first_name: "Syd", last_name: "Vicious")
+
+%a{name: "find_or_initialize_by"}
+%h4 <tt>Model.find_or_initialize_by</tt>
+
+%p
+  Find a document given the provided conditions, or instantiate a new one
+  if nothing is persisted.
+
+:coderay
+  #!ruby
+  Person.find_or_initialize_by(first_name: "Syd", last_name: "Vicious")
+
+%a{name: "first"}
+%h4 <tt>Model.first</tt>
+
+%p
+  Find the first document in the database given the provided conditions.
+  Will return a document or <tt>nil</tt> if nothing is found and defaults
+  to the natural sorting of documents in the database. You can provide
+  sort criteria as well if you want to dictate the exact document that
+  would be returned first.
+
+:coderay
+  #!ruby
+  Person.first(conditions: { first_name: "Syd" })
+  Person.first(sort: [[ :first_name, :asc ]])
+
+%a{name: "last"}
+%h4 <tt>Model.last</tt>
+
+%p
+  Find the last document in the database given the provided conditions.
+  Will return a document or <tt>nil</tt> if nothing is found and defaults
+  to to sorting by id in descending order. You may provide
+  sort criteria as well if you want to dictate the exact document that
+  would be returned - Mongoid will invert the sort criteria you provide.
+
+:coderay
+  #!ruby
+  Person.last(conditions: { first_name: "Syd" })
+  Person.last(sort: [[ :first_name, :asc ]])
+
+%a{name: "paginate"}
+%h4 <tt>Model.paginate</tt>
+
+%p
+  Return all documents in the database that match the provided conditions,
+  and paginate them according to the provided options. This will return a
+  <tt>WillPaginate::Collection</tt> and the options conform to the
+  <a href="#">Will Paginate</a> API.
+
+:coderay
+  #!ruby
+  Person.paginate(
+    conditions: { first_name: "Syd" },
+    page: 2,
+    per_page: 20
+  )

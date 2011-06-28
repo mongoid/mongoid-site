@@ -1,0 +1,74 @@
+- content_for :head do
+  %title Mongoid: Documents [Access]
+
+%h1 access
+
+%p
+  There are cases where you don't want Mongoid to allow attributes to be
+  set through mass assignment, like passwords. This is a common event when
+  submitting forms, and fields can be protected by using Mongoid's
+  <tt>attr_protected</tt> or <tt>attr_accessible</tt> thanks to the
+  wonders of Active Model.
+
+%h3 protected
+
+%p
+  When defining a list of fields as protected, all other fields in the
+  document will NOT be able to be set through mass assignment.
+
+:coderay
+  #!ruby
+  class User
+    include Mongoid::Document
+    field :first_name, type: String
+    field :password, type: String
+    attr_protected :password
+  end
+
+  # Set attributes on a person properly.
+  Person.new(first_name: "Corbin")
+  person.attributes = { first_name: "Corbin" }
+  person.write_attributes(first_name: "Corbin")
+
+  # Attempt to set attributes a person, raising an error.
+  Person.new(first_name: "Corbin", password: "password")
+  person.attributes = { first_name: "Corbin", password: "password" }
+  person.write_attributes(first_name: "Corbin", password: "password")
+
+%h3 accessible
+
+%p
+  Providing a list of fields as accessible is simply the inverse of
+  protecting them. Anything not defined as accessible will cause the
+  error.
+
+:coderay
+  #!ruby
+  class User
+    include Mongoid::Document
+    field :first_name, type: String
+    field :password, type: String
+    attr_accessible :first_name
+  end
+
+  # Set attributes on a person properly.
+  Person.new(first_name: "Corbin")
+  person.attributes = { first_name: "Corbin" }
+  person.write_attributes(first_name: "Corbin")
+
+  # Attempt to set attributes a person, raising an error.
+  Person.new(first_name: "Corbin", password: "password")
+  person.attributes = { first_name: "Corbin", password: "password" }
+  person.write_attributes(first_name: "Corbin", password: "password")
+
+%h3 overriding
+
+%p
+  In the case you want to override the security in a single call,
+  you can pass a block to the document constructor to set fields manually.
+
+:coderay
+  #!ruby
+  Person.new(first_name: "Corbin") do |person|
+    person.password = "password"
+  end

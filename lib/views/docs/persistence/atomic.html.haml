@@ -1,0 +1,101 @@
+- content_for :head do
+  %title Mongoid: Persistence [Atomic]
+
+%h1 atomic persistence
+
+%p
+  Although Mongoid performs atomic operations under the covers by default,
+  there may be cases where you want to do this explicitly without
+  persisting other fields. Mongoid provides support for some of
+  these operations as well.
+
+  %ul
+    %li <a href="#add_to_set"><tt>Model#add_to_set</tt></a>
+    %li <a href="#inc"><tt>Model#inc</tt></a>
+    %li <a href="#pull_all"><tt>Model#pull_all</tt></a>
+    %li <a href="#push"><tt>Model#push</tt></a>
+
+%a{name: "add_to_set"}
+%h4 <tt>Model#add_to_set</tt>
+
+%p
+  Performs MongoDB's <tt>$addToSet</tt> modifier on the supplied field and
+  value. The value will be added to the field if it does not already exist,
+  and if the field is nil it will be initialized to an array with the
+  value in it. If the field is not an array an error will be raised.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.add_to_set(:aliases, "Bond")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$addToSet" : { "aliases" : "Bond" } }
+  )
+
+%a{name: "inc"}
+%h4 <tt>Model#inc</tt>
+
+%p
+  Performs MongoDB's <tt>$inc</tt> modifier which increments it's value
+  by the supplied amount or initializes it to that value. If the field
+  is not numeric an error will be raised.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.inc(:age, 1)
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$inc" : { "age" : 1 } }
+  )
+
+%a{name: "pull_all"}
+%h4 <tt>Model#pull_all</tt>
+
+%p
+  Performs MongoDB's <tt>$pullAll</tt> modifier that removes all the matching
+  supplied values from the array.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.pull_all(:aliases, [ "Bond", "James" ])
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$pullAll" : { "aliases" : [ "Bond", "James" ] } }
+  )
+
+%a{name: "push"}
+%h4 <tt>Model#push</tt>
+
+%p
+  Performs MongoDB's <tt>$push</tt> modifier that will append the value to
+  the provided field. If the field does not exist it will be initialized
+  as an array with the parameter. If the field exists and is not an
+  array an error will be raised.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.push(:aliases, "007")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$push" : { "aliases" : "007" } }
+  )

@@ -1,0 +1,70 @@
+- content_for :head do
+  %title Mongoid: Querying [Modification]
+
+%h1 modification
+
+%p
+  You may use a Mongoid criteria or chain or criteria to build up a
+  MongoDB selector that you may want to use in order to modify some
+  documents in the database. Mongoid provides a few ways to do this
+  in the form of some non-chainable methods that you can append to
+  the end of your criteria chains.
+
+%h3 creation
+
+%p
+  If you would like to create a document in the database based on your
+  criteria you can use <tt>Criteria#create</tt>, or if you just want to
+  instantiate a new one <tt>Criteria#build</tt>.
+
+:coderay
+  #!ruby
+
+  # Create a saved person with a title of Sir and first name Lancelot.
+  Person.where(title: "Sir", first_name: "Lancelot").create
+  Person.where(title: "Sir").create(first_name: "Lancelot")
+
+  # Build an unsaved person with a title of Sir and first name Lancelot.
+  Person.where(title: "Sir", first_name: "Lancelot").build
+  Person.where(title: "Sir").build(first_name: "Lancelot")
+
+%p
+  Note that for obvious reasons certain criterion cannot be translated
+  into a value to set on the object, for example...
+
+:coderay
+  #!ruby
+
+  # The values in this criteria will be ignored.
+  Person.where(:age.gt => 5, :aliases.in => [ "007", "008" ]).create
+
+%h3 updating
+
+%p
+  You can atomically update multiple documents in the database via
+  a criteria using <tt>Criteria#update_all</tt>. This will perform
+  an atomic <tt>$set</tt> on all the attributes passed to the
+  method.
+
+:coderay
+  #!ruby
+
+  # Update all people with last name Oldman with new first name.
+  Person.where(last_name: "Oldman").update_all(
+    first_name: "Pappa Gary"
+  )
+
+%h3 removal
+
+%p
+  Removing documents based on criteria is also possible through the
+  <tt>Criteria#delete_all</tt> and <tt>Criteria#destroy_all</tt>.
+  Using the delete will hit the database directly where destroy will load
+  each object in order to run the destroy callbacks on them.
+
+:coderay
+  #!ruby
+
+  # Delete all of Arthur's knight's from the db.
+  Person.where(title: "Sir").and(king: "Arthur").delete_all
+  Person.where(title: "Sir", king: "Arthur").destroy_all
