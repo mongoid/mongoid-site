@@ -5,9 +5,10 @@
 		= stylesheet_link_tag "/stylesheet.css"
 		= stylesheet_link_tag "/coderay.css"          		              								
 		= yield_content :head            
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-		<script type="text/javascript" src="/ja2.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>		
 		<script type="text/javascript" src="/jquery.collapser.min.js"></script>
+		<script type="text/javascript" src="/jquery.pjax.js"></script>		                                           
+		<script type="text/javascript" src="/ja2.js"></script>
 
 	%body
 		#wrapper_menu	    
@@ -15,7 +16,9 @@
 		#wrapper			
 			#contents          			
 				= partial('partials/index')
-				#doc	
+				#doc 
+					.loader{:style=>'display:none'}
+						%img{:src=>'/spinner.gif'}
 					= yield      
 					
 					<div id="disqus_thread"></div>					

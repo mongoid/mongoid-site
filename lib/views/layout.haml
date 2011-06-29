@@ -3,7 +3,11 @@
 		%meta{name: "description", content: "A Ruby ODM for MongoDB"}
 		%meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
 		= stylesheet_link_tag "/stylesheet.css"
-		= stylesheet_link_tag "/coderay.css"          		              								
+		= stylesheet_link_tag "/coderay.css"
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>		
+		<script type="text/javascript" src="/jquery.collapser.min.js"></script>
+		<script type="text/javascript" src="/jquery.pjax.js"></script>		                                           
+		<script type="text/javascript" src="/ja2.js"></script>          		              								
 		= yield_content :head
 
 	%body
@@ -12,7 +16,4 @@
 		#wrapper			
 			#contents          			
 				#doc	
-					= yield      
-															            						
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>				
-		<script type="text/javascript" src="/ja2.js"></script>
+					= yield      															            					   

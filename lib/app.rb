@@ -24,9 +24,16 @@ get '/stories' do
   haml :"/stories"
 end       
 
-
-get '/docs/*/?' do  
-  haml :"docs/#{params[:splat].join('/')}.html", :layout => :'docs_layout'
+get '/docs/*' do                                           
+  if request.xhr?
+    puts "Sending a pjax request"  
+    puts "docs/#{params[:splat].join('/')}.html"        
+    content_type 'text/html'
+    headers "X-PJAX"=>'true'
+    body(haml(:"docs/#{params[:splat].join('/')}.html", :layout => false))    
+  else
+    haml :"docs/#{params[:splat].join('/')}.html", :layout => :'docs_layout'
+  end  
 end          
 
 get '/stylesheet.css' do
