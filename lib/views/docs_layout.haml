@@ -4,129 +4,22 @@
 		%meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
 		= stylesheet_link_tag "/stylesheet.css"
 		= stylesheet_link_tag "/coderay.css"          		              								
-		= yield_content :head
+		= yield_content :head            
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		<script type="text/javascript" src="/ja2.js"></script>
+		<script type="text/javascript" src="/jquery.collapser.min.js"></script>
 
 	%body
 		#wrapper_menu	    
-			#menu{:name=>'menu'}
-				%ul
-					%li 
-						%a{:href=>'/docs'} Docs			
-					%li API 								
-					%li 
-						%a{:href=>'https://github.com/mongoid/mongoid'}	Code
-					%li Blog
-					%li Who is using Mongoid?   			   
-				%hr
+			= partial('partials/menu')
 		#wrapper			
 			#contents          			
-				#index										
-					%ul
-						%li				    
-							%a{:href=>url('/docs/introduction')} Introduction
-						%li
-							%a{:href=>url('/docs/performance')} Performance						
-						%li	
-							%a{:href=>url('/docs/installation')} Installation							
-							%ul							
-								%li	
-									%a{:href=>url('/docs/installation/configuration')} Configuration
-								%li	
-									%a{:href=>url('/docs/installation/languages')} Languages
-								%li	
-									%a{:href=>url('/docs/installation/replication')} Replication					
-						%li	
-							%a{:href=>url('/docs/documents')} Documents				
-							%ul
-								%li	
-									%a{:href=>url('/docs/documents/access')} Access				
-								%li	
-									%a{:href=>url('/docs/documents/dirty')} Dirty
-								%li	
-									%a{:href=>url('/docs/documents/dynamic')} Dynamic
-								%li	
-									%a{:href=>url('/docs/documents/fields')} Fields
-								%li	
-									%a{:href=>url('/docs/documents/inheritance')} Inheritance       								
-						%li	
-							%a{:href=>url('/docs/persistence')} Persistence    
-							%ul
-								%li	
-									%a{:href=>url('/docs/persistence/atomic')} Atomic
-								%li	
-									%a{:href=>url('/docs/persistence/standard')} Standard    												
-						%li
-							%a{:href=>url('/docs/querying')} Querying
-							%ul
-								%li
-									%a{:href=>url('/docs/querying/criteria')} Criteria
-								%li
-									%a{:href=>url('/docs/querying/finders')} Finders
-								%li
-									%a{:href=>url('/docs/querying/modification')} Modification
-								%li
-									%a{:href=>url('/docs/querying/scopes')} Scopes
-						%li
-							%a{:href=>url('/docs/relations')} Relations
-							%ul								
-								%li
-									%a{:href=>url('/docs/relations/embedded')} Embedded
-									%ul
-										%li
-											%a{:href=>url('/docs/relations/embedded/1-1')} 1-1
-										%li
-											%a{:href=>url('/docs/relations/embedded/1-n')} 1-n 
-								%li
-									%a{:href=>url('/docs/relations/referenced')} Referenced
-									%ul
-										%li
-											%a{:href=>url('/docs/relations/referenced/1-1')} 1-1
-										%li
-											%a{:href=>url('/docs/relations/referenced/1-n')} 1-n
-										%li
-											%a{:href=>url('/docs/relations/referenced/n-n')} n-n
-								%li
-									%a{:href=>url('/docs/relations/metadata')} Metadata														
-								%li
-									%a{:href=>url('/docs/relations/validations')} Validations  
-						%li	
-							%a{:href=>url('/docs/callbacks')} Callbacks
-							%ul 
-								%li
-									%a{:href=>url('/docs/callbacks/observers')} Observers									
-						%li
-							%a{:href=>url('/docs/validation')} Validation																											
-						%li	
-							%a{:href=>url('/docs/indexing')} Indexing      										
-						%li	
-							%a{:href=>url('/docs/extras')} Extras							
-						%li 
-							%a{:href=>url('/docs/rails')} Rails
-							%ul
-								%li
-									%a{:href=>url('/docs/rails/railties')} Railties
-								%li
-									%a{:href=>url('/docs/rails/rake')} Rake																
-						%li	
-							%a{:href=>url('/docs/extensions')} Extensions									
-
-						%li
-							%a{:href=>url('/docs/upgrading')} Upgrading
-							
-						%li	
-							%a{:href=>url('/docs/contributing')} Contributing																										  														   					  
-					#fixedDiv
-						%a{:href=>'#menu'} > Return to menu
+				= partial('partials/index')
 				#doc	
 					= yield      
 					
 					<div id="disqus_thread"></div>					
 					<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-					<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>  
-					            
-		
-		
-		
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>				
-		<script type="text/javascript" src="/ja2.js"></script>    
-		                                                   			
+					<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>  					            												
+
+		    		                                                   			
