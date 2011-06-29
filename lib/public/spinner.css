@@ -8,7 +8,7 @@
 	text-indent: 250px;
 	white-space: nowrap;
 	overflow: hidden;
-	-webkit-mask-image: url('/spinner.png');
+	-webkit-mask-image: url('spinner.png');
 	background-color: #000;
 	-webkit-animation-name: spinnerRotate;
 	-webkit-animation-duration: 2s;
