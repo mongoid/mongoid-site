@@ -8,28 +8,41 @@ require 'sinatra/static_assets'
 
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
-get '/?' do
-  haml :"docs/introduction.html", :layout => :'docs_layout'
+get '/?' do              
+  if request.xhr?
+    haml :"docs/introduction.html", :layout => false
+  else    
+    haml :"docs/introduction.html", :layout => :'docs_layout'
+  end
 end           
 
-get '/docs/?' do           
-  haml :"docs/introduction.html", :layout => :'docs_layout'
+get '/docs/?' do
+  if request.xhr?
+    haml :"docs/introduction.html", :layout => false
+  else                       
+    haml :"docs/introduction.html", :layout => :'docs_layout'
+  end               
 end
 
 get '/contributors' do
-  haml :"/contributors"
+  if request.xhr?
+    haml :"/contributors", :layout=>false
+  else                   
+    haml :"/contributors"
+  end
 end       
 
 get '/stories' do
-  haml :"/stories"
+  if request.xhr?    
+    haml :"/stories", :layout=>false
+  else              
+    haml :"/stories"
+  end
 end       
 
-get '/docs/*' do                                           
+get '/docs/*' do       
+  sleep(2)
   if request.xhr?
-    puts "Sending a pjax request"  
-    puts "docs/#{params[:splat].join('/')}.html"        
-    content_type 'text/html'
-    headers "X-PJAX"=>'true'
     body(haml(:"docs/#{params[:splat].join('/')}.html", :layout => false))    
   else
     haml :"docs/#{params[:splat].join('/')}.html", :layout => :'docs_layout'

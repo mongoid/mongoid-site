@@ -3,7 +3,8 @@
 		%meta{name: "description", content: "A Ruby ODM for MongoDB"}
 		%meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
 		= stylesheet_link_tag "/stylesheet.css"
-		= stylesheet_link_tag "/coderay.css"          		              								
+		= stylesheet_link_tag "/coderay.css"
+		= stylesheet_link_tag "/spinner.css"          		              								
 		= yield_content :head            
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>		
 		<script type="text/javascript" src="/jquery.collapser.min.js"></script>
@@ -18,8 +19,9 @@
 				= partial('partials/index')
 				#doc 
 					.loader{:style=>'display:none'}
-						%img{:src=>'/spinner.gif'}
-					= yield      
+						%p#spinner Please wait while we do what we do best
+					.yield
+						= yield      
 					
 					<div id="disqus_thread"></div>					
 					<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
