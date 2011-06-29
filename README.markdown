@@ -11,7 +11,7 @@ extensions to our website docs, and give credit for your help!
 # How to run the site locally
 
 Clone this repo and using Ruby 1.9.2 run `bundle install`. Then
-run `bundle exec mm-server` to start the server at http://localhost:4567
+run `shotgun config.ru -p 3000` to start the server at http://localhost:3000
 
 # Design Credits
 

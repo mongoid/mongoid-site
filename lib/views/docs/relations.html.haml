@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Relations
 
-%h1 relations
+%h1 Relations
 
 %p
   Relations are associations between one model and another in the domain
@@ -13,11 +13,15 @@
 %p
   All relation objects in Mongoid are proxies to the actual document or
   documents themselves, which provide extra functionality for accessing,
-  replacing, appending and persisting.
+  replacing, appending and persisting.  
 
-%h2 commonalities between all relations
+%p.centered
+  = image_tag "/images/cheatsheet.png", class: "diagram"
 
-%h3 attributes
+
+%h2 Commonalities between all relations
+
+%h3 Attributes
 
 %p
   All relations contain a <tt>target</tt>, which is the proxied document
@@ -37,7 +41,7 @@
   person.addresses.base #=> returns person
   person.addresses.metadata #=> returns the metadata
 
-%h3 extensions
+%h3 Extensions
 
 %p
   All relations can have extensions, which provides a way to add
@@ -56,7 +60,7 @@
     end
   end
 
-%h3 custom relation names
+%h3 Custom relation names
 
 %p
   You can name your relations whatever you like, but if the class cannot be

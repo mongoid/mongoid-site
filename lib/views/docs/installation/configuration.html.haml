@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Installation [Configuration]
 
-%h1 configuration
+%h1 Configuration
 
 %p
   Mongoid configuration can be done through a <tt>mongoid.yml</tt> that
@@ -14,7 +14,7 @@
   host: localhost
   database: godfather
 
-%h3 rails applications
+%h3 Rails applications
 
 %p
   You can generate a config file by executing the generator and then editing
@@ -45,7 +45,7 @@
   require "active_resource/railtie"
   require "rails/test_unit/railtie"
 
-%h3 sinatra, padrino, and others
+%h3 Sinatra, Padrino, and others
 
 %p
   You can create your <tt>mongoid.yml</tt> and place it anywhere you like.
@@ -65,7 +65,7 @@
     config.master = Mongo::Connection.new.db("godfather")
   end
 
-%h3 configuration options
+%h3 Configuration options
 
 %p
   Mongoid currently supports the following configuration options, either

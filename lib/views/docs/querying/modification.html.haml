@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Querying [Modification]
 
-%h1 modification
+%h1 Modification
 
 %p
   You may use a Mongoid criteria or chain or criteria to build up a
@@ -10,7 +10,7 @@
   in the form of some non-chainable methods that you can append to
   the end of your criteria chains.
 
-%h3 creation
+%h3 Creation
 
 %p
   If you would like to create a document in the database based on your
@@ -38,7 +38,7 @@
   # The values in this criteria will be ignored.
   Person.where(:age.gt => 5, :aliases.in => [ "007", "008" ]).create
 
-%h3 updating
+%h3 Updating
 
 %p
   You can atomically update multiple documents in the database via
@@ -54,7 +54,7 @@
     first_name: "Pappa Gary"
   )
 
-%h3 removal
+%h3 Removal
 
 %p
   Removing documents based on criteria is also possible through the

@@ -1,16 +1,17 @@
 - content_for :head do
   %title Mongoid: Relations [Referenced: 1-1]
 
-%h1 referenced one to one
+%h1 Referenced one to one
 
-%p= image_tag "/images/referenced-1-1.png", class: "diagram"
+%p.centered
+  = image_tag "/images/referenced-1-1.png", class: "diagram"
 
 %p
   One to one relationships where the children are referenced in the parent
   document are defined using Mongoid's <tt>has_one</tt> and
   <tt>belongs_to</tt> macros.
 
-%h3 defining
+%h3 Defining
 
 %p
   The parent document of the relation should use the <tt>has_one</tt>
@@ -35,7 +36,7 @@
   Definitions are required on both sides to the relation in order for it to
   work properly.
 
-%h3 storage
+%h3 Storage
 
 %p
   When defining a relation of this nature, each document is stored in it's
@@ -54,7 +55,7 @@
     "person_id" : ObjectId("4d3ed089fb60ab534684b7f1")
   }
 
-%h3 accessors
+%h3 Accessors
 
 %p
   Accessing the relations is handled through the methods created based on the
@@ -76,7 +77,7 @@
   # Set the parent person.
   game.person = Person.new
 
-%h3 building and creating
+%h3 Building and creating
 
 %p
   From the parent side, documents in the referenced child can be initialized or
@@ -97,7 +98,7 @@
   # Replace the parent with a newly saved one from the attributes.
   game.create_person(title: "Prince")
 
-%h3 removal
+%h3 Removal
 
 %p
   Documents in the referenced many can be removed by either calling delete
@@ -111,7 +112,7 @@
   person.game.destroy
   person.game = nil
 
-%h3 polymorphic behaviour
+%h3 Polymorphic behaviour
 
 %p
   When a child referenced document can belong to more than one type of parent

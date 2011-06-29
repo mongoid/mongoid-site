@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Querying [Scopes]
 
-%h1 scopes
+%h1 Scopes
 
 %p
   Similar to Active Record, Mongoid allows you to define scopes on your
@@ -11,7 +11,7 @@
   chainable and can be applied to associations as well, the later being
   discussed in the relations section.
 
-%h3 named scopes
+%h3 Named scopes
 
 %p
   Named scopes are defined at the class level using a <tt>scope</tt>
@@ -38,7 +38,7 @@
   # Find a criteria with Keith Richards in it.
   Person.rock_n_rolla.over(60)
 
-%h3 class methods
+%h3 Class methods
 
 %p
   For those who prefer a Data Mapper style syntax, class methods that
@@ -100,7 +100,7 @@
   Person.washed_up.rock_n_rolla
   Person.rock_n_rolla.over(60)
 
-%h3 default scopes
+%h3 Default scopes
 
 %p
   You can supply a default scope at the class level to tell Mongoid that

@@ -1,9 +1,9 @@
 - content_for :head do
   %title Mongoid: Installation [Replication]
 
-%h1 replication
+%h1 Replication
 
-%h3 replica sets
+%h3 Replica sets
 
 %p
   Configuring Mongoid to use a replica set is easy. Simply add an array of
@@ -57,7 +57,7 @@
   documentation, so you'll have to catch the connection errors and retry
   yourself in the meantime.
 
-%h3 master/slave
+%h3 Master/Slave
 
 %p
   You can configure Mongoid to do traditional master/slave replication,
@@ -74,7 +74,7 @@
       - host: localhost
         port: 27019
 
-%h3 multiple databases
+%h3 Multiple databases
 
 %p
   You can configure Mongoid to use multiple databases on separate servers
@@ -111,7 +111,7 @@
     set_database :secondary
   end
 
-%h3 sharding
+%h3 Sharding
 
 %p
   If you are using Mongoid in a sharded MongoDB environment and want to tell

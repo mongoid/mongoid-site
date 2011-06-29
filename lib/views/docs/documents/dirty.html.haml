@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Documents [Dirty Tracking]
 
-%h1 dirty tracking
+%h1 Dirty tracking
 
 %p
   Mongoid supports tracking of changed or "dirty" fields with an API that
@@ -9,7 +9,7 @@
   a model the model will be marked as dirty and some additional behaviour
   comes into play.
 
-%h3 viewing changes
+%h3 Viewing changes
 
 %p
   There are various ways to view what has been altered on a model. Changes
@@ -45,7 +45,7 @@
   # Get the previous value for a field.
   person.name_was #=> "Alan Parsons"
 
-%h3 resetting changes
+%h3 Resetting changes
 
 %p
   You can reset changes of a field to it's previous value by calling the
@@ -60,7 +60,7 @@
   person.reset_name!
   person.name #=> "Alan Parsons"
 
-%h3 notes on persistence
+%h3 Notes on persistence
 
 %p
   Mongoid uses dirty tracking as the core of its persistence operations.
@@ -69,7 +69,7 @@
   each save. If no changes have been made, Mongoid will not hit the database
   on a call to <tt>Model#save</tt>.
 
-%h3 viewing previous changes
+%h3 Viewing previous changes
 
 %p
   After a document has been persisted, you can see what the changes were

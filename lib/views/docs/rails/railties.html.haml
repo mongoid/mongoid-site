@@ -1,10 +1,10 @@
-%h1 railties
+%h1 Railties
 
 %p
   Mongoid provides some railties and initializers that one should be
   aware of when writing a Rails application with Mongoid.
 
-%h3 configuration
+%h3 Configuration
 
 %p
   You can set Mongoid configuration options in your <tt>application.rb</tt>
@@ -21,7 +21,7 @@
     end
   end
 
-%h3 model preloading
+%h3 Model preloading
 
 %p
   In order to properly set up single collection inheritance, Mongoid
@@ -33,7 +33,7 @@
   #!ruby
   config.mongoid.preload_models = false
 
-%h3 exceptions
+%h3 Exceptions
 
 %p
   Similar to Active Record, Mongoid tells raise to return specific http
@@ -43,7 +43,7 @@
     %li <tt>Mongoid::Errors::DocumentNotFound</tt>: 404
     %li <tt>Mongoid::Errors::Validations</tt>: 422
 
-%h3 unicorn and passenger
+%h3 Unicorn and passenger
 
 %p
   When using Unicorn or Passenger, each time a child process is forked

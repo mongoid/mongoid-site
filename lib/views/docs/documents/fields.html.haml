@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Documents [Fields]
 
-%h1 fields
+%h1 Fields
 
 %p
   Even though MongoDB is a schemaless database, most uses will be with
@@ -59,7 +59,7 @@
     field :last_name
   end
 
-%h3 getting and setting field values
+%h3 Getting and setting field values
 
 %p
   When a field is defined, Mongoid provides several different ways of
@@ -96,7 +96,7 @@
     middle_name: "Emmanuel"
   )
 
-%h3 defaults
+%h3 Defaults
 
 %p
   You can tell a field in Mongoid to always have a default value if nothing
@@ -111,7 +111,7 @@
     field :last_drink, type: Time, default: -> { 10.minutes.ago }
   end
 
-%h3 reserved names
+%h3 Reserved names
 
 %p
   If you define a field on your document that conflicts with a reserved method

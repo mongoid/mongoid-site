@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Documents [Access]
 
-%h1 access
+%h1 Access
 
 %p
   There are cases where you don't want Mongoid to allow attributes to be
@@ -10,7 +10,7 @@
   <tt>attr_protected</tt> or <tt>attr_accessible</tt> thanks to the
   wonders of Active Model.
 
-%h3 protected
+%h3 Protected
 
 %p
   When defining a list of fields as protected, all other fields in the
@@ -35,7 +35,7 @@
   person.attributes = { first_name: "Corbin", password: "password" }
   person.write_attributes(first_name: "Corbin", password: "password")
 
-%h3 accessible
+%h3 Accessible
 
 %p
   Providing a list of fields as accessible is simply the inverse of
@@ -61,7 +61,7 @@
   person.attributes = { first_name: "Corbin", password: "password" }
   person.write_attributes(first_name: "Corbin", password: "password")
 
-%h3 overriding
+%h3 Overriding
 
 %p
   In the case you want to override the security in a single call,

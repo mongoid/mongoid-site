@@ -1,16 +1,17 @@
 - content_for :head do
   %title Mongoid: Relations [Embedded: 1-1]
 
-%h1 embedded one to one
+%h1 Embedded one to one
 
-%p= image_tag "/images/embedded-1-1.png", class: "diagram"
+%p.centered
+  =image_tag "/images/embedded-1-1.png", class: "diagram"
 
 %p
   One to one relationships where the children are embedded in the parent
   document are defined using Mongoid's <tt>embeds_one</tt> and
   <tt>embedded_in</tt> macros.
 
-%h3 defining
+%h3 Defining
 
 %p
   The parent document of the relation should use the <tt>embeds_one</tt>
@@ -36,7 +37,7 @@
   Definitions are required on both sides to the relation in order for it to
   work properly.
 
-%h3 storage
+%h3 Storage
 
 %p
   Documents that are embedded using the <tt>embeds_one</tt> macro are stored
@@ -54,7 +55,7 @@
     }
   }
 
-%h3 accessors
+%h3 Accessors
 
 %p
   Accessing the relations is handled through the methods created based on the
@@ -76,7 +77,7 @@
   # Set the parent person.
   name.person = Person.new
 
-%h3 building and creating
+%h3 Building and creating
 
 %p
   From the parent side, documents in the embedded child can be initialized or
@@ -97,7 +98,7 @@
   # Replace the parent with a newly saved one from the attributes.
   name.create_person(title: "Prince")
 
-%h3 removal
+%h3 Removal
 
 %p
   Documents in the embedded many can be removed by either calling delete
@@ -111,7 +112,7 @@
   person.name.destroy
   person.name = nil
 
-%h3 polymorphic behaviour
+%h3 Polymorphic behaviour
 
 %p
   When a child embedded document can belong to more than one type of parent
@@ -137,7 +138,7 @@
     embedded_in :namable, polymorphic: true
   end
 
-%h3 inheritance
+%h3 Inheritance
 %p
   When embedding models that inherit from a different class, monogid will store the class of this object in the field <tt>_type</tt>.
 

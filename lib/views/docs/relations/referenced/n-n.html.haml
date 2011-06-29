@@ -1,9 +1,10 @@
 - content_for :head do
   %title Mongoid: Relations [Referenced: n-n]
 
-%h1 referenced many to many
+%h1 Referenced many to many
 
-%p= image_tag "/images/referenced-n-n.png", class: "diagram"
+%p.centered
+  = image_tag "/images/referenced-n-n.png", class: "diagram"
 
 %p
   Many to many relationships where the inverse documents are stored in a
@@ -13,7 +14,7 @@
   no join collection is needed, the foreign key ids are stored as
   arrays on either side of the relation.
 
-%h3 defining
+%h3 Defining
 
 %p
   Both sides of the relation use the same macro.
@@ -37,7 +38,7 @@
   Definitions are required on both sides to the relation in order for it to
   work properly.
 
-%h3 storage
+%h3 Storage
 
 %p
   When defining a relation of this nature, each document is stored in it's
@@ -59,7 +60,7 @@
     "person_ids" : [ ObjectId("4d3ed089fb60ab534684b7e9") ]
   }
 
-%h3 accessors
+%h3 Accessors
 
 %p
   Accessing the relations is handled through the methods created based on the
@@ -81,7 +82,7 @@
   # Set the person from the tag.
   tag.person = Person.new
 
-%h3 building and creating
+%h3 Building and creating
 
 %p
   From either side, documents in the referenced inverse can be appended to using
@@ -122,7 +123,7 @@
   # raising an error if validation fails.
   tag.people.create!(title: "Douchebag")
 
-%h3 removal
+%h3 Removal
 
 %p
   Documents in the relation can be removed in several different manners,

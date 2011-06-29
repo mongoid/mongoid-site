@@ -3,15 +3,26 @@ GEM
   specs:
     RedCloth (4.2.7)
     coderay (0.9.8)
+    emk-sinatra-url-for (0.2.1)
+      sinatra (>= 0.9.1.1)
     haml (3.1.2)
     haml-coderay (0.1.2)
       coderay
       haml
     rack (1.3.0)
     rdiscount (1.6.8)
+    sass (3.1.3)
+    shotgun (0.9)
+      rack (>= 1.0)
     sinatra (1.2.6)
       rack (~> 1.1)
       tilt (>= 1.2.2, < 2.0)
+    sinatra-content-for2 (0.2.4)
+      sinatra
+    sinatra-static-assets (0.5.0)
+      emk-sinatra-url-for (>= 0.2.1)
+      rack (>= 1.0.0)
+      sinatra (>= 0.9.1)
     tilt (1.3.2)
 
 PLATFORMS
@@ -22,4 +33,8 @@ DEPENDENCIES
   haml
   haml-coderay
   rdiscount
+  sass
+  shotgun
   sinatra
+  sinatra-content-for2
+  sinatra-static-assets
