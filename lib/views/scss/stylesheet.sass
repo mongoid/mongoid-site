@@ -1,13 +1,17 @@
 body
-	//background-image: url('background.jpg')
+	//background-image: url('background2.jpg')
 	background-color: #E6EBEA
 	background-repeat: repeat
 	font: "Lucida Grande", "Trebuchet MS", Verdana, sans-serif   
+	            
+div#wrapper_menu
+	margin: 0 auto
+	width: 900px
 	
 div#menu              
 	font: 150% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif
 	text-align: center
-	float: clear	
+	float: clear			
 	ul
 		li
 			display: inline
@@ -22,14 +26,19 @@ div#menu
 				color: blue
 			a:active 
 				color: black
-		 
-div#wrapper      
+						 
+div#wrapper
 	margin: 0 10px
 	width: 900px
 		   
 div#index
 	float: left
-	width: 60px                      
+	width: 200px
+	border: 1px solid #CCC     
+	background-color: #FFF
+	-webkit-border-radius: 10px
+	-moz-border-radius: 10px
+	border-radius: 10px                     
 	a
 		text-decoration: none
 	a:link 
@@ -42,10 +51,40 @@ div#index
 		color: black
 div#doc         
 	float: right
-	width: 700px       
+	width: 650px       
 	
 .centered
 	text-align: center
 	
 #fixedDiv
 	position: fixed
+	
+	
+table#performance
+	color: #CCCCCC
+	font-size: 11px
+	margin: 10px
+	text-transform: uppercase
+	width: 580px
+	tr
+		td
+			border-radius: 5px
+			-moz-border-radius: 5px
+			margin: 10px
+			text-align: center
+			width: 120px
+
+		td.green
+			border: 5px solid #75AD75
+			background-color: #92D592
+			color: #567156
+
+		td.red
+			border: 5px solid #c77171
+			background-color: #FF6666
+			color: #973636
+
+		td.yellow
+			border: 5px solid #d3d48b
+			background-color: #EAEB89
+			color: #6c6c4e	 
