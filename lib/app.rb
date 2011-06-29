@@ -41,7 +41,6 @@ get '/stories' do
 end       
 
 get '/docs/*' do       
-  sleep(2)
   if request.xhr?
     body(haml(:"docs/#{params[:splat].join('/')}.html", :layout => false))    
   else
