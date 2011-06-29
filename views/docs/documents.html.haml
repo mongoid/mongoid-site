@@ -25,7 +25,26 @@
   end
 
 %p
-  The collection the model's documents can be changed at the class level
+  NOTE: Model class name cannot end with "s", because it will be considered as
+  the pluralized form of the word. For example <tt>Status</tt> would be considered
+  as the plural form of <tt>Statu</tt>, which will cause a few known problems.
+
+%p
+  This is a limitation of the <tt>ActiveSupport::Inflector#classify</tt> which
+  Mongoid uses to convert from filenames and collection names to class names.
+  You can overcome this by specifying a custom inflection rule for your model class.
+  For example, the following code will take care of the model named <tt>Status</tt>
+
+:coderay
+  #!ruby
+  ActiveSupport::Inflector.inflections do |inflect|
+    inflect.singular("status", "status")
+  end
+
+%br
+
+%p
+  The collection for the model's documents can be changed at the class level
   if you would like them persisted elsewhere.
 
 :coderay
