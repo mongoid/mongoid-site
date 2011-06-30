@@ -17,8 +17,8 @@ get '/?' do
 end           
 
 get '/docs/?' do
-  if request.xhr?
-    haml :"docs/introduction.html", :layout => false
+  if request.xhr?                           
+    haml :"docs/introduction.html", :layout =>:'simple_doc_layout'
   else                       
     haml :"docs/introduction.html", :layout => :'docs_layout'
   end               
