@@ -1,3 +1,5 @@
+= yield_content :head
+
 = yield
 
 = partial('partials/disqus')
@@ -7,7 +9,6 @@
 	  reload: true,
 	  config: function () {  
 	    this.page.identifier = location.pathname;
-		console(this.page.identifier = location.pathname)
 	    this.page.url = location.href;
 	  }
 	});    
