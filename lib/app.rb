@@ -18,7 +18,7 @@ end
 
 get '/docs/?' do
   if request.xhr?                           
-    haml :"docs/introduction.html", :layout =>:'simple_doc_layout'
+    haml :"docs/introduction.html"
   else                       
     haml :"docs/introduction.html", :layout => :'docs_layout'
   end               
@@ -42,7 +42,7 @@ end
 
 get '/docs/*' do
   if request.xhr?
-    body(haml(:"docs/#{params[:splat].join('/')}.html", :layout => false))    
+    haml :"docs/#{params[:splat].join('/')}.html", :layout =>:'simple_doc_layout'    
   else
     haml :"docs/#{params[:splat].join('/')}.html", :layout => :'docs_layout'
   end  
