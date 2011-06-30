@@ -1,7 +1,8 @@
 #menu{:name=>'menu'}	
 	%ul             
-		%li
-			= image_tag "/mongoid-logo-small.png", :class=>'logo'			
+		%li.logo
+			%a{:href=>'/docs/mongoid'}
+				= image_tag "/mongoid-logo-small.png"			
 		%li 
 			%a.doc{:href=>'/docs'} Docs			
 		%li 
@@ -10,6 +11,7 @@
 			%a{:href=>'https://github.com/mongoid/mongoid', :target=>"_blank"}	Code
 		%li 
 			%a{:href=>'/stories'} Who is using Mongoid?
-		%li
-			= image_tag "/mongoid-logo-small-reflex.png", :class=>'logo'			
+		%li.logo
+			%a{:href=>'/docs/mongoid'}
+				= image_tag "/mongoid-logo-small-reflex.png"
 	%hr
