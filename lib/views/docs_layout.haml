@@ -12,19 +12,20 @@
 		<script type="text/javascript" src="/ja2.js"></script>
 
 	%body
-		#wrapper_menu	    
-			= partial('partials/menu')
-		#wrapper			
-			#contents          			
-				= partial('partials/index')
-				#doc 
-					.loader{:style=>'display:none'}
-						%p#spinner Please wait while we do what we do best
-					.yield
-						= yield      
+		#wrap
+			#wrapper_menu	    
+				= partial('partials/menu')
+			#wrapper			
+				#contents          			
+					= partial('partials/index')
+					#doc 
+						.loader{:style=>'display:none'}
+							%p#spinner Please wait while we do what we do best
+						.yield
+							= yield      
 					
-						<div id="disqus_thread"></div>					
-						<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-						<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>  					            												
-
-		    		                                                   			
+							<div id="disqus_thread"></div>					
+							<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+							<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>  					            												
+		#footer
+			= partial('partials/footer')

@@ -1,9 +1,12 @@
+html, body
+	height: 100%	
+	
 body
 	//background-color: #E6EBEA
 	background: url('background.jpg')
 	background-repeat: repeat
 	font: "Lucida Grande", "Trebuchet MS", Verdana, sans-serif   
-	margin: 0
+	margin: 0	
 	            
 div#wrapper_menu
 	margin: 0 auto
@@ -12,8 +15,7 @@ div#wrapper_menu
 	
 div#menu              
 	font: 150% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif					
-	text-align: center
-	float: clear
+	text-align: center	
 	text-shadow: 0 1px 0 white			
 	ul
 		li
@@ -32,7 +34,18 @@ div#menu
 						 
 div#wrapper
 	margin: 0 10px
-	width: 1010px		
+	width: 1010px
+	clear: both
+	overflow: auto
+	padding-bottom: 50px		
+	
+div#footer                
+	background-color: #D0D0D0
+	text-align: center	
+	position: relative
+	margin-top: -50px
+	height: 40px
+	clear: both
 		   
 div#index
 	margin-top: 15px
@@ -62,8 +75,10 @@ div#doc
 	float: right
 	width: 780px              
 	font-family: "Bookman Old Style"
+	margin-bottom: 50px	
 	h1,h2,h3,h4,h5,h6
-		font-family: 'Verdana' 
+		font-family: 'Verdana'
+		text-shadow: 0 1px 0 gray 
 	p               
 		text-indent: 20px
 		text-align: justify
@@ -100,7 +115,7 @@ table#performance
 			color: #6c6c4e	 
 			
 #disqus_thread
-	margin-top: 50px
+	margin-top: 50px	
 	
 .expArrow                                              
 	padding-left: 14px
@@ -112,4 +127,7 @@ table#performance
 	
 .logo		
 	position: relative
-	top: 15px   	
+	top: 15px   	  
+		  
+#wrap 
+	min-height: 100% 	                      
