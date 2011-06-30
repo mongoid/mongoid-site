@@ -26,9 +26,9 @@ end
 
 get '/stories' do
   if request.xhr?    
-    haml :"/stories", :layout=>false
+    haml :"/stories", :layout =>:'simple_doc_layout'
   else              
-    haml :"/stories"
+    haml :"/stories", :layout => :'docs_layout'
   end
 end      
 
@@ -36,7 +36,7 @@ get '/docs/mongoid' do
   if request.xhr?
     haml :"docs/mongoid.html", :layout => false
   else
-    haml :"docs/mongoid.html"
+    haml :"docs/mongoid.html", :layout => :'docs_layout'
   end
 end 
 
