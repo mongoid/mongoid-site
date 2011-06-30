@@ -1,7 +1,6 @@
 # Documentation
 
-These are the source files that power mongoid.org. It is a
-Sinatra application.
+These are the source files that power mongoid.org. It is a Sinatra application.
 
 # Contributing
 
@@ -15,9 +14,8 @@ run `rackup -p 3000 config.ru` to start the server at http://localhost:3000
 
 # Design Credits
 
-The newly designed site is by Durran Jordan, logo design by Doris Steere, and
-Omnigraffle wizardry by Gonzalo Rodríguez-Baltanás Díaz.
+The newly designed site is by Gonzalo Rodríguez-Baltanás Díaz, logo design by Doris Steere.
 
 # Notes
 
-All pages are written in HAMLintr, and for consistency must stay that way.
+All pages are written in HAML and for consistency must stay that way.
