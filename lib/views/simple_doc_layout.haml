@@ -8,7 +8,7 @@
 	DISQUS.reset({
 	  reload: true,
 	  config: function () {  
-	    this.page.identifier = location.pathname;
+	    this.page.identifier = document.title;
 	    this.page.url = location.href;
 	  }
 	});    
