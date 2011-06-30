@@ -9,18 +9,18 @@ require 'sinatra/static_assets'
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
 get '/?' do              
-  redirect url('/docs/introduction')
+  redirect url('/docs/mongoid')
 end           
 
 get '/docs/?' do
-  redirect url('/docs/introduction')               
+  redirect url('/docs/mongoid')               
 end
 
-get '/contributors' do
+get '/docs/contributors' do
   if request.xhr?
-    haml :"/contributors", :layout=>false
+    haml :"/docs/contributors.html", :layout=>false
   else                   
-    haml :"/contributors"
+    haml :"/docs/contributors.html"
   end
 end       
 
@@ -30,7 +30,15 @@ get '/stories' do
   else              
     haml :"/stories"
   end
-end       
+end      
+
+get '/docs/mongoid' do
+  if request.xhr?
+    haml :"docs/mongoid.html", :layout => false
+  else
+    haml :"docs/mongoid.html"
+  end
+end 
 
 get '/docs/*' do
   if request.xhr?
@@ -45,7 +53,7 @@ get '/stylesheet.css' do
 end       
 
 get '/coderay.css' do
-  css :"scss/coderay"
+  sass :"scss/coderay"
 end
 
 

@@ -16,8 +16,11 @@
 			#wrapper_menu	    
 				= partial('partials/menu')
 			#wrapper			
-				#contents          			
+				#contents    
+					= partial('partials/index')      			
 					#doc	
+						.loader{:style=>'display:none'}
+							%p#spinner Please wait while we do what we do best
 						.yield
 							= yield      															            					   
 		#footer 
