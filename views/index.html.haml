@@ -38,7 +38,7 @@
   # document for him. Of course he'll smash it within the next few minutes,
   # but no worries we can delete it later.
   Artist.where(name: "Syd Vicious").first.tap do |artist|
-    artist.instruments.create(type: "Bass")
+    artist.instruments.create(name: "Bass")
   end
 
 %p
