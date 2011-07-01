@@ -36,7 +36,7 @@ get '/docs/mongoid' do
   if request.xhr?
     haml :"docs/mongoid.html", :layout => false
   else
-    haml :"docs/mongoid.html", :layout => :'docs_layout'
+    haml :"docs/mongoid.html"
   end
 end 
 
