@@ -7,13 +7,11 @@ require 'sinatra/content_for2'
 require 'sinatra/static_assets'   
 
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
-
-get '/?' do              
-  redirect url('/docs/mongoid')
-end           
-
-get '/docs/?' do
-  redirect url('/docs/mongoid')               
+       
+["/", "/docs/?"].each do |path|
+  get path do              
+    redirect url('/docs/mongoid')
+  end             
 end
 
 get '/docs/contributors' do
@@ -48,14 +46,9 @@ get '/docs/*' do
   end  
 end          
 
-get '/stylesheet.css' do
-  sass :"scss/stylesheet"
-end       
-
-get '/coderay.css' do
-  sass :"scss/coderay"
-end
-
+get '/:id.css' do
+  sass :"scss/#{params[:id]}"
+end 
 
 module Haml
   module Helpers
