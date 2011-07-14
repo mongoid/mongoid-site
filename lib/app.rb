@@ -13,7 +13,7 @@ Haml::Filters::CodeRay.encoder_options = { :css => :class }
     if request.xhr?
       haml :"docs/mongoid.html", :layout => false
     else
-      haml :"docs/mongoid.html"
+      haml :"docs/mongoid.html"   
     end
   end                
 end
