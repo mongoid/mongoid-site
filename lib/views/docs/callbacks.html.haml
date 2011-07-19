@@ -1,0 +1,68 @@
+- content_for :head do
+  %title Mongoid: Callbacks
+
+%h1 Callbacks
+
+%p
+  Mongoid supports the following callbacks:
+
+  %ul
+    %li <tt>after_initialize</tt>
+    %li <tt>before_validation</tt>
+    %li <tt>after_validation</tt>
+    %li <tt>before_create</tt>
+    %li <tt>around_create</tt>
+    %li <tt>after_create</tt>
+    %li <tt>before_update</tt>
+    %li <tt>around_update</tt>
+    %li <tt>after_update</tt>
+    %li <tt>before_save</tt>
+    %li <tt>around_save</tt>
+    %li <tt>after_save</tt>
+    %li <tt>before_destroy</tt>
+    %li <tt>around_destroy</tt>
+    %li <tt>after_destroy</tt>
+
+%p
+  Callbacks are available on any document, whether it is embedded within
+  another document or not. Note that to be efficient, Mongoid only fires
+  the callback of the document that the persistence action was executed on.
+  This is that Mongoid aims to support large hierarchies and to handle
+  optimized atomic updates callbacks can't be firing all over the document
+  hierarchy.
+
+:coderay
+  #!ruby
+  class Article
+    include Mongoid::Document
+    field :name, type: String
+    field :body, type: String
+    field :slug, type: String
+
+    before_create :generate_slug
+
+    protected
+    def generate_slug
+      self.slug = name.to_permalink
+    end
+  end
+
+%p
+  Callbacks are coming from <tt>ActiveModel</tt>, so you can use the new
+  syntax as well:
+
+:coderay
+  #!ruby
+  class Article
+    include Mongoid::Document
+    field :name, type: String
+
+    set_callback(:save, :before) do |document|
+      document.generate_slug
+    end
+
+    protected
+    def generate_slug
+      self.slug = name.to_permalink
+    end
+  end

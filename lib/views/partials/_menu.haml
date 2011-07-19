@@ -1,0 +1,17 @@
+#menu{:name=>'menu'}	
+	%ul             
+		%li.logo
+			%a.menu{:href=>'/docs/mongoid'}
+				= image_tag "/mongoid-logo-small.png"			
+		%li 
+			%a.doc.menu{:href=>'/docs'} Docs			
+		%li 
+			%a{:href=>'http://rubydoc.info/github/mongoid/mongoid/master/frames', :target=>"_blank" } API
+		%li 
+			%a{:href=>'https://github.com/mongoid/mongoid', :target=>"_blank"}	Code
+		%li 
+			%a.menu{:href=>'/stories'} User Stories
+		%li.logo
+			%a.menu{:href=>'/docs/mongoid'}
+				= image_tag "/mongoid-logo-small-reflex.png"
+	%hr

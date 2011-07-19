@@ -1,0 +1,61 @@
+- content_for :head do
+  %title Mongoid: Installation
+
+%h1 Installation
+
+%h3 Prerequisites
+
+%p
+  There are a few things you need to have in your toolbox before tackling
+  a web application using Mongoid.
+
+  %ul
+    %li A good to advanced knowledge of Ruby.
+    %li Have good knowledge of your web framework if using one.
+    %li A thorough understanding of MongoDB.
+
+%p
+  This may seem like a "thank you Captain Obvious" moment, however if you
+  believe that you can just hop over to Mongoid because you read a blog
+  post on how cool Ruby and MongoDB were, you are in for a
+  <i>world of pain</i>.
+
+%p
+  Mongoid leverages many aspects of the Ruby programming
+  language that are not for beginner use, and sending the core
+  team into a frenzy tracking down a bug for a common Ruby mistake is a
+  waste of our time, and all of the other users of the framework as well.
+
+%p
+  <i>THE DATABASE IS NOT A BLACK BOX</i>.
+
+%p
+  Mongoid is an abstraction to make application developers'
+  lives easier, however the internals leverage the
+  power of MongoDB and it is truly important to know what is going on
+  under the covers. This is why the documentation provides the exact
+  queries that Mongoid is executing against the database when you call a
+  persistence operation. If we took the time to tell you, you should listen. :)
+
+%h3 Okay, now i'm ready
+
+%p
+  The preferred method for installing Mongoid is with bundler. Add the Mongoid
+  and optional BSON extenstions to your Gemfile:
+
+:coderay
+  #!ruby
+  gem "mongoid", "~> 2.0"
+  gem "bson_ext", "~> 1.3"
+
+%p
+  Alternatively you can get the Mongoid gem direcly from rubygems.org:
+
+:coderay
+  #!ruby
+  $ gem install mongoid bson_ext
+
+%p
+  Note for performance improvements you will want to also install the bson c
+  extensions if compatible with your system, however it is not a direct
+  dependency of Mongoid in case it is not compatible.

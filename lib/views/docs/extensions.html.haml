@@ -1,0 +1,50 @@
+- content_for :head do
+  %title Mongoid: Extensions
+
+%h1 Extensions
+
+%h3 Fabrication
+
+%p
+  Paul Elliott's
+  <a href="http://github.com/paulelliott/fabrication">Fabrication</a> gem is
+  a slick object generation library. It support's Mongoid out of the box and
+  provides a nice syntax for creating objects with ease for testing.
+
+:coderay
+  #!ruby
+  Fabricator(:person) do
+    title "Grand Poobah"
+    addresses(count: 2) do |address, i|
+      Fabricate(:address, streeet: "\#{i} Bond St.")
+    end
+  end
+
+%h3 Voting
+
+%p
+  Alex Nguyen's
+  <a href="https://github.com/vinova/voteable_mongo">voteable_mongo</a> gem
+  add up / down voteability to Mongoid and MongoMapper. It takes advantage
+  of document-oriented & in-place update to ensure data integrity and use
+  only ONE database request to validate, update & get updated vote data.
+
+:coderay
+  #!ruby
+  class Post
+    include Mongoid::Document
+    include Mongo::Voteable
+    voteable self, :up => 1, :down => -2
+  end
+
+  class User
+    include Mongoid::Document
+    include Mongo::Voter
+  end
+
+  @user.vote(@post, :down)
+  # => <Post .. votes: {"up"=>[], "down"=>[..], "count"=>1, "point"=>-2, ..}>
+  @user.voted?(@post)
+  # => true
+  @user.vote_value(@post)
+  # => :down

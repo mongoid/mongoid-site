@@ -1,0 +1,119 @@
+- content_for :head do
+  %title Mongoid: Documents [Fields]
+
+%h1 Fields
+
+%p
+  Even though MongoDB is a schemaless database, most uses will be with
+  web applications where form parameters always come to the server as strings.
+  Mongoid provides an easy mechanism for transforming these strings into
+  their appropriate types through the definition of fields in a
+  <tt>Mongoid::Document</tt>.
+
+%p
+  Consider a simple class for modeling a person in an application. A person may
+  have a first name, last name, and middle name. We can define these
+  attributes on a person by using the fields macro.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :first_name, type: String
+    field :middle_name, type: String
+    field :last_name, type: String
+  end
+
+%p
+  Below is a list of valid types for fields.
+
+  %ul
+    %li <tt>Array</tt>
+    %li <tt>BigDecimal</tt> (Stores as a String in the database)
+    %li <tt>Boolean</tt>
+    %li <tt>Date</tt>
+    %li <tt>DateTime</tt>
+    %li <tt>Float</tt>
+    %li <tt>Hash</tt>
+    %li <tt>Integer</tt>
+    %li <tt>String</tt>
+    %li <tt>Symbol</tt>
+    %li <tt>Time</tt>
+
+%p
+  If you decide not to specify the type of field with the definition, Mongoid
+  will treat it as an object and not try to typecast it when sending the
+  values to the database. This can be advantageous in 2 places, since
+  the lack of attempted conversion will yield a slight performance gain.
+
+  %ul
+    %li You're not using a web front end and values are already properly cast.
+    %li All of your fields are strings.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :first_name
+    field :middle_name
+    field :last_name
+  end
+
+%h3 Getting and setting field values
+
+%p
+  When a field is defined, Mongoid provides several different ways of
+  accessing the field.
+
+:coderay
+  #!ruby
+
+  # Get the value of the first name field.
+  person.first_name
+  person[:first_name]
+  person.read_attribute(:first_name)
+
+  # Set the value for the first name field.
+  person.first_name = "Jean"
+  person[:first_name] = "Jean"
+  person.write_attribute(:first_name, "Jean")
+
+%p
+  In cases where you want to set multiple field values at once, there are a
+  few different ways of handling this as well.
+
+:coderay
+  #!ruby
+
+  # Get the field values as a hash.
+  person.attributes
+
+  # Set the field values in the document.
+  Person.new(first_name: "Jean-Baptiste", middle_name: "Emmanuel")
+  person.attributes = { first_name: "Jean-Baptiste", middle_name: "Emmanuel" }
+  person.write_attributes(
+    first_name: "Jean-Baptiste",
+    middle_name: "Emmanuel"
+  )
+
+%h3 Defaults
+
+%p
+  You can tell a field in Mongoid to always have a default value if nothing
+  has been provided. Defaults are either static values or lambdas.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    field :blood_alcohol_level, type: Float, default: 0.40
+    field :last_drink, type: Time, default: -> { 10.minutes.ago }
+  end
+
+%h3 Reserved names
+
+%p
+  If you define a field on your document that conflicts with a reserved method
+  name in Mongoid, the configuration will raise an error. For a list of these
+  you may look at <tt>Mongoid.destructive_fields</tt>.

@@ -1,0 +1,166 @@
+- content_for :head do
+  %title Mongoid: Extras
+
+%h1 Extras
+
+%p
+  Mongoid has some useful extra features that can be used in applications.
+
+%h3 Master / Slave Support
+
+%p
+  If slave databases are supplied in the <tt>mongoid.yml</tt>, Mongoid will
+  round-robin all enslaved documents' read queries to the slave databases.
+  This can also be handled on a per-query basis.
+
+%p
+  To have all reads for a model round robin between slaves enslave the class, note
+  there is no need to do this in a replica set environment that set the
+  <tt>read_secondary</tt> config option to true.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    enslave
+  end
+
+%p
+  To send reads to the slaves on a per-query basis just enslave a
+  <tt>Criteria</tt>:
+
+:coderay
+  #!ruby
+  Person.where(first_name: "Omar").enslave
+
+%h3 Caching
+
+%p
+  Out of the box, Mongoid wraps the MongoDB Ruby Driver's cursor in order
+  to be memory efficient for large queries and data sets. However if you
+  want the query to load all matching documents in memory and return
+  them on <i>n</i> iterations without hitting the database again you
+  may cache a class or criteria:
+
+%p
+  To have all queries for a model "cache":
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    cache
+  end
+
+%p
+  To cache on a per-query basis:
+
+:coderay
+  #!ruby
+  Person.where(first_name: "Franziska").cache
+
+%h3 Paranoid Documents
+
+%p
+  There may be times when you don't want documents to actually get deleted
+  from the database, but "flagged" as deleted. Mongoid provides a Paranoia
+  module to give you just that.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::Paranoia
+  end
+
+  person.delete # Sets the deleted_at field to the current time.
+  person.delete! # Permanently deletes the document.
+  person.destroy! # Permanently delete the document with callbacks.
+  person.restore # Brings the "deleted" document back to life.
+
+%h3 Versioning
+
+%p
+  Mongoid supports simple versioning through inclusion of the
+  <tt>Mongoid::Versioning</tt> module. Including this module will create a
+  versions embedded relation on the document that it will append to on
+  each save. It will also update the version number on the document,
+  which is an integer.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::Versioning
+  end
+
+%p
+  You can also set a <tt>max_versions</tt> setting, and Mongoid will only
+  keep the max most recent versions.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::Versioning
+
+    # keep at most 5 versions of a record
+    max_versions 5
+  end
+
+%p
+  You may skip versioning at any point in time by wrapping the persistence
+  call in a <tt>versionless</tt> block.
+
+:coderay
+  #!ruby
+  person.versionless do |doc|
+    doc.update_attributes(name: "Theodore")
+  end
+
+%h3 Timestamping
+
+%p
+  Mongoid supplies a timestamping module in <tt>Mongoid::Timestamps</tt> which
+  can be included to get basic behavior for <tt>created_at</tt> and
+  <tt>updated_at</tt> fields.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::Timestamps
+  end
+
+%p
+  You may also choose to only have specific timestamps for creation or
+  modification.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::Timestamps::Created
+  end
+
+  class Post
+    include Mongoid::Document
+    include Mongoid::Timestamps::Updated
+  end
+
+%h3 Keys
+
+%p
+  You can create a composite key in mongoid to replace the default id using the key macro:
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :first_name
+    field :last_name
+    key :first_name, :last_name
+  end
+
+  person = Person.new(first_name: "Syd", last_name: "Vicious")
+  person.id # returns "syd-vicious"

@@ -1,0 +1,14 @@
+= yield_content :head
+
+= yield
+
+= partial('partials/disqus')
+
+:javascript
+	DISQUS.reset({
+	  reload: true,
+	  config: function () {  
+	    this.page.identifier = document.title;
+	    this.page.url = location.href;
+	  }
+	});    

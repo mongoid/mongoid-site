@@ -1,0 +1,50 @@
+- content_for :head do
+  %title Mongoid: Documents [Inheritance]
+
+%h1 Inheritance
+
+%p
+  Mongoid supports inheritance in both root and embedded documents. In
+  scenarios where documents are inherited from their fields, relations,
+  validations and scopes get copied down into their child documents, but
+  not vise-versa.
+
+:coderay
+  #!ruby
+  class Canvas
+    include Mongoid::Document
+    field :name, type: String
+    embeds_many :shapes
+  end
+
+  class Browser < Canvas
+    field :version, type: Integer
+    scope :recent, where(:version.gt => 3)
+  end
+
+  class Firefox < Browser
+  end
+
+  class Shape
+    include Mongoid::Document
+    field :x, type: Integer
+    field :y, type: Integer
+    embedded_in :canvas
+  end
+
+  class Circle < Shape
+    field :radius, type: Float
+  end
+
+  class Rectangle < Shape
+    field :width, type: Float
+    field :height, type: Float
+  end
+
+%p
+  In the above example, <tt>Canvas</tt>, <tt>Browser</tt> and
+  <tt>Firefox</tt> will all save in the <tt>canvases</tt> collection.
+  An additional attribute <tt>_type</tt> is stored in order
+  to make sure when loaded from the database the correct document is
+  returned. This also holds true for the embedded documents <tt>Circle</tt>,
+  <tt>Rectangle</tt>, and <tt>Shape</tt>.

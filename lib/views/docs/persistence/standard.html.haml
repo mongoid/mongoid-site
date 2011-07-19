@@ -1,0 +1,322 @@
+- content_for :head do
+  %title Mongoid: Persistence [Standard]
+
+%h1 Standard persistence
+
+%p
+  Mongoid's standard persistence methods come in the form of common methods
+  you would find in other mapping frameworks.
+
+  %ul
+    %li <a href="#create"><tt>Model.create</tt></a>
+    %li <a href="#create!"><tt>Model.create!</tt></a>
+    %li <a href="#save"><tt>Model#save</tt></a>
+    %li <a href="#save!"><tt>Model#save!</tt></a>
+    %li <a href="#update_attributes"><tt>Model#update_attributes</tt></a>
+    %li <a href="#update_attributes!"><tt>Model#update_attributes!</tt></a>
+    %li <a href="#update_attribute"><tt>Model#update_attribute</tt></a>
+    %li <a href="#delete"><tt>Model#delete</tt></a>
+    %li <a href="#destroy"><tt>Model#destroy</tt></a>
+    %li <a href="#delete_all"><tt>Model.delete_all</tt></a>
+    %li <a href="#destroy_all"><tt>Model.destroy_all</tt></a>
+
+%a{name: "create"}
+%h4 <tt>Model.create</tt>
+
+%p
+  Inserts a new document into the database given the provided attributes.
+  This will run validations and will return the document whether it was
+  persisted or not. You can check <tt>Model#persisted?</tt> to see if it
+  was successful.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db.
+  Person.create(first_name: "Heinrich", last_name: "Heine")
+
+  # This can also take a block.
+  Person.create(first_name: "Heinrich") do |doc|
+    doc.last_name = "Heine"
+  end
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+%a{name: "create!"}
+%h4 <tt>Model.create!</tt>
+
+%p
+  Inserts a new document into the database given the provided attributes.
+  This will run validations and will return the document if it passed
+  validations, otherwise it will raise a validations error.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db, raising an error if
+  # validation failed.
+  Person.create!(first_name: "Heinrich", last_name: "Heine")
+
+  # This can also take a block.
+  Person.create!(first_name: "Heinrich") do |doc|
+    doc.last_name = "Heine"
+  end
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+%a{name: "save"}
+%h4 <tt>Model#save</tt>
+
+%p
+  Saves the document to the database. If the document is new then the
+  entire document will be inserted. If the document is already saved
+  then only changes to the document will the persisted. This runs
+  validations by default, however they can be switched off by providing
+  an option to the method. Returns <tt>true</tt> if validation passed
+  and <tt>false</tt> if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db.
+  person = Person.new(first_name: "Heinrich", last_name: "Heine")
+  person.save
+
+  # Save without running validations.
+  person.save(validate: false)
+
+  # Save an existing document's changed fields.
+  person.first_name = "Christian Johan"
+  person.save
+
+%mongodb mongodb commands
+:coderay
+  #!ruby
+
+  # Insert command for the new document.
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Christian Johan" } }
+  })
+
+%a{name: "save!"}
+%h4 <tt>Model#save!</tt>
+
+%p
+  Saves the document to the database. If the document is new then the
+  entire document will be inserted. If the document is already saved
+  then only changes to the document will the persisted. Returns
+  <tt>true</tt> if validation passed and raises an error if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Insert a new German poet to the db.
+  person = Person.new(first_name: "Heinrich", last_name: "Heine")
+  person.save!
+
+  # Save an existing document's changed fields.
+  person.first_name = "Christian Johan"
+  person.save!
+
+%mongodb mongodb commands
+:coderay
+  #!ruby
+
+  # Insert command for the new document.
+  collections["people"].insert({
+    "_id" : ..., "first_name" : "Heinrich", "last_name" : "Heine"
+  })
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Christian Johan" } }
+  })
+
+%a{name: "update_attributes"}
+%h4 <tt>Model#update_attributes</tt>
+
+%p
+  Modifies the provided attributes to new values and persists them in
+  a single call. This runs validations and will return true if they
+  passed, false if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Update the provided attributes.
+  person.update_attributes(first_name: "Jean", last_name: "Zorg")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Jean", "last_name" : "Zorg" } }
+  })
+
+%a{name: "update_attributes!"}
+%h4 <tt>Model#update_attributes!</tt>
+
+%p
+  Modifies the provided attributes to new values and persists them in
+  a single call. This runs validations and will return true if they
+  passed or raise an error if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Update the provided attributes.
+  person.update_attributes!(first_name: "Jean", last_name: "Zorg")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Jean", "last_name" : "Zorg" } }
+  })
+
+%a{name: "update_attribute"}
+%h4 <tt>Model#update_attribute</tt>
+
+%p
+  Updates a single attribute in the database without going through the normal validation procedure, but does fire callbacks.
+  Returns true if save was successful, false if not.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Update the provided attribute.
+  person.update_attribute(first_name, "Jean")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Update command for the changed document.
+  collections["people"].update({
+    { "_id" : ... },
+    { "$set" : { "first_name" : "Jean" } }
+  })
+
+%a{name: "delete"}
+%h4 <tt>Model#delete</tt>
+
+%p
+  Deletes the document from the database without running callbacks.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  person.delete
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  collections["people"].remove("_id" : ... )
+
+%a{name: "destroy"}
+%h4 <tt>Model#destroy</tt>
+
+%p
+  Deletes the document from the database while running destroy callbacks.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  person.destroy
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  collections["people"].remove("_id" : ... )
+
+%a{name: "delete_all"}
+%h4 <tt>Model.delete_all</tt>
+
+%p
+  Deletes all matching documents in the database given the supplied
+  conditions. See the criteria section on deletion for preferred
+  ways to perform these actions. This does not run any callbacks on
+  the matching documents.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Delete all the documents from the collection.
+  Person.delete_all
+
+  # Delete all matching documents.
+  Person.delete_all(conditions: { first_name: "Heinrich" })
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Delete all command.
+  collections["people"].remove
+
+  # Delete all matching command.
+  collections["people"].remove("first_name" : "Heinrich")
+
+%a{name: "destroy_all"}
+%h4 <tt>Model.destroy_all</tt>
+
+%p
+  Deletes all matching documents in the database given the supplied
+  conditions. See the criteria section on deletion for preferred
+  ways to perform these actions. This runs destroy callbacks on all
+  matching documents.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+
+  # Destroy all the documents from the collection.
+  Person.destroy_all
+
+  # Destroy all matching documents.
+  Person.destroy_all(conditions: { first_name: "Heinrich" })
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+
+  # Destroy all command.
+  collections["people"].remove
+
+  # Destroy all matching command.
+  collections["people"].remove("first_name" : "Heinrich")
