@@ -157,34 +157,51 @@ p
   padding-left: 10px
   padding-right: 10px
 
-table#performance
+table.performance
   color: #CCCCCC
   font-size: 11px
   margin: 10px
-  text-transform: uppercase
   width: 580px
   tr
     td
       border-radius: 5px
       -moz-border-radius: 5px
       margin: 10px
-      text-align: center
+      padding: 5px 3px 5px 3px
       width: 120px
+
+      .op
+        float: left
+        width: 300px
+
+      .time, .rate
+        float: left
+        width: 130px
+        text-align: right
+
+    td.header
+      color: #CCCCCC
+      padding: 10px 3px 10px 3px
+      font-weight: bold
+      text-transform: uppercase
 
     td.green
       border: 5px solid #75AD75
       background-color: #92D592
-      color: #567156
+      color: #333333
+      font-family: monospace
 
     td.red
       border: 5px solid #c77171
       background-color: #FF6666
       color: #973636
+      font-family: monospace
 
     td.yellow
       border: 5px solid #d3d48b
       background-color: #EAEB89
       color: #6c6c4e
+      font-family: monospace
 
 tt
   color: #99CC99
