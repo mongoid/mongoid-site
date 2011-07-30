@@ -166,9 +166,6 @@
   # Do any children exist that are persisted?
   person.posts.exists?
 
-  # Paginate the referenced child documents.
-  person.posts.paginate(page: 2, per_page: 20)
-
 %h3 polymorphic behaviour
 
 %p
