@@ -8,8 +8,16 @@
 
 %h3 Upgrading to 2.1.0
 
-  See the changelog
-  <a href="https://github.com/mongoid/mongoid/blob/2.1.0/CHANGELOG.rdoc">here</a>.
+%p
+  Mongoid now requires MongoDB 1.8.0 and higher.
+
+%p
+  Traditional master/slave support has been removed, you will need to switch
+  to using replica sets instead.
+
+%p
+  Custom field serialization has changed. Please see
+  <a href="http://github.com/mongoid/mongoid/blob/master/lib/mongoid/fields/serializable.rb">RDoc</a> for API.
 
 %h3 Upgrading to 2.0.0
 
