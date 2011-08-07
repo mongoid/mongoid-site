@@ -89,35 +89,50 @@ div#doc
 		text-indent: 20px
 		text-align: justify
 	.centered
-		text-align: center
-
-			
+		text-align: center    
+		
+		
+		
 table.performance
-	font-size: 13px
+	font-size: 11px
 	margin: 10px
-	text-transform: uppercase
 	width: 100%
-	tr             
-		td.header
-			font-weight: bold
+	tr
 		td
 			border-radius: 5px
 			-moz-border-radius: 5px
 			margin: 10px
-			text-align: center
+			padding: 5px 3px 5px 3px
 			width: 120px
+
+		.op
+			float: left
+			width: 300px
+
+		.time, .rate
+			float: left
+			width: 130px
+			text-align: right
+
+		td.header
+			padding: 10px 3px 10px 3px
+			font-weight: bold
+			text-transform: uppercase
 
 		td.green
 			border: 5px solid #75AD75
 			background-color: #92D592
+			font-family: monospace
 
 		td.red
 			border: 5px solid #c77171
 			background-color: #FF6666
+			font-family: monospace
 
 		td.yellow
 			border: 5px solid #d3d48b
 			background-color: #EAEB89
+			font-family: monospace		  
 			
 #disqus_thread
 	margin-top: 50px
