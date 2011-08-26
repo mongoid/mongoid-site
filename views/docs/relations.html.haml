@@ -53,8 +53,14 @@
       def find_by_country(country)
         where(country: country).first
       end
+      def chinese
+        @target.select { |address| address.country == "China"}
+      end
     end
   end
+
+  person.addresses.find_by_country('Mongolia') #=> returns address
+  person.addresses.chinese #=> returns [ address ]
 
 %h3 custom relation names
 
