@@ -24,10 +24,10 @@
 :coderay
   #!ruby
   production:
-    hosts: [[db1.mongoid.org, 27017], [db2.mongoid.org, 27017], [db3.mongoid.org, 27017]]
+    hosts: [[db1.mongoid.org, 27017], [db2.mongoid.org, 27017]]
     database: project_production
   development:
-    hosts: [[db1.mongoid.org, 27017], [db2.mongoid.org, 27017], [db3.mongoid.org, 27017]]
+    hosts: [[db1.mongoid.org, 27017], [db2.mongoid.org, 27017]]
     database: project_development
 
 %p Then in your application load in the settings and configure the connection.
@@ -40,7 +40,9 @@
   #!ruby
   # load models
   $LOAD_PATH.unshift("\#{File.dirname(__FILE__)}/models")
-  Dir.glob("\#{File.dirname(__FILE__)}/models/*.rb") { |lib| require File.basename(lib, '.*') }
+  Dir.glob("\#{File.dirname(__FILE__)}/models/*.rb") do |lib|
+    require File.basename(lib, '.*')
+  end
 
 %p
   If you would also like Mongoid to retry operations if a
