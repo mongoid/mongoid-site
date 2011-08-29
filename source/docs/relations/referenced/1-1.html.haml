@@ -136,3 +136,38 @@
     include Mongoid::Document
     belongs_to :playable, polymorphic: true
   end
+
+%h3 dependent behaviour
+
+%p
+  You can tell Mongoid what to do with child relations of a has one
+  when unsetting the relation via the dependent option.
+  The valid options are:
+
+%ul
+  %li <tt>:delete</tt>: Delete the child document.
+  %li <tt>:destroy</tt>: Destroy the child document.
+  %li <tt>:nullify</tt>: Orphan the child document.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    has_one :game, as: :playable, dependent: :delete
+  end
+
+  class Arcade
+    include Mongoid::Document
+    has_one :game, as: :playable, dependent: :nullify
+  end
+
+  # Deletes the existing game on the person.
+  person.game = []
+  person.game = nil
+
+  # Orphans the existing game on the arcade (no delete).
+  person.game = []
+  person.game = nil
+
+%p
+  If the dependent option is not defined, the default is to nullify.

@@ -191,3 +191,44 @@
     include Mongoid::Document
     belongs_to :postable, polymorphic: true
   end
+
+%h3 dependent behaviour
+
+%p
+  You can tell Mongoid what to do with child relations of a has many
+  when unsetting the relation via the dependent option. This also applies
+  to calling <tt>#delete</tt> on the relation. The valid options are:
+
+%ul
+  %li <tt>:delete</tt>: Delete the child documents.
+  %li <tt>:destroy</tt>: Destroy the child documents.
+  %li <tt>:nullify</tt>: Orphan the child documents.
+
+:coderay
+  #!ruby
+  class Company
+    include Mongoid::Document
+    has_many :posts, as: :postable, dependent: :delete
+  end
+
+  class Person
+    include Mongoid::Document
+    has_many :posts, as: :postable, dependent: :nullify
+  end
+
+  # Delete all the child relations:
+  company.posts = []
+  company.posts = nil
+
+  # Orphan all the child relations:
+  person.posts = []
+  person.posts = nil
+
+  # Delete a single child relation:
+  company.posts.delete(post)
+
+  # Orphan a single child relation:
+  person.posts.delete(post)
+
+%p
+  If the dependent option is not defined, the default is to nullify.

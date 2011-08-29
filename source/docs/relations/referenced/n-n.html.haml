@@ -162,3 +162,32 @@
   # Destroy all matching referenced documents, running callbacks.
   tag.people.destroy_all(conditions: { title: "Marshall" })
   tag.people.where(title: "Heiness").destroy_all
+
+%h3 dependent behaviour
+
+%p
+  You can tell Mongoid what to do with inverse relations of a many to many
+  when unsetting the relation via the dependent option. This also applies
+  to calling <tt>#delete</tt> on the relation. The valid options are:
+
+%ul
+  %li <tt>:delete</tt>: Delete the inverse documents.
+  %li <tt>:destroy</tt>: Destroy the inverse documents.
+  %li <tt>:nullify</tt>: Orphan the inverse documents.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    has_and_belongs_to_many :preferences, dependent: :nullify
+  end
+
+  # Orphan all the inverse relations:
+  person.preferences = []
+  person.preferences = nil
+
+  # Orphan a single child relation:
+  person.preferences.delete(preference)
+
+%p
+  If the dependent option is not defined, the default is to nullify.
