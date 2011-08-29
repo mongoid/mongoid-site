@@ -6,6 +6,67 @@
 %p
   Use this as a reference when upgrading between Mongoid versions.
 
+%h3 upgrading to 2.2.0
+
+%p
+  Previously when setting an embedded relation via attributes on the parent,
+  Mongoid would persist the embedded relation regardless of whether the
+  parent operation was a persistence operation or not. This is best shown with
+  an example:
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :name, type: String
+    embeds_many :addresses
+  end
+
+  class Address
+    include Mongoid::Document
+    field :street, type: String
+    embedded_in :person
+  end
+
+  # The following code would previously save the address with an atomic $push
+  # immediately then the attributes were set.
+  person.addresses_attributes = [ { :street => "High St." }]
+
+%p
+  Now Mongoid waits to persist the embedded documents until save is called on
+  the parent, or if the attributes were set via update_attributes. The
+  following are examples of calls and how they <i>now</i> behave:
+
+:coderay
+  #!ruby
+
+  # Atomic $push of the new address.
+  person.addresses << Address.new
+
+  # Atomic $push of the new address.
+  person.addresses.create
+
+  # Atomic $push of the new address.
+  person.addresses = [ Address.new ]
+
+  # Atomic $push of the new address.
+  person.addresses = []
+  person.addresses = nil
+
+  # No save, will be atomic $set when parent is saved.
+  person.attributes = { :addresses => [ Address.new ] }
+
+  # No save, will be atomic $set when parent is saved.
+  person.addresses_attributes = [ { :street => "High St." }]
+
+  # No save, will be atomic $unset when parent is saved.
+  person.attributes = { :addresses => [] }
+  person.attributes = { :addresses => nil }
+
+  # No save, will be atomic $pull when parent is saved.
+  person.addresses_attributes = [ { :_id => 1, _destroy => true }]
+
+
 %h3 Upgrading to 2.1.0
 
 %p
