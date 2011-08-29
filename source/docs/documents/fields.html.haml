@@ -111,6 +111,25 @@
     field :last_drink, type: Time, default: -> { 10.minutes.ago }
   end
 
+%p
+  Be wary that default values that are not defined as lambdas or procs are
+  evaluated at class load time, so the following 2 definitions are not
+  equivalent. (You probably would prefer the second, which is at document
+  creation time.)
+
+:coderay
+  #!ruby
+  field :dob, type: Time, default: Time.now
+  field :dob, type: Time, default: -> { Time.now }
+
+%p
+  If you want to set a default with a dependency on the document's state,
+  <tt>self</tt> inside a lambda or proc evaluates to the document instance.
+
+:coderay
+  #!ruby
+  field :wasted_at, type: Time, default: -> { new? ? 2.hours.ago : Time.now }
+
 %h3 reserved names
 
 %p
