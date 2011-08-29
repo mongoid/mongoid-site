@@ -38,6 +38,17 @@
   # Find a criteria with Keith Richards in it.
   Person.rock_n_rolla.over(60)
 
+%p
+  Note that definitions are evaluated at class load time. For evaluation
+  at runtime you will want to make sure to define using a proc or lambda. In
+  the following example the first date is set as the date of class load,
+  where the second scope sets the date at the time the scope is called.
+
+:coderay
+  #!ruby
+  scope :current, where(:start_date.lte => Date.today)
+  scope :current, -> { where(:start_date.lte => Date.today) }
+
 %h3 class methods
 
 %p
