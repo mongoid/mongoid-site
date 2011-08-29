@@ -143,6 +143,36 @@
   #!ruby
   field :wasted_at, type: Time, default: -> { new? ? 2.hours.ago : Time.now }
 
+%h3 custom field serialization
+
+%p
+  You can define custom types in Mongoid and determine how they are
+  serialized and deserialized. You simply need to define the class, include
+  <tt>Mongoid::Fields::Serializable</tt>, and override the
+  <tt>serialize</tt> and <tt>deserialize</tt> methods as needed.
+  Deserialization is used to convert from the value that is stored in the
+  database to a value that is used when accessed. Serialization is used to
+  convert the object to a MongoDB friendly value.
+
+:coderay
+  #!ruby
+  class Profile
+    include Mongoid::Document
+    field :location, type: Point
+  end
+
+  class Point
+    include Mongoid::Fields::Serializable
+
+    def deserialize(object)
+      [ object["x"], object["y"] ]
+    end
+
+    def serialize(object)
+      { "x" => object[0], "y" => object[1] }
+    end
+  end
+
 %h3 reserved names
 
 %p
