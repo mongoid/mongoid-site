@@ -1,9 +1,6 @@
 # Automatic sitemaps
 # activate :slickmap
 
-# CodeRay syntax highlighting in Haml
-activate :code_ray
-
 # Automatic image dimension calculations
 # activate :automatic_image_sizes
 
@@ -11,7 +8,7 @@ activate :code_ray
 helpers do
 
   def link_to_active(text, href, options = nil)
-    if request.path == href
+    if "/#{request.path}" == href
       if options
         class_options = options[:class] || ""
         class_options += " active"
@@ -28,8 +25,8 @@ helpers do
     "Mongoid #{sections.second}: #{sections[2, sections.length].join(" - ")}"
   end
 
-  def render_subsection?(href)
-    request.path.include?(href)
+  def render_subsection?(section)
+    request.path.include?(section)
   end
 end
 
