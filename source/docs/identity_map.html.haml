@@ -1,0 +1,88 @@
+- content_for :head do
+  %title Mongoid: IdentityMap
+
+%h1 identity map
+
+%p
+  The identity map in Mongoid is a current aid to assist with excessive
+  database queries in relations, and is necessary for eager loading to
+  work. It's functionality will be extended in future releases.
+
+%p
+  To enable the identity map, simply change the configuration option in
+  your mongoid.yml.
+
+:coderay
+  #!ruby
+  identity_map_enabled: true
+
+%p
+  When a document is now loaded from the database, is is automatically
+  added to the identity map by it's class and id. Subsequent request for
+  that document by it's id will not hit the database, but rather pull
+  the document back from the identity map itself. It's primary function
+  in this capacity is to aid in cutting down queries for belongs_to
+  relations when iterating over the parents.
+
+%h2 access
+
+%p
+  You can access documents in the map directly via the <tt>get</tt> method.
+  It requires the class of the document you want and an id.
+
+:coderay
+  #!ruby
+  Mongoid::IdentityMap.get(Person, id)
+
+%p
+  Note in future releases the Mongoid finders will hook directly into the
+  map so you don't have to access it directly.
+
+%h2 the unit of work
+
+%p
+  To prevent database objects from becoming stale, the documents in the
+  identity map should only exist in a single unit of work, which is
+  usually a single request to the application.
+
+%h3 rails
+
+%p
+  No extra work is needed for Rails users, Mongoid will automatically
+  clear out the identity map after each request.
+
+%h3 sinatra
+
+%p
+  You can require the Mongoid identity map middleware in your application
+  to clear out the map with each request:
+
+:coderay
+  #!ruby
+  use Rack::Mongoid::Middleware::IdentityMap
+
+%h3 non rack based applications
+
+%p
+  For users not using rack based apps, you will need to wrap your requests
+  or application defined unit of work in a <tt>Mongoid.unit_of_work</tt>
+  block:
+
+:coderay
+  #!ruby
+  Mongoid.unit_of_work do
+    Person.create(title: "Grand Poobah")
+  end
+
+%h2 testing
+
+%p
+  If you have the identity map enabled in your application, you should set up
+  a global hook to clear out the map before each test so the test suite does
+  not create memory bloat. For example in RSpec in <tt>spec_helper.rb</tt>.
+
+:coderay
+  #!ruby
+  RSpec.configure do |config|
+    config.before(:each) { Mongoid::IdentityMap.clear }
+  end
