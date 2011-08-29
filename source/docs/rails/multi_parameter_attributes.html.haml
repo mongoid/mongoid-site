@@ -1,0 +1,15 @@
+- content_for :head do
+  %title Mongoid: Rails [ Multi Parameter Attributes ]
+
+%h1 multi parameter attributes
+
+%p
+  If you want to use multi-paramater attributes with Rails, you will
+  need to include an extra Mongoid module to support it.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::MultiParameterAttributes
+  end
