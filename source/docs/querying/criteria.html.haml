@@ -27,6 +27,7 @@
     %li <a href="#any_of"><tt>Model.any_of</tt></a>
     %li <a href="#asc"><tt>Model.asc</tt></a>
     %li <a href="#desc"><tt>Model.desc</tt></a>
+    %li <a href="#distinct"><tt>Criteria#distinct</tt></a>
     %li <a href="#excludes"><tt>Model.excludes</tt></a>
     %li <a href="#limit"><tt>Model.limit</tt></a>
     %li <a href="#near"><tt>Model.near</tt></a>
@@ -182,6 +183,23 @@
   { "sort" :
       {[ [ "first_name", Mongo::DESCENDING ],
         [ "last_name", Mongo::DESCENDING ] ]} }
+
+%a{name: "distinct"}
+%h4 <tt>Criteria#distinct(name)</tt>
+
+%p
+  Get the distinct values for the provided field.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Get the distinct values for last names
+  Person.all.distinct(:last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "distinct" : "last_name" }
 
 %a{name: "excludes"}
 %h4 <tt>Model.excludes</tt> | <tt>Criteria#excludes</tt>
