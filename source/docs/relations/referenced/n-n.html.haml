@@ -34,8 +34,21 @@
   end
 
 %p
-  Definitions are required on both sides to the relation in order for it to
-  work properly.
+  You can create a one sided many to many if you want to mimic a has_many
+  that stores the keys as an array on the parent.
+
+:coderay
+  #!ruby
+
+  class Movie
+    include Mongoid::Document
+    field :title, type: String
+    has_and_belongs_to_many :ratings, inverse_of: nil
+  end
+
+  class Rating
+    include Mongoid::Document
+  end
 
 %h3 storage
 
