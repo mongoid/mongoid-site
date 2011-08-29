@@ -17,8 +17,8 @@
     %li 10,000 referenced documents to another collection (n-n)
 
 %p.italic
-  * Performance metrics done on a 2.4 GHz i5 MacBook Pro / 4GB RAM,
-  OSX 10.7, Mongoid 2.1.0
+  * Performance metrics done on a 2.93 GHz i7 iMac / 8GB RAM,
+  OSX 10.7, Mongoid 2.2.0
 
 %p.italic
   * The script to run the performance metrics can be found
@@ -43,13 +43,13 @@
   %tr
     %td.green
       .op Model#create
-      .time [ 480.870 ]
-      .rate [ 2,079/sec ]
+      .time [ 417.93 ]
+      .rate []
   %tr
     %td.green
       .op Model#all.each
-      .time [ 52.318 ]
-      .rate [ 19,114/sec ]
+      .time [ 40.87 ]
+      .rate []
   %tr
     %td.green
       .op Model#find
@@ -58,13 +58,13 @@
   %tr
     %td.green
       .op Model#save
-      .time [ 554.206 ]
-      .rate [ 1,804/sec ]
+      .time [ 487.93 ]
+      .rate []
   %tr
     %td.green
       .op Model#update_attribute
-      .time [ 401.765 ]
-      .rate [ 2,489/sec ]
+      .time [ 339.54 ]
+      .rate []
 
 %table.performance
   %tr
@@ -72,47 +72,47 @@
   %tr
     %td.green
       .op relation#build
-      .time [ 2.655 ]
-      .rate [ 3,766/sec ]
+      .time [ 2.253 ]
+      .rate []
   %tr
     %td.green
       .op relation#clear
-      .time [ 1.307 ]
-      .rate [ 7,651/sec ]
+      .time [ 1.230 ]
+      .rate []
   %tr
     %td.yellow
       .op relation#create
-      .time [ 6.997 ]
-      .rate [ 1,429/sec ]
+      .time [ 4.899 ]
+      .rate []
   %tr
     %td.green
       .op relation#count
-      .time [ 0.017 ]
+      .time [ 0.011 ]
       .rate
   %tr
     %td.green
       .op relation#delete_all
-      .time [ 2.229 ]
-      .rate [ 4,486/sec ]
+      .time [ 1.377 ]
+      .rate []
   %tr
     %td.green
       .op relation#push (batch)
-      .time [ 4.054 ]
-      .rate [ 2,466/sec ]
+      .time [ 3.496 ]
+      .rate []
   %tr
     %td.green
       .op relation#each
-      .time [ 0.001 ]
-      .rate [ 10,000,000/sec ]
+      .time [ 0.027 ]
+      .rate []
   %tr
     %td.green
       .op relation#find
-      .time [ 0.069 ]
+      .time [ 0.044 ]
       .rate
   %tr
     %td.green
       .op relation#delete
-      .time [ 0.065 ]
+      .time [ 0.045 ]
       .rate
 
 %table.performance
@@ -121,8 +121,8 @@
   %tr
     %td.green
       .op relation#=
-      .time [ 4.539 ]
-      .rate [ 2,203/sec ]
+      .time [ 3.902 ]
+      .rate []
 
 %table.performance
   %tr
@@ -130,47 +130,47 @@
   %tr
     %td.green
       .op relation#build
-      .time [ 21.225 ]
-      .rate [ 4,711/sec ]
+      .time [ 18.521 ]
+      .rate []
   %tr
     %td.green
       .op relation#clear
-      .time [ 5.289 ]
-      .rate [ 18,907/sec ]
+      .time [ 4.085 ]
+      .rate []
   %tr
     %td.yellow
       .op relation#create
-      .time [ 59.970 ]
-      .rate [ 1,667/sec ]
+      .time [ 45.464 ]
+      .rate []
   %tr
     %td.green
       .op relation#count
-      .time [ 0.057 ]
+      .time [ 0.051 ]
       .rate
   %tr
     %td.green
       .op relation#delete_all
-      .time [ 6.897 ]
-      .rate [ 14,499/sec ]
+      .time [ 5.596 ]
+      .rate []
   %tr
     %td.green
       .op relation#push (batch)
-      .time [ 44.710 ]
-      .rate [ 2,236/sec ]
+      .time [ 34.551 ]
+      .rate []
   %tr
     %td.green
       .op relation#each
-      .time [ 0.089 ]
-      .rate [ 1,123,595/sec ]
+      .time [ 0.055 ]
+      .rate []
   %tr
     %td.green
       .op relation#find
-      .time [ 1.326 ]
+      .time [ 0.020 ]
       .rate
   %tr
     %td.green
       .op relation#delete
-      .time [ 0.569 ]
+      .time [ 0.410 ]
       .rate
 
 %table.performance
@@ -179,8 +179,8 @@
   %tr
     %td.green
       .op relation#=
-      .time [ 43.719 ]
-      .rate [ 2,287/sec ]
+      .time [ 54.991 ]
+      .rate []
 
 %table.performance
   %tr
@@ -188,13 +188,13 @@
   %tr
     %td.green
       .op relation#build
-      .time [ 1.715 ]
-      .rate [ 5,830/sec ]
+      .time [ 1.325 ]
+      .rate []
   %tr
     %td.green
       .op relation#clear
-      .time [ 0.755 ]
-      .rate [ 13,245/sec ]
+      .time [ 0.350 ]
+      .rate []
 
   %tr
     %td.green
@@ -209,20 +209,48 @@
   %tr
     %td.green
       .op relation#push (batch)
-      .time [ 2.723 ]
-      .rate [ 3,672/sec ]
+      .time [ 2.628 ]
+      .rate []
   %tr
     %td.green
       .op relation#each
-      .time [ 0.008 ]
-      .rate [ 1,250,000/sec ]
+      .time [ 0.005 ]
+      .rate []
   %tr
     %td.green
       .op relation#find
-      .time [ 0.113 ]
+      .time [ 0.010 ]
       .rate
   %tr
     %td.green
       .op relation#delete
-      .time [ 0.076 ]
+      .time [ 0.060 ]
       .rate
+
+%table.performance
+  %tr
+    %td.header{ colspan: 3 } eager loading 1-1 (10,000 docs)
+  %tr
+    %td.yellow
+      .op Model#each (without eager load)
+      .time [ 5.617 ]
+      .rate []
+  %tr
+    %td.green
+      .op Model#includes (with eager load)
+      .time [ 2.966 ]
+      .rate []
+
+%table.performance
+  %tr
+    %td.header{ colspan: 3 } eager loading 1-n (10,000 docs)
+  %tr
+    %td.yellow
+      .op Model.all#each (without eager load)
+      .time [ 4.300 ]
+      .rate
+  %tr
+    %td.green
+      .op Model#includes (with eager load)
+      .time [ 2.094 ]
+      .rate [ ]
