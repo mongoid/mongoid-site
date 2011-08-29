@@ -29,6 +29,7 @@
     %li <a href="#desc"><tt>Model.desc</tt></a>
     %li <a href="#distinct"><tt>Criteria#distinct</tt></a>
     %li <a href="#excludes"><tt>Model.excludes</tt></a>
+    %li <a href="#includes"><tt>Model.includes</tt></a>
     %li <a href="#limit"><tt>Model.limit</tt></a>
     %li <a href="#near"><tt>Model.near</tt></a>
     %li <a href="#not_in"><tt>Model.not_in</tt></a>
@@ -219,6 +220,42 @@
 :coderay
   #!ruby
   {{ "last_name" : { "$ne" : "Teller" } }, { "first_name" : { "$ne" : "Bob" } }}
+
+%a{name: "includes"}
+%h4 <tt>Model.includes</tt> | <tt>Criteria#includes</tt>
+
+%p
+  Adds a criterion that specifies a list of relational associations to
+  eager load when executing the query. This is to prevent the n+1 issue when
+  iterating over documents that access their relations during the iteration.
+
+%p
+  This only works with <tt>has_many</tt>, <tt>has_one</tt>, and
+  <tt>belongs_to</tt> relations and only 1 level deep at the current moment.
+  If you try to eager load a many to many an exception will get raised. Many
+  to many is not supported due to the performance actually being slower
+  despite lowering the number of database calls.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Eager load the posts and games when retrieving the people.
+  Person.includes(:posts, :game)
+
+%mongodb mongodb queries
+:coderay
+  #!ruby
+  people_ids = people.find({}, { "fields" : { "_id" : 1 }})
+  posts.find({ "person_id" : { "$in" : people_ids }})
+  games.find({ "person_id" : { "$in" : people_ids }})
+
+%p
+  In order for <tt>#includes</tt> to work the Mongoid identity map must
+  be enabled in the mongoid.yml:
+
+:coderay
+  #!ruby
+  identity_map_enabled: true
 
 %a{name: "limit"}
 %h4 <tt>Model.limit</tt> | <tt>Criteria#limit</tt>
