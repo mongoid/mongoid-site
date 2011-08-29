@@ -68,14 +68,15 @@
 
 %p
   You can have Mongoid define indexes for you on "foreign key" fields for
-  relational associations.
+  relational associations. This only works on the relation macro that the
+  foreign key is stored on.
 
 :coderay
   #!ruby
   class Comment
     include Mongoid::Document
     belongs_to :post, index: true
-    has_many :users, index: true
+    has_and_belongs_to_many :preferences, index: true
   end
 
 %p
