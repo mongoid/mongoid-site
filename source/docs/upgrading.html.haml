@@ -67,7 +67,7 @@
   person.attributes = { :addresses => nil }
 
   # No save, will be atomic $pull when parent is saved.
-  person.addresses_attributes = [ { :_id => 1, _destroy => true }]
+  person.addresses_attributes = [ { :_id => 1, :_destroy => true }]
 
 
 %h3 Upgrading to 2.1.0
