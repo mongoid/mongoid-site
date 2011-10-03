@@ -9,11 +9,18 @@
   persisting other fields. Mongoid provides support for some of
   these operations as well.
 
-  %ul
-    %li <a href="#add_to_set"><tt>Model#add_to_set</tt></a>
-    %li <a href="#inc"><tt>Model#inc</tt></a>
-    %li <a href="#pull_all"><tt>Model#pull_all</tt></a>
-    %li <a href="#push"><tt>Model#push</tt></a>
+%ul
+  %li <a href="#add_to_set"><tt>Model#add_to_set</tt></a>
+  %li <a href="#bit"><tt>Model#bit</tt></a>
+  %li <a href="#inc"><tt>Model#inc</tt></a>
+  %li <a href="#pop"><tt>Model#pop</tt></a>
+  %li <a href="#pull"><tt>Model#pull</tt></a>
+  %li <a href="#pull_all"><tt>Model#pull_all</tt></a>
+  %li <a href="#push"><tt>Model#push</tt></a>
+  %li <a href="#push_all"><tt>Model#push_all</tt></a>
+  %li <a href="#rename"><tt>Model#rename</tt></a>
+  %li <a href="#set"><tt>Model#set</tt></a>
+  %li <a href="#unset"><tt>Model#unset</tt></a>
 
 %a{name: "add_to_set"}
 %h4 <tt>Model#add_to_set</tt>
@@ -37,6 +44,27 @@
     { "$addToSet" : { "aliases" : "Bond" } }
   )
 
+%a{name: "bit"}
+%h4 <tt>Model#bit</tt>
+
+%p
+  Performs MongoDB's <tt>$bit</tt> modifier on the supplied field and
+  bitwise operations. Note that Ruby 1.8.x hashes are not ordered so the
+  order of application is not guaranteed there.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.bit(:age, { and: 10, or: 12 })
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$bit" : { "age" : { "and" : 10, "or" : 12 } } }
+  )
+
 %a{name: "inc"}
 %h4 <tt>Model#inc</tt>
 
@@ -56,6 +84,46 @@
   collections["people"].update(
     { "_id" : ... },
     { "$inc" : { "age" : 1 } }
+  )
+
+%a{name: "pop"}
+%h4 <tt>Model#pop</tt>
+
+%p
+  Performs MongoDB's <tt>$pop</tt> modifier that removes the number of
+  elements from the array.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.pop(:aliases, 1)
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$pop" : { "aliases" : 1 } }
+  )
+
+%a{name: "pull"}
+%h4 <tt>Model#pull</tt>
+
+%p
+  Performs MongoDB's <tt>$pull</tt> modifier that removes the provided
+  value from the array.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.pull(:aliases, "Bond")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$pull" : { "aliases" : "Bond" } }
   )
 
 %a{name: "pull_all"}
@@ -98,4 +166,82 @@
   collections["people"].update(
     { "_id" : ... },
     { "$push" : { "aliases" : "007" } }
+  )
+
+%a{name: "push_all"}
+%h4 <tt>Model#push_all</tt>
+
+%p
+  Performs MongoDB's <tt>$pushAll</tt> modifier that will append the values to
+  the provided field.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.push_all(:aliases, [ "007", "008" ])
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$pushAll" : { "aliases" : [ "007", "008" ] } }
+  )
+
+%a{name: "rename"}
+%h4 <tt>Model#rename</tt>
+
+%p
+  Performs MongoDB's <tt>$rename</tt> modifier that renames a field atomically.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.rename(:bday, :dob)
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$rename" : { "bday" : "dob" } }
+  )
+
+%a{name: "set"}
+%h4 <tt>Model#set</tt>
+
+%p
+  Performs MongoDB's <tt>$set</tt> modifier to atomically set a single value.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.set(:name, "Tyler Durden")
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$set" : { "name" : "Tyler Durden" } }
+  )
+
+%a{name: "unset"}
+%h4 <tt>Model#unset</tt>
+
+%p
+  Performs MongoDB's <tt>$unset</tt> modifier to atomically remove a field
+  completely from the database.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  person.unset(:name)
+
+%mongodb mongodb command
+:coderay
+  #!ruby
+  collections["people"].update(
+    { "_id" : ... },
+    { "$unset" : { "name" : 1 } }
   )
