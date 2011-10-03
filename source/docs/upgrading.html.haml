@@ -9,6 +9,28 @@
   <a href="http://github.com/mongoid/mongoid/blob/master/CHANGELOG.md">changelog</a>
   for bug fixes, new features, and major changes between versions.
 
+%h3 upgrading to 2.3.0
+
+%p
+  Active Model, MongoDB, and the MongoDB Ruby Driver requirements have been raised:
+
+  %ul
+    %li Active Model 3.1 is now the minimum requirement.
+    %li MongoDB 2.0.0 is now the minimum requirement.
+    %li MongoDB Ruby Driver, BSON versions 1.4.0 are the minimum.
+
+%p
+  For those using <tt>#create</tt>, <tt>#create!</tt>, and <tt>#build</tt> on
+  associations that are subclassed and passing in types to these methods,
+  the type now needs to be the third argument as mass assignment scoping is
+  now supported in these methods:
+
+:coderay
+  #!ruby
+  canvas.shapes.build({ x: 10, y: 10 }, as: :admin, Circle)
+  canvas.shapes.create({ x: 10, y: 10 }, as: :admin, Circle)
+  canvas.shapes.create!({ x: 10, y: 10 }, as: :admin, Circle)
+
 %h3 upgrading to 2.2.0
 
 %p
