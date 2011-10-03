@@ -216,3 +216,30 @@
   programming.child_tags  # [ruby, python]
   ruby.parent_tag         # [programming]
   python.parent_tag       # [programming]
+
+%h3 cascading callbacks
+
+%p
+  If you want the embedded document callbacks to fire when calling a persistence
+  operation on it's parent, you will need to provide the cascade callbacks
+  option to the relation.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    embeds_many :addresses, cascade_callbacks: true
+  end
+
+%p
+  <i>Gotcha</i>: You run the risk of having the callbacks on an embedded document
+  fire more than once if this option is set to true and you call the
+  operation on the child. In these cases it's best to always call from the parent.
+
+:coderay
+  #!ruby
+  # This will fire the callbacks twice
+  person.addresses.create(street: "Unter den Linden")
+  # This fires the callbacks once
+  person.addresses.build(street: "Maybachufer")
+  person.save

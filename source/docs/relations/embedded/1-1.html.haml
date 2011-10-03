@@ -152,3 +152,30 @@
   end
   class Doctor < Person; end;
   class Nurse < Person; end;
+
+%h3 cascading callbacks
+
+%p
+  If you want the embedded document callbacks to fire when calling a persistence
+  operation on it's parent, you will need to provide the cascade callbacks
+  option to the relation.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    embeds_one :name, cascade_callbacks: true
+  end
+
+%p
+  <i>Gotcha</i>: You run the risk of having the callbacks on an embedded document
+  fire more than once if this option is set to true and you call the
+  operation on the child. In these cases it's best to always call from the parent.
+
+:coderay
+  #!ruby
+  # This will fire the callbacks twice
+  person.create_name(first: "Bob")
+  # This fires the callbacks once
+  person.build_name(first: "Joe")
+  person.save
