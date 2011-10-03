@@ -148,6 +148,15 @@
     include Mongoid::Timestamps::Updated
   end
 
+%p
+  If you want to turn off timestamping for specific calls, use the timeless
+  method:
+
+:coderay
+  #!ruby
+  person.timeless.save
+  Person.timeless.create!
+
 %h3 Keys
 
 %p
