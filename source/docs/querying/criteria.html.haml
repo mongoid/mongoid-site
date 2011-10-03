@@ -21,6 +21,7 @@
 %p
   %ul
     %li <a href="#all_in"><tt>Model.all_in</tt></a>
+    %li <a href="#all_of"><tt>Model.all_of</tt></a>
     %li <a href="#also_in"><tt>Model.also_in</tt></a>
     %li <a href="#and"><tt>Criteria#and</tt></a>
     %li <a href="#any_in"><tt>Model.any_in</tt></a>
@@ -56,6 +57,24 @@
 :coderay
   #!ruby
   { "aliases" : { "$all" : [ "Bond", "007" ] }}
+
+%a{name: "all_of"}
+%h4 <tt>Model.all_of</tt> | <tt>Criteria#all_of</tt>
+
+%p
+  Adds a criterion that specifies expressions that must all match in order to
+  return results. The corresponding MongoDB operation is <tt>$and</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all crazy old people.
+  Person.all_of(:age.gt => 60, mental_state: "crazy mofos")
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "$and" : [{ "age" : { "$gt" : 60 }}, { "mental_state" : "crazy mofos" }] }
 
 %a{name: "also_in"}
 %h4 <tt>Model.also_in</tt> | <tt>Criteria#also_in</tt>
