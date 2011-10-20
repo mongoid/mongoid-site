@@ -108,11 +108,11 @@
   person.tags.push(Tag.new)
   person.tags.concat([ tag_one, tag_two ])
 
-  # Appends and returns a new tag from the attirbutes.
+  # Appends and returns a new tag from the attributes.
   person.tags.build(name: "Buch")
   person.tags.new(name: "Buch")
 
-  # Appends, saves, and returns a new tag from the attirbutes.
+  # Appends, saves, and returns a new tag from the attributes.
   person.tags.create(name: "Bar")
 
   # Appends, saves, and returns a new tag from the attributes,
@@ -124,11 +124,11 @@
   tag.people.push(Person.new)
   tag.people.concat([ person_one, person_two ])
 
-  # Appends and returns a new person from the attirbutes.
+  # Appends and returns a new person from the attributes.
   tag.people.build(title: "Mr")
   tag.people.new(title: "Mr")
 
-  # Appends, saves, and returns a new person from the attirbutes.
+  # Appends, saves, and returns a new person from the attributes.
   tag.people.create(title: "Sire")
 
   # Appends, saves, and returns a new person from the attributes,
