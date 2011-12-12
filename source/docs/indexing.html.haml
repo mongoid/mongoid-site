@@ -44,6 +44,17 @@
     )
   end
 
+  %p
+    Indexes can be sparse:
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+      field :ssn
+      index :ssn, sparse: true
+    end
+
 %p
   Indexes can be run in the background in cases where they may take some time:
 
