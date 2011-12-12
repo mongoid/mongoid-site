@@ -106,3 +106,27 @@
   #!ruby
   defaults: &defaults
     autocreate_indexes: true
+
+
+%h3 dropping indexes
+
+%p
+  When you want to remove an index, it must be done using the MongoDB index name.
+  Therefore if you create a range index on the <i>birthday</i> date coluumn in the Person
+  model in the Rails console, you would do it like this.
+
+:coderay
+  #!ruby
+  :001 > Person.collection.ensure_index([['birthday',Mongo::DESCENDING]])
+
+%p
+  In order to delete that same index, you need to use the index name, not the index definition.
+  The index name is <i>birthday</i>, but the index definition according to MongoDB will include
+  an <i>_1</i> for an <i>Mongo::ASCENDING</i> range index and a <i>_-1</i> for a
+  <i>Mongo::DESCENDING</i> range index.  To remove the above index in the Rails console, you would
+  enter the following.
+
+:coderay
+  #!ruby
+  :002 > Person.collection.drop_index('birthday_-1')
+
