@@ -48,3 +48,38 @@
   to make sure when loaded from the database the correct document is
   returned. This also holds true for the embedded documents <tt>Circle</tt>,
   <tt>Rectangle</tt>, and <tt>Shape</tt>.
+
+%h3 querying for subclasses
+
+%p
+  Querying for subclasses is handled in the normal manner, and although
+  the documents are all in the same collection, queries will only return
+  documents of the correct type, similar to Single Table Inheritance in
+  ActiveRecord.
+
+:coderay
+  #!ruby
+  # Returns Canvas documents and subclasses
+  Canvas.where(name: "Paper")
+  # Returns only Firefox documents
+  Firefox.where(name: "Window 1")
+
+%h3 associations
+
+%p
+  You can add any type of subclass to a has one or has many association,
+  through either normal setting or through the build and create methods
+  on the association:
+
+:coderay
+  #!ruby
+  firefox = Firefox.new
+  # Builds a Shape object
+  firefox.shapes.build({ x: 0, y: 0 })
+  # Builds a Circle object
+  firefox.shapes.build({ x: 0, y: 0 }, Circle)
+  # Creates a Rectangle object
+  firefox.shapes.create({ x: 0, y: 0 }, Rectangle)
+
+  rect = Rectangle.new(width: 100, height: 200)
+  firefox.shapes
