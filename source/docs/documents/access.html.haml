@@ -51,15 +51,15 @@
     attr_accessible :first_name
   end
 
-  # Set attributes on a person properly.
-  Person.new(first_name: "Corbin")
-  person.attributes = { first_name: "Corbin" }
-  person.write_attributes(first_name: "Corbin")
+  # Set attributes on a user properly.
+  User.new(first_name: "Corbin")
+  user.attributes = { first_name: "Corbin" }
+  user.write_attributes(first_name: "Corbin")
 
-  # Attempt to set attributes a person, raising an error.
-  Person.new(first_name: "Corbin", password: "password")
-  person.attributes = { first_name: "Corbin", password: "password" }
-  person.write_attributes(first_name: "Corbin", password: "password")
+  # Attempt to set attributes on a user, will silently ignore protected ones.
+  User.new(first_name: "Corbin", password: "password")
+  user.attributes = { first_name: "Corbin", password: "password" }
+  user.write_attributes(first_name: "Corbin", password: "password")
 
 %p
   You can scope the mass assignment by role by providing the role as an
