@@ -85,3 +85,45 @@
   and
   = link_to 'limit', 'http://mongoid.org/docs/querying/criteria.html#limit'
   methods bringing just the needed objects from Mongodb.
+
+%h3 Geo Spacial Search
+
+%p
+  Ryan Ong's
+  <a href="http://github.com/ryanong/mongoid_spacial">mongoid_spacial</a> gem
+  extends complex criteria options and simplifies geo spacial row creation,
+  search and return. It adds a few helpers and it also adds a wrapper around
+  the geoNear function that has support for pagination and automatic unit conversion.
+
+:coderay
+  #!ruby
+  class River
+    include Mongoid::Document
+    include Mongoid::Spacial::Document
+
+    field :name, type: String
+    field :source, type: Array, spacial: true
+
+    # set return_array to true if you do not want a hash returned all the time
+    field :mouth, type: Array, spacial: {lat: :latitude, lng: :longitude, return_array: true }
+
+    spacial_index :source
+  end
+
+  hudson = River.create(
+    name: 'Hudson',
+    # order agnostic
+    source: {:lat => 44.106667, :lng => -73.935833},
+    mouth: {:latitude => 40.703056, :longitude => -74.026667}
+  )
+
+  hudson.distance_from(:mouth, [-74,40], :mi)
+
+  # Automatic unit conversion for spherical query, support for $near and $within
+  River.where(:source.near(:sphere) => {:point => [-73.98, 40.77], :max => 5, :unit => :km})
+
+  # Adds chainable paginatable geo_near finder.
+  # Returns paginated sorted by distance list of rivers where
+  # name = Hudson and skips the first row with pagination
+  River.skip(1).where(name: 'Hudson').geo_near([-73.99756,40.73083], page: 1)
+
