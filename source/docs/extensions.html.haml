@@ -48,3 +48,40 @@
   # => true
   @user.vote_value(@post)
   # => :down
+
+%h3 Will Paginate Mongoid
+
+%p
+  Lucas Souza's
+  = link_to 'will_paginate_mongoid', 'https://github.com/lucasas/will_paginate_mongoid'
+  gem becomes possible use
+  %strong skip
+  and
+  %strong limit
+  methods from Mongoid with
+  = link_to 'will_paginate', 'https://github.com/mislav/will_paginate'
+
+%p
+  %strong Why I should use will_paginate_mongoid?
+
+%p
+  Will Paginate does not support Mongoid pagination (skip and limit methods) and
+  this issue can cause performance problems.
+  For example: If you use just will_paginate to paginate a model called User,
+  in your controller you will call this:
+
+:coderay
+  #!ruby
+  User.paginate :page => params[:page], :per_page => 10
+
+%p
+  The code above appears that will bring just 10 users from Mongodb, but
+  will bring all users from Mongodb.
+
+%p
+  With will_paginate_mongoid this issue is solved because it creates the
+  same pagination method but using
+  = link_to 'skip', 'http://mongoid.org/docs/querying/criteria.html#skip'
+  and
+  = link_to 'limit', 'http://mongoid.org/docs/querying/criteria.html#limit'
+  methods bringing just the needed objects from Mongodb.
