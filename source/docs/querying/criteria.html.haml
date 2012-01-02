@@ -425,6 +425,7 @@
   Person.where(:aliases.size => 2)
   Person.where(:location.near => [ 22.50, -21.33 ])
   Person.where(:location.within => { "$center" => [ [ 50, -40 ], 1 ] })
+  Person.where(:skills.matches => {:level => "pro", :name => "photographer"})
 
 %mongodb mongodb query selectors
 :coderay
@@ -451,6 +452,7 @@
   { "aliases" : { "$size" : 2 } }
   { "location" : { "$near" : [ 22.50, -21.33 ] } }
   { "location" : { "$within" : { "$center" => [ [ 50, -40 ], 1 ] } } }
+  { "skills" : { "$elemMatch" : { "level" : "pro", "name" : "photographer" } } }
 
 %a{name: "without"}
 %h4 <tt>Model.without</tt> | <tt>Criteria#without</tt>
