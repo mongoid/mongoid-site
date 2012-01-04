@@ -5,3 +5,4 @@ tmp/*
 output/*
 .sass-cache
 build/*
+publish.sh
