@@ -42,11 +42,11 @@
     include Mongo::Voter
   end
 
-  @user.vote(@post, :down)
+  user.vote(post, :down)
   # => <Post .. votes: {"up"=>[], "down"=>[..], "count"=>1, "point"=>-2, ..}>
-  @user.voted?(@post)
+  user.voted?(post)
   # => true
-  @user.vote_value(@post)
+  user.vote_value(post)
   # => :down
 
 %h3 Will Paginate Mongoid
