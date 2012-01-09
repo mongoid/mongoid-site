@@ -82,17 +82,17 @@
 :coderay
   #!ruby
 
-  # Return the tags.
+  # Return the tags that belong to a person.
   person.tags
 
   # Set the tags from the person.
   person.tags = [ Tag.new ]
 
-  # Return the person from the tag.
-  tag.person
+  # Return the people that belong to a tag.
+  tag.people
 
-  # Set the person from the tag.
-  tag.person = Person.new
+  # Set the people from the tag.
+  tag.people = [ Person.new ]
 
 %h3 building and creating
 
