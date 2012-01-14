@@ -91,11 +91,23 @@
   end
 
 %p
-  When you want to create the indexes in the database, use the provided rake task:
+  When you want to create the indexes in the database, use the provided rake task.
 
 :coderay
   #!ruby
   rake db:mongoid:create_indexes
+
+%p
+  Note that you must following standard Rails class and module naming and
+  organization patterns in order for this to work properly with respect to
+  namespacing and camel-casing.
+
+:coderay
+  #!ruby
+  Model # must reside in /app/models/model.rb
+  MyModel # must be in /app/models/my_model.rb
+  MYModel # must be in /app/models/m_y_model.rb
+  Namespaced::Model # must be in /app/models/namespaced/model.rb
 
 %p
   If you want indexes autocreated when the model classes are loaded, add this
