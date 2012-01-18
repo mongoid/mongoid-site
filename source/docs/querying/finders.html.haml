@@ -41,14 +41,15 @@
 %h4 <tt>Model.count</tt>
 
 %p
-  Returns the number of documents in the database given the provided
-  conditions.
+  Returns the number of documents in the database.
+  If you want to specify conditions use where.
 
 :coderay
   #!ruby
-  # Get the count of documents given the provided conditions.
+  # Get the count of documents.
   Person.count
-  Person.count(conditions: { title: "Sir" })
+  # Get the count of documents given the provided conditions.
+  Person.where(title: "Sir").count
 
 %a{name: "exists?"}
 %h4 <tt>Model.exists?</tt>
