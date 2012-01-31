@@ -3,6 +3,37 @@
 
 %h1 extensions
 
+%h3 Optimistic Locking
+
+%p
+  Boxee's
+  = link_to 'mongoid_optimistic_locking', 'https://github.com/burgalon/mongoid_optimistic_locking'
+  helps to abstract "Update if current" method which may be used as a replacement for transactions in Mongo The gem is an addon over Mongoid ODM.
+
+:coderay
+  #!ruby
+  # post.rb
+  class Post
+    include Mongoid::Document
+    include Mongoid::Lockable
+
+    field :text
+  end
+
+  # post_controller.rb
+  class PostController < ApplicationController
+      ## Adds an "UPDATE: ...some text..." to an existing document
+      def add_update
+          begin
+              post = Post.find(params[:id])
+              post.text += "---UPDATE---  " + params[:more_text]
+              post.save_optimistically!
+          rescue Mongoid::Errors::StaleDocument
+              retry
+          end
+      end
+  end
+
 %h3 Fabrication
 
 %p
