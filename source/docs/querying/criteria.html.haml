@@ -431,6 +431,11 @@
   )
   Person.where(age: 18...35)
 
+  # Using both symbol h4s on embedded docs
+  # Match all people who live at a house with a number over 100
+  Person.where(:"addresses.house_no".gt => 100)
+ 
+
 %mongodb mongodb query selectors
 :coderay
   #!ruby
@@ -460,6 +465,9 @@
     { "$elemMatch" : { "level" : "pro", "name" : "photographer" }}
   }
   { "age" : { "$gte" : 18, "$lte" : 35 }}
+
+  # Match all people who live at a house with a number over 100
+  { "addresses.house_no" : { "$gt" : 100 }}
 
 %a{name: "without"}
 %h4 <tt>Model.without</tt> | <tt>Criteria#without</tt>
