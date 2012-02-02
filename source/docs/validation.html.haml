@@ -111,7 +111,7 @@
 
 :coderay
   #!ruby
-  validates_format_of :title, with: /[A-Za-z]/
+  validates_format_of :title, with: /\A\w+\Z/
 
 %h4 <tt>validates_inclusion_of</tt>
 
