@@ -78,6 +78,13 @@
   person.destroy! # Permanently delete the document with callbacks.
   person.restore # Brings the "deleted" document back to life.
 
+%p
+  The documents that have been "flagged" as deleted (soft deleted) can be accessed at any time by calling the <tt>deleted</tt> class method on the class.
+
+:coderay
+  #!ruby
+  Person.deleted # Returns documents that have been "flagged" as deleted.
+
 %h3 Versioning
 
 %p
