@@ -10,9 +10,11 @@
   master db on port 27017:
 
 :coderay
-  #!ruby
+  #!yaml
   host: localhost
   database: godfather
+
+%p Note, this configuration will NOT work inside rails.
 
 %h3 rails applications
 
@@ -24,6 +26,34 @@
 :coderay
   #!ruby
   $ rails g mongoid:config
+
+%p
+  This will create a configuration file with the Rails specific environment
+  sections that that looks like this:
+
+:coderay
+  #!yaml
+  development:
+    host: localhost
+    database: godfather_development
+
+  test:
+    host: localhost
+    database: godfather_test
+
+  # set these environment variables on your prod server
+  production:
+    host: <%= ENV['MONGOID_HOST'] %>
+    port: <%= ENV['MONGOID_PORT'] %>
+    username: <%= ENV['MONGOID_USERNAME'] %>
+    password: <%= ENV['MONGOID_PASSWORD'] %>
+    database: <%= ENV['MONGOID_DATABASE'] %>
+    # slaves:
+    #   - host: slave1.local
+    #     port: 27018
+    #   - host: slave2.local
+    #     port: 27019
+
 
 %p
   Now that you have a <tt>mongoid.yml</tt> you can't wait to delete that
