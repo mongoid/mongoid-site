@@ -150,8 +150,8 @@
     include Mongoid::Document
     embedded_in :person
   end
-  class Doctor < Person; end;
-  class Nurse < Person; end;
+  class Doctor < Profession; end;
+  class Nurse < Profession; end;
 
 %h3 cascading callbacks
 
