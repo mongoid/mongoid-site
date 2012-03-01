@@ -13,3 +13,17 @@
     include Mongoid::Document
     include Mongoid::MultiParameterAttributes
   end
+
+%p 
+  An example of this is the date_select or datetime_select helper methods:
+
+:coderay
+  #!ruby
+  = f.date_select(:birthday, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'})
+
+will send the date as multi param:
+
+birthday(1i)
+birthday(2i)
+birthday(3i)
+
