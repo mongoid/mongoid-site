@@ -1,0 +1,869 @@
+- content_for :head do
+  %title Mongoid: Querying
+
+%h1 querying
+
+%p
+  One of MongoDB's greatest features is its ability to execute dynamic
+  queries, which Mongoid abstracts in a familiar Arel-style DSL.
+
+%h3 mongoid queries
+
+%p
+  All queries in Mongoid are <tt>Criteria</tt>, which is a chainable and
+  lazily evaluated wrapper to a MongoDB dynamic query. Criteria only
+  touch the database when they need to, for example on iteration of the
+  results, and when executed wrap a cursor in order to keep memory
+  management and performance predictable.
+
+%h1 criteria
+
+%p
+  The following are a list of chainable criteria query methods in
+  Mongoid along with their corresponding database selectors or options.
+
+%p
+  Please note again that criteria are lazy evaluated, and with each
+  chained method it will be cloned and return a new criteria copy.
+
+%p
+  For more information on the underlying database selectors please refer to
+  <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries">MongoDB</a>
+  directly.
+
+%h3 query methods
+
+%p
+  %ul
+    %li <a href="#all_in"><tt>Model.all_in</tt></a>
+    %li <a href="#all_of"><tt>Model.all_of</tt></a>
+    %li <a href="#also_in"><tt>Model.also_in</tt></a>
+    %li <a href="#and"><tt>Criteria#and</tt></a>
+    %li <a href="#any_in"><tt>Model.any_in</tt></a>
+    %li <a href="#any_of"><tt>Model.any_of</tt></a>
+    %li <a href="#asc"><tt>Model.asc</tt></a>
+    %li <a href="#desc"><tt>Model.desc</tt></a>
+    %li <a href="#distinct"><tt>Criteria#distinct</tt></a>
+    %li <a href="#excludes"><tt>Model.excludes</tt></a>
+    %li <a href="#includes"><tt>Model.includes</tt></a>
+    %li <a href="#limit"><tt>Model.limit</tt></a>
+    %li <a href="#near"><tt>Model.near</tt></a>
+    %li <a href="#not_in"><tt>Model.not_in</tt></a>
+    %li <a href="#only"><tt>Model.only</tt></a>
+    %li <a href="#order_by"><tt>Model.order_by</tt></a>
+    %li <a href="#skip"><tt>Model.skip</tt></a>
+    %li <a href="#where"><tt>Model.where</tt></a>
+    %li <a href="#without"><tt>Model.without</tt></a>
+
+%a{name: "all_in"}
+%h4 <tt>Model.all_in</tt> | <tt>Criteria#all_in</tt>
+
+%p
+  Adds a criterion that specifies values that must all match in order to
+  return results. The corresponding MongoDB operation is <tt>$all</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with Bond and 007 as aliases.
+  Person.all_in(aliases: [ "Bond", "007" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "aliases" : { "$all" : [ "Bond", "007" ] }}
+
+%a{name: "all_of"}
+%h4 <tt>Model.all_of</tt> | <tt>Criteria#all_of</tt>
+
+%p
+  Adds a criterion that specifies expressions that must all match in order to
+  return results. The corresponding MongoDB operation is <tt>$and</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all crazy old people.
+  Person.all_of(:age.gt => 60, mental_state: "crazy mofos")
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "$and" : [{ "age" : { "$gt" : 60 }}, { "mental_state" : "crazy mofos" }] }
+
+%a{name: "also_in"}
+%h4 <tt>Model.also_in</tt> | <tt>Criteria#also_in</tt>
+
+%p
+  Adds a criterion that specifies values where any value can be matched in
+  order to return results. This is similar to <tt>Criteria#any_in</tt> with
+  the exception here that if if it chained with values for the same field
+  it performs a union of the values where <tt>any_in</tt> perform an
+  intersection. The underlying MongoDB expression is <tt>$in</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with either Bond or 007 as aliases.
+  Person.also_in(aliases: [ "Bond", "007" ])
+  Person.any_in(aliases: [ "Bond" ]).also_in(aliases: [ "007" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "aliases" : { "$in" : [ "Bond", "007" ] }}
+
+%a{name: "and"}
+%h4 <tt>Criteria#and</tt>
+
+%p
+  Adds another simple expression that must match in order to return results.
+  This is the same as <a href="#where">Criteria#where</a> and is mostly
+  here for syntactic sugar.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with last name Jordan and first name starting with d.
+  Person.where(last_name: "Jordan").and(first_name: /^d/i)
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "last_name" : "Jordan", "first_name" : /^d/i }
+
+%a{name: "any_in"}
+%h4 <tt>Model.any_in</tt> | <tt>Criteria#any_in</tt>
+
+%p
+  Adds a criterion that specifies values where any value can be matched in
+  order to return results. This is similar to <tt>Criteria#also_in</tt> with
+  the exception here that if if it chained with values for the same field
+  it performs an intersection of the values where <tt>also_in</tt> perform a
+  union. The underlying MongoDB expression is <tt>$in</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with either Bond or 007 as aliases.
+  Person.any_in(aliases: [ "Bond", "007" ])
+  Person.
+    any_in(aliases: [ "Bond", "007", "James" ]).
+    any_in(aliases: [ "Bond", "007" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "aliases" : { "$in" : [ "Bond", "007" ] }}
+
+%a{name: "any_of"}
+%h4 <tt>Model.any_of</tt> | <tt>Criteria#any_of</tt>
+
+%p
+  Adds a criterion that specifies a set of expressions that any can match
+  in order to return results. The underlying MongoDB expression is
+  <tt>$or</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with either last name Penn or Teller
+  Person.any_of({ last_name: "Penn" }, { last_name: "Teller" })
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "last_name" :
+    { "$or" :
+      [ { "last_name" : "Penn" }, { "last_name" : "Teller" } ]
+    }
+  }
+
+%a{name: "asc"}
+%h4 <tt>Model.asc</tt> | <tt>Criteria#asc</tt>
+
+%p
+  Adds ascending sort options for the provided fields.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Sort people by first and last name ascending.
+  Person.asc(:first_name, :last_name)
+  Person.ascending(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "sort" :
+      {[ [ "first_name", Mongo::ASCENDING ],
+        [ "last_name", Mongo::ASCENDING ] ]} }
+
+%a{name: "desc"}
+%h4 <tt>Model.desc</tt> | <tt>Criteria#desc</tt>
+
+%p
+  Adds descending sort options for the provided fields.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Sort people by first and last name descending.
+  Person.desc(:first_name, :last_name)
+  Person.descending(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "sort" :
+      {[ [ "first_name", Mongo::DESCENDING ],
+        [ "last_name", Mongo::DESCENDING ] ]} }
+
+%a{name: "distinct"}
+%h4 <tt>Criteria#distinct(name)</tt>
+
+%p
+  Get the distinct values for the provided field.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Get the distinct values for last names
+  Person.all.distinct(:last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "distinct" : "last_name" }
+
+%a{name: "excludes"}
+%h4 <tt>Model.excludes</tt> | <tt>Criteria#excludes</tt>
+
+%p
+  Adds a criterion that specifies a set of expressions that cannot match
+  in order to return results. The underlying MongoDB expression is
+  <tt>$ne</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people without either last name Teller and first name Bob.
+  Person.excludes(last_name: "Teller", first_name: "Bob")
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  {{ "last_name" : { "$ne" : "Teller" } }, { "first_name" : { "$ne" : "Bob" } }}
+
+%a{name: "includes"}
+%h4 <tt>Model.includes</tt> | <tt>Criteria#includes</tt>
+
+%p
+  Adds a criterion that specifies a list of relational associations to
+  eager load when executing the query. This is to prevent the n+1 issue when
+  iterating over documents that access their relations during the iteration.
+
+%p
+  This only works with <tt>has_many</tt>, <tt>has_one</tt>, and
+  <tt>belongs_to</tt> relations and only 1 level deep at the current moment.
+  If you try to eager load a many to many an exception will get raised. Many
+  to many is not supported due to the performance actually being slower
+  despite lowering the number of database calls.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Eager load the posts and games when retrieving the people.
+  Person.includes(:posts, :game)
+
+%mongodb mongodb queries
+:coderay
+  #!ruby
+  people_ids = people.find({}, { "fields" : { "_id" : 1 }})
+  posts.find({ "person_id" : { "$in" : people_ids }})
+  games.find({ "person_id" : { "$in" : people_ids }})
+
+%p
+  In order for <tt>#includes</tt> to work the Mongoid identity map must
+  be enabled in the mongoid.yml:
+
+:coderay
+  #!ruby
+  identity_map_enabled: true
+
+%a{name: "limit"}
+%h4 <tt>Model.limit</tt> | <tt>Criteria#limit</tt>
+
+%p
+  Limits the number of returned results by the provided value.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Only return 20 documents.
+  Person.limit(20)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "limit" : 20 }
+
+%a{name: "near"}
+%h4 <tt>Model.near</tt> | <tt>Criteria#near</tt>
+
+%p
+  Adds a criterion to find locations that are near the supplied
+  coordinates. This performs a MongoDB <tt>$near</tt> selection and
+  requires a 2d index to be on the provided field.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all bars near Berlin
+  Bar.near(location: [ 52.30, 13.25 ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  { "location" : { "$near" : [ 52.30, 13.25 ] }}
+
+%a{name: "not_in"}
+%h4 <tt>Model.not_in</tt> | <tt>Criteria#not_in</tt>
+
+%p
+  Adds a criterion that specifies a set of expressions that cannot match
+  in order to return results. The underlying MongoDB expression is
+  <tt>$nin</tt>.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people without last names Zorg and Dallas
+  Person.not_in(last_name: [ "Zorg", "Dallas" ])
+
+%mongodb mongodb query selector
+:coderay
+  #!ruby
+  {{ "last_name" : { "$nin" : [ "Zorg", "Dallas" ] } }}
+
+%a{name: "only"}
+%h4 <tt>Model.only</tt> | <tt>Criteria#only</tt>
+
+%p
+  Limits the fields returned from the database to those supplied to the
+  method. Extremely useful for list views where the entire documents
+  are not needed. Cannot be used in conjunction with #without.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Return only the first and last names of each person.
+  Person.only(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "fields" : { "first_name" : 1, "last_name" : 1 }}
+
+%a{name: "order_by"}
+%h4 <tt>Model.order_by</tt> | <tt>Criteria#order_by</tt>
+
+%p
+  Sorts the results given the arguments that must match the MongoDB
+  driver sorting syntax (key/value pairs of field and direction).
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Provide the sorting options.
+  Person.order_by([[:first_name, :asc], [:last_name, :desc]])
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "sort" :
+      {[ [ "first_name", Mongo::ASCENDING ],
+        [ "last_name", Mongo::DESCENDING ] ]} }
+
+%a{name: "skip"}
+%h4 <tt>Model.skip</tt> | <tt>Criteria#skip</tt>
+
+%p
+  Skips the number of the results given the provided value, similar to
+  a SQL "offset".
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Skip 20 documents.
+  Person.skip(20)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "skip" : 20 }
+
+%a{name: "where"}
+%h4 <tt>Model.where</tt> | <tt>Criteria#where</tt>
+
+%p
+  Adds a criterion that must match in order to return results. If provided
+  a string it interperets it as a javascript function and converts it to
+  the proper <tt>$where</tt> clause. Mongoid also provides convenience
+  h4s on <tt>Symbol</tt> to make advanced queries simpler to write.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Match all people with first name Emmanuel
+  Person.where(first_name: "Emmanuel")
+
+  # Match all people with first name Emmanuel using Javascript.
+  Person.where("this.first_name == 'Emmanuel'")
+
+  # Match all people who live in Berlin, where address is embedded.
+  Person.where("addresses.city" => "Berlin")
+
+  # Match all people who live at an address in Berlin or
+  # Munich where address is embedded.
+  Person.where("addresses.city" => {"$in" => ["Berlin, "Munich"]})
+
+  # Example queries using symbol h4s to perform more complex criteria.
+  Person.where(:title.all => ["Sir"])
+  Person.where(:age.exists => true)
+  Person.where(:age.gt => 18)
+  Person.where(:age.gte => 18)
+  Person.where(:title.in => ["Sir", "Madam"])
+  Person.where(:age.lt => 55)
+  Person.where(:age.lte => 55)
+  Person.where(:title.ne => "Mr")
+  Person.where(:title.nin => ["Esquire"])
+  Person.where(:aliases.size => 2)
+  Person.where(:location.near => [ 22.50, -21.33 ])
+  Person.where(:location.within => { "$center" => [ [ 50, -40 ], 1 ] })
+  Person.where(
+    :skills.matches => {:level => "pro", :name => "photographer"}
+  )
+  Person.where(age: 18...35)
+
+  # Using both symbol h4s on embedded docs
+  # Match all people who live at a house with a number over 100
+  Person.where(:"addresses.house_no".gt => 100)
+ 
+
+%mongodb mongodb query selectors
+:coderay
+  #!ruby
+  # Match all people with first name Emmanuel
+  { "first_name" : "Emmanuel" }
+
+  # Match all people with first name Emmanuel using Javascript.
+  { "$where" : "this.first_name == 'Emmanuel'" }
+
+  # Match all people who live in Berlin, where address is embedded.
+  { "addresses.city" : "Berlin" }
+
+  # Example queries using symbol h4s to perform more complex criteria.
+  { "title" : { "$all" : [ "Sir" ] }}
+  { "age" : { "$exists" : true }}
+  { "age" : { "$gt" : 18 }}
+  { "age" : { "$gte" : 18 }}
+  { "title" : { "$in" : [ "Sir", "Madam" ] }}
+  { "age" : { "$lt" : 55 }}
+  { "age" : { "$lte" : 55 }}
+  { "title" : { "$ne" : "Mr" }}
+  { "title" : { "$nin" : [ "Esquire" ] }}
+  { "aliases" : { "$size" : 2 }}
+  { "location" : { "$near" : [ 22.50, -21.33 ] }}
+  { "location" : { "$within" : { "$center" => [ [ 50, -40 ], 1 ] }}}
+  { "skills" :
+    { "$elemMatch" : { "level" : "pro", "name" : "photographer" }}
+  }
+  { "age" : { "$gte" : 18, "$lte" : 35 }}
+
+  # Match all people who live at a house with a number over 100
+  { "addresses.house_no" : { "$gt" : 100 }}
+
+%a{name: "without"}
+%h4 <tt>Model.without</tt> | <tt>Criteria#without</tt>
+
+%p
+  Limits the fields returned from the database to those NOT supplied to the
+  method. Extremely useful for list views where the entire documents
+  are not needed. Cannot be used in conjunction with #only.
+
+%mongoid mongoid
+:coderay
+  #!ruby
+  # Return all fields except first name and last name
+  Person.without(:first_name, :last_name)
+
+%mongodb mongodb query options
+:coderay
+  #!ruby
+  { "fields" : { "first_name" : 0, "last_name" : 0 }}
+
+%h1 finders
+
+%p
+  Mongoid supports more traditional-style finders for those who prefer an
+  Active Record 2 type syntax. Note that unlike criteria, these methods are
+  not chainable and return actual arrays of documents, or a single document,
+  with the exception of those noted in their individual sections.
+
+%h3 finder methods
+
+%p
+  %ul
+    %li <a href="#all"><tt>Model.all</tt></a>
+    %li <a href="#count"><tt>Model.count</tt></a>
+    %li <a href="#exists?"><tt>Model.exists?</tt></a>
+    %li <a href="#find"><tt>Model.find</tt></a>
+    %li <a href="#find_or_create_by"><tt>Model.find_or_create_by</tt></a>
+    %li <a href="#find_or_initialize_by"><tt>Model.find_or_initialize_by</tt></a>
+    %li <a href="#first"><tt>Model.first</tt></a>
+    %li <a href="#last"><tt>Model.last</tt></a>
+
+%a{name: "all"}
+%h4 <tt>Model.all</tt>
+
+%p
+  Returns a chainable criteria object with the provided conditions
+  applied.
+
+:coderay
+  #!ruby
+  # Find all people by MongoDB compatible conditions and options.
+  Person.all
+  Person.all(conditions: { first_name: /^dur/i, "addresses.city" => "Berlin" })
+  Person.all(conditions: { title: "Sir" }, limit: 5)
+  Person.all(sort: [[ :first_name, :asc ]])
+
+%a{name: "count"}
+%h4 <tt>Model.count</tt>
+
+%p
+  Returns the number of documents in the database.
+  If you want to specify conditions use where.
+
+:coderay
+  #!ruby
+  # Get the count of documents.
+  Person.count
+  # Get the count of documents given the provided conditions.
+  Person.where(title: "Sir").count
+
+%a{name: "exists?"}
+%h4 <tt>Model.exists?</tt>
+
+%p
+  Returns true if any documents in the database exist given the provided
+  conditions and false if there are none.
+
+:coderay
+  #!ruby
+  # Do any documents exist in the database for the provided conditions?
+  Person.exists?
+  Person.exists?(conditions: { title: "Sir" })
+
+%a{name: "find"}
+%h4 <tt>Model.find</tt> | <tt>Criteria#find</tt>
+
+%p
+  Provides the ability to find a document or documents given a set of
+  conditions or ids. This either returns a criteria, an array of
+  documents, or a single document depending on the arguments passed.
+
+%p
+  The first way to use this method is for finding a single
+  document given the provided ID. If no document is found
+  this will raise an error unless the configuration option is
+  changed. You can provide a <tt>BSON::ObjectId</tt> or its string
+  representation (Mongoid will convert to the appropriate type).
+  This can also be placed at the end of a criteria chain to limit
+  by a single document.
+
+:coderay
+  #!ruby
+  Person.find(id)
+  Person.find("4baa56f1230048567300485c")
+  Person.where(last_name: "Black").find(id)
+
+%p
+  You may find multiple documents given the provided array of ids.
+  If a single document is not found the error will get raised. You
+  may provide object ids or string representations. This can also
+  be placed at the end of a criteria chain to find specific documents.
+
+:coderay
+  #!ruby
+  Person.find([id_one, id_two])
+  Person.find(["4baa56f1230048567300485c","4baa56f1230048567300485d"])
+  Person.where(last_name: "Black").find([ id_one, id_two ])
+
+%a{name: "find_or_create_by"}
+%h4 <tt>Model.find_or_create_by</tt>
+
+%p
+  Find a document given the provided conditions, or create a new one
+  if nothing is persisted.
+
+:coderay
+  #!ruby
+  Person.find_or_create_by(first_name: "Syd", last_name: "Vicious")
+
+%a{name: "find_or_initialize_by"}
+%h4 <tt>Model.find_or_initialize_by</tt>
+
+%p
+  Find a document given the provided conditions, or instantiate a new one
+  if nothing is persisted.
+
+:coderay
+  #!ruby
+  Person.find_or_initialize_by(first_name: "Syd", last_name: "Vicious")
+
+%a{name: "first"}
+%h4 <tt>Model.first</tt>
+
+%p
+  Find the first document in the database given the provided conditions.
+  Will return a document or <tt>nil</tt> if nothing is found and defaults
+  to the natural sorting of documents in the database. You can provide
+  sort criteria as well if you want to dictate the exact document that
+  would be returned first.
+
+:coderay
+  #!ruby
+  Person.first(conditions: { first_name: "Syd" })
+  Person.first(sort: [[ :first_name, :asc ]])
+
+%a{name: "last"}
+%h4 <tt>Model.last</tt>
+
+%p
+  Find the last document in the database given the provided conditions.
+  Will return a document or <tt>nil</tt> if nothing is found and defaults
+  to to sorting by id in descending order. You may provide
+  sort criteria as well if you want to dictate the exact document that
+  would be returned - Mongoid will invert the sort criteria you provide.
+
+:coderay
+  #!ruby
+  Person.last(conditions: { first_name: "Syd" })
+  Person.last(sort: [[ :first_name, :asc ]])
+
+%h1 modification
+
+%p
+  You may use a Mongoid criteria or chain or criteria to build up a
+  MongoDB selector that you may want to use in order to modify some
+  documents in the database. Mongoid provides a few ways to do this
+  in the form of some non-chainable methods that you can append to
+  the end of your criteria chains.
+
+%h3 creation
+
+%p
+  If you would like to create a document in the database based on your
+  criteria you can use <tt>Criteria#create</tt>, or if you just want to
+  instantiate a new one <tt>Criteria#build</tt>.
+
+:coderay
+  #!ruby
+
+  # Create a saved person with a title of Sir and first name Lancelot.
+  Person.where(title: "Sir", first_name: "Lancelot").create
+  Person.where(title: "Sir").create(first_name: "Lancelot")
+
+  # Build an unsaved person with a title of Sir and first name Lancelot.
+  Person.where(title: "Sir", first_name: "Lancelot").build
+  Person.where(title: "Sir").build(first_name: "Lancelot")
+
+%p
+  Note that for obvious reasons certain criterion cannot be translated
+  into a value to set on the object, for example...
+
+:coderay
+  #!ruby
+
+  # The values in this criteria will be ignored.
+  Person.where(:age.gt => 5, :aliases.in => [ "007", "008" ]).create
+
+%h3 updating
+
+%p
+  You can atomically update multiple documents in the database via
+  a criteria using <tt>Criteria#update_all</tt>. This will perform
+  an atomic <tt>$set</tt> on all the attributes passed to the
+  method.
+
+:coderay
+  #!ruby
+
+  # Update all people with last name Oldman with new first name.
+  Person.where(last_name: "Oldman").update_all(
+    first_name: "Pappa Gary"
+  )
+
+%h3 removal
+
+%p
+  Removing documents based on criteria is also possible through the
+  <tt>Criteria#delete_all</tt> and <tt>Criteria#destroy_all</tt>.
+  Using the delete will hit the database directly where destroy will load
+  each object in order to run the destroy callbacks on them.
+
+:coderay
+  #!ruby
+
+  # Delete all of Arthur's knight's from the db.
+  Person.where(title: "Sir").and(king: "Arthur").delete_all
+  Person.where(title: "Sir", king: "Arthur").destroy_all
+
+%h1 scopes
+
+%p
+  Similar to Active Record, Mongoid allows you to define scopes on your
+  models as a convenience for filtering result sets. Scopes are defined
+  at the class level, either using the <tt>scope</tt> macro or by
+  defining class methods that return a criteria object. All scopes are
+  chainable and can be applied to associations as well, the later being
+  discussed in the relations section.
+
+%h3 named scopes
+
+%p
+  Named scopes are defined at the class level using a <tt>scope</tt>
+  macro and can be chained to create result sets in a nice DSL.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    scope :rock_n_rolla, where(occupation: "Rockstar")
+    scope :washed_up, where(:age.gt => 30)
+    scope :over, ->(limit) { where(:age.gt => limit) }
+  end
+
+  # Find all the rockstars.
+  Person.rock_n_rolla
+
+  # Find all rockstars that should probably quit.
+  Person.washed_up.rock_n_rolla
+
+  # Find a criteria with Keith Richards in it.
+  Person.rock_n_rolla.over(60)
+
+%p
+  Note that definitions are evaluated at class load time. For evaluation
+  at runtime you will want to make sure to define using a proc or lambda. In
+  the following example the first date is set as the date of class load,
+  where the second scope sets the date at the time the scope is called.
+
+:coderay
+  #!ruby
+  scope :current, where(:start_date.lte => Date.today)
+  scope :current, -> { where(:start_date.lte => Date.today) }
+
+%h3 class methods
+
+%p
+  For those who prefer a Data Mapper style syntax, class methods that
+  return criteria can be treated as chainable scopes as well.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    class << self
+
+      def rock_n_rolla
+        where(occupation: "Rockstar")
+      end
+
+      def washed_up
+        where(:age.gt => 30)
+      end
+
+      def over(limit)
+        where(:age.gt => limit)
+      end
+    end
+  end
+
+  # Find all the rockstars.
+  Person.rock_n_rolla
+
+  # Find all rockstars that should probably quit.
+  Person.washed_up.rock_n_rolla
+
+  # Find a criteria with Keith Richards in it.
+  Person.rock_n_rolla.over(60)
+
+%p
+  Named scopes and class methods that return a criteria can be chained
+  together - that's the beauty of Mongoid's powerful criteria API.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    scope :washed_up, where(:age.gt => 30)
+    scope :over, ->(limit) { where(:age.gt => limit) }
+
+    def self.rock_n_rolla
+      where(occupation: "Rockstar")
+    end
+  end
+
+  # Same queries apply here as well.
+  Person.rock_n_rolla
+  Person.washed_up.rock_n_rolla
+  Person.rock_n_rolla.over(60)
+
+%h3 default scopes
+
+%p
+  You can supply a default scope at the class level to tell Mongoid that
+  all queries need to filter by the provided criteria without needing
+  to specify it for every query. This is very useful when you find
+  yourself filtering by a particular criterion many times througout an
+  application.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :occupation, type: String
+    field :age, type: Integer
+
+    default_scope where(occupation: "Rockstar")
+    scope :washed_up, where(:age.gt => 30)
+  end
+
+  # We seem to search for rockstars all the time, so just make that
+  # included by default. The following query applies the rock_n_rolla
+  # scope to it by default.
+  Person.washed_up
+
+%p
+  When a default scope is defined, you may find yourself executing
+  queries that do not need the default applied. This is where Mongoid's
+  familiar <tt>unscoped</tt> method comes in.
+
+:coderay
+  #!ruby
+
+  # We just want some old people who aren't rockstars.
+  Person.unscoped.washed_up
+

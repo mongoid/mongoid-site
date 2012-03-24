@@ -3,15 +3,54 @@
   %head
     %meta{name: "description", content: "A Ruby ODM for MongoDB"}
     %meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
-    = stylesheet_link_tag "coderay.css"
-    = stylesheet_link_tag "site.css"
+    = stylesheet_link_tag "bootstrap.min.css"
+    = stylesheet_link_tag "mongoid.css"
+    = stylesheet_link_tag "mongoid-coderay.css"
+    = stylesheet_link_tag "bootstrap-responsive.min.css"
+    = javascript_include_tag "jquery-1.7.2.min.js"
+    = javascript_include_tag "bootstrap-dropdown.js"
+    = javascript_include_tag "mongoid.js"
     = yield_content :head
 
-  %body
-    #container
-      .navigation= partial("partials/navigation")
-      .main
-        .header= partial("partials/header")
-        .content= yield
-        .footer= partial("partials/footer")
-        .clear
+  %body{:"data-offset" => 60, :"data-target" => ".subnav", :"data-spy" => "scroll" }
+    #header
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container
+            %ul.nav
+              %li.divider-vertical
+              %li.link
+                = link_to "/" do
+                  = image_tag "/images/mongoid-logo-small-green.png"
+              %li.divider-vertical
+
+    #navigation
+      .subnav
+        .container
+          %ul.nav.nav-pills
+            %li= link_to "HOME", "/"
+            %li.dropdown#docs
+              %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}
+                DOCS
+                %b.caret
+              %ul.dropdown-menu
+                %li= link_to "Installation", "/docs/installation.html"
+                %li= link_to "Documents", "/docs/documents.html"
+                %li= link_to "Persistence", "/docs/persistence.html"
+                %li= link_to "Querying", "/docs/querying.html"
+                %li= link_to "Relations", "/docs/relations.html"
+                %li= link_to "Identity Map", "/docs/identity_map.html"
+                %li= link_to "Callbacks", "/docs/callbacks.html"
+                %li= link_to "Validation", "/docs/validation.html"
+                %li= link_to "Indexing", "/docs/indexing.html"
+                %li= link_to "Rails", "/docs/rails.html"
+                %li= link_to "Extras", "/docs/extras.html"
+                %li= link_to "Upgrading", "/docs/upgrading.html"
+                %li= link_to "Contributing", "/docs/contributing.html"
+                %li= link_to "Performance", "/docs/performance.html"
+            %li= link_to "LINKS", "/links.html"
+
+    #content
+      .container
+        = yield
+    #footer

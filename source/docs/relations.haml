@@ -1,0 +1,1489 @@
+- content_for :head do
+  %title Mongoid: Relations
+
+%h1 relations
+
+%p
+  Relations are associations between one model and another in the domain
+  and in the database. Embedded relations describe documents who are
+  stored inside other documents in the database. Referenced relations
+  describe documents that reference documents in another collection by
+  storing data (usually an id) about the other document in itself.
+
+%p
+  All relation objects in Mongoid are proxies to the actual document or
+  documents themselves, which provide extra functionality for accessing,
+  replacing, appending and persisting.
+
+%h2 commonalities between all relations
+
+%h3 attributes
+
+%p
+  All relations contain a <tt>target</tt>, which is the proxied document
+  or documents, a <tt>base</tt> which is the document the relation hangs
+  off, and <tt>metadata</tt> which provides information about the relation.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    embeds_many :addresses
+  end
+
+  person.addresses = [ address ]
+  person.addresses.target #=> returns [ address ]
+  person.addresses.base #=> returns person
+  person.addresses.metadata #=> returns the metadata
+
+%h3 extensions
+
+%p
+  All relations can have extensions, which provides a way to add
+  application specific functionality to the relation. They are defined by
+  providing a block to the relation definition.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    embeds_many :addresses do
+      def find_by_country(country)
+        where(country: country).first
+      end
+      def chinese
+        @target.select { |address| address.country == "China"}
+      end
+    end
+  end
+
+  person.addresses.find_by_country('Mongolia') #=> returns address
+  person.addresses.chinese #=> returns [ address ]
+
+%h3 custom relation names
+
+%p
+  You can name your relations whatever you like, but if the class cannot be
+  inferred by Mongoid from the name, and neither can the opposite side you'll
+  want to provide the macro with some additional options to tell Mongoid
+  how to hook them up.
+
+:coderay
+  #!ruby
+
+  class Lush
+    include Mongoid::Document
+    embeds_one :whiskey, class_name: "Drink", inverse_of: :alcoholic
+  end
+
+  class Drink
+    include Mongoid::Document
+    embedded_in :alcoholic, class_name: "Lush", inverse_of: :whiskey
+  end
+
+%h1 embedded one to one
+
+%p= image_tag "/images/embedded-1-1.png", class: "diagram"
+
+%p
+  One to one relationships where the children are embedded in the parent
+  document are defined using Mongoid's <tt>embeds_one</tt> and
+  <tt>embedded_in</tt> macros.
+
+%h3 defining
+
+%p
+  The parent document of the relation should use the <tt>embeds_one</tt>
+  macro to indicate is has 1 embedded child, where the document that
+  is embedded uses <tt>embedded_in</tt>.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    embeds_one :name
+  end
+
+  class Name
+    include Mongoid::Document
+    field :vorname, type: String
+    field :nachname, type: String
+    embedded_in :person
+  end
+
+%p
+  Definitions are required on both sides to the relation in order for it to
+  work properly.
+
+%h3 storage
+
+%p
+  Documents that are embedded using the <tt>embeds_one</tt> macro are stored
+  as a hash inside the parent in the parent's database collection.
+
+:coderay
+  #!javascript
+
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+    "name" : {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
+      "vorname" : "Heinrich",
+      "nachname" : "Heine"
+    }
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the child name.
+  person.name
+
+  # Set the child name.
+  person.name = Name.new
+
+  # Return the parent person.
+  name.person
+
+  # Set the parent person.
+  name.person = Person.new
+
+%h3 building and creating
+
+%p
+  From the parent side, documents in the embedded child can be initialized or
+  created using the specially defined methods.
+
+:coderay
+  #!ruby
+
+  # Create a new child name given the provided attributes.
+  person.build_name(vorname: "Heinrich", nachname: "Heine")
+
+  # Create a persisted child name.
+  person.create_name(vorname: "Heinrich", nachname: "Heine")
+
+  # Replace the parent with a new one from the attributes.
+  name.build_person(title: "Prince")
+
+  # Replace the parent with a newly saved one from the attributes.
+  name.create_person(title: "Prince")
+
+%h3 removal
+
+%p
+  Documents in the embedded many can be removed by either calling delete
+  on the child or setting it to nil.
+
+:coderay
+  #!ruby
+
+  # Delete the child document
+  person.name.delete
+  person.name.destroy
+  person.name = nil
+
+%h3 polymorphic behaviour
+
+%p
+  When a child embedded document can belong to more than one type of parent
+  document, you can tell Mongoid to support this by adding the <tt>as</tt>
+  option to the definition on the parents, and the <tt>polymorphic</tt>
+  option on the child.
+
+:coderay
+  #!ruby
+
+  class Doctor
+    include Mongoid::Document
+    embeds_one :name, as: :namable
+  end
+
+  class Nurse
+    include Mongoid::Document
+    embeds_one :name, as: :namable
+  end
+
+  class Name
+    include Mongoid::Document
+    embedded_in :namable, polymorphic: true
+  end
+
+%h3 inheritance
+%p
+  When embedding models that inherit from a different class, monogid will store the class of this object in the field <tt>_type</tt>.
+
+:coderay
+  #!ruby
+  class Person
+    embeds_one :profession
+  end
+  class Profession
+    include Mongoid::Document
+    embedded_in :person
+  end
+  class Doctor < Person; end;
+  class Nurse < Person; end;
+
+%h3 cascading callbacks
+
+%p
+  If you want the embedded document callbacks to fire when calling a persistence
+  operation on it's parent, you will need to provide the cascade callbacks
+  option to the relation.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    embeds_one :name, cascade_callbacks: true
+  end
+
+%p
+  <i>Gotcha</i>: You run the risk of having the callbacks on an embedded document
+  fire more than once if this option is set to true and you call the
+  operation on the child. In these cases it's best to always call from the parent.
+
+:coderay
+  #!ruby
+  # This will fire the callbacks twice
+  person.create_name(first: "Bob")
+  # This fires the callbacks once
+  person.build_name(first: "Joe")
+  person.save
+
+%h1 embedded one to many
+
+%p= image_tag "/images/embedded-1-n.png", class: "diagram"
+
+%p
+  One to many relationships where the children are embedded in the parent
+  document are defined using Mongoid's <tt>embeds_many</tt> and
+  <tt>embedded_in</tt> macros.
+
+%h3 defining
+
+%p
+  The parent document of the relation should use the <tt>embeds_many</tt>
+  macro to indicate it has <i>n</i> number of embedded children, where
+  the document that is embedded uses <tt>embedded_in</tt>.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    embeds_many :addresses
+  end
+
+  class Address
+    include Mongoid::Document
+    field :city, type: String
+    field :country, type: String
+    embedded_in :person
+  end
+
+%p
+  Definitions are required on both sides to the relation in order for it to
+  work properly.
+
+%h3 storage
+
+%p
+  Documents that are embedded using the <tt>embeds_many</tt> macro are stored
+  as an array of hashes inside the parent in the parent's database
+  collection.
+
+:coderay
+  #!javascript
+
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+    "addresses" : [
+      {
+        "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
+        "city" : "Berlin",
+        "country" : "Deutschland"
+      }
+    ]
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the child addresses.
+  person.addresses
+
+  # Set the child addresses.
+  person.addresses = [ Address.new ]
+
+  # Return the parent person.
+  address.person
+
+  # Set the parent person.
+  address.person = Person.new
+
+%h3 building and creating
+
+%p
+  From the parent side, documents in the embedded child can be appended to using
+  traditional array syntax or the special association proxy methods. On the
+  child side the only option is to replace the existing with a newly built or
+  created document.
+
+:coderay
+  #!ruby
+
+  # Append one or many child addresses, saving them if the person is persisted.
+  person.addresses << Address.new
+  person.addresses.push(Address.new)
+  person.addresses.concat([ address ])
+
+  # Appends and returns a new child address from the attirbutes.
+  person.addresses.build(city: "Berlin")
+  person.addresses.new(city: "Berlin")
+
+  # Appends, saves, and returns a new child address from the attirbutes.
+  person.addresses.create(city: "Berlin")
+
+  # Appends, saves, and returns a new child address from the attributes,
+  # raising an error if validation fails.
+  person.addresses.create!(city: "Berlin")
+
+  # Replace the parent with a new one from the attributes.
+  address.build_person(title: "Prince")
+
+  # Replace the parent with a newly saved one from the attributes.
+  address.create_person(title: "Prince")
+
+%h3 removal
+
+%p
+  Documents in the embedded many can be removed in several different manners,
+  either through the relation, criteria, or accessors.
+
+:coderay
+  #!ruby
+
+  # Delete all documents
+  person.addresses.delete_all
+  person.addresses.clear
+  person.addresses = []
+
+  # Delete all matching documents.
+  person.addresses.delete_all(conditions: { city: "Berlin" })
+  person.addresses.where(city: "Berlin").delete_all
+
+  # Destroy all documents, running destroy callbacks.
+  person.addresses.destroy_all
+
+  # Destroy all matching documents, running callbacks.
+  person.addresses.destroy_all(conditions: { city: "Berlin" })
+  person.addresses.where(city: "Berlin").destroy_all
+
+  # Delete the parent document (Note this also deletes all children.)
+  address.person.delete
+
+  # Destroy the parent document (Note this also deletes all children.)
+  address.person.destroy
+
+%h3 finding
+
+%p
+  Finding documents in the embedded children is handled through <tt>find</tt>
+  or by using chained criteria on the relation.
+
+:coderay
+  #!ruby
+
+  # Find a child by a single or multiple ids.
+  person.addresses.find(id)
+  person.addresses.find([ id_one, id_two ])
+
+  # Find matching children.
+  person.addresses.where(city: "Berlin")
+
+  # Find or create a matching (saved) child.
+  person.addresses.find_or_create_by(city: "Berlin")
+
+  # Find or initialize a matching (new) child.
+  person.addresses.find_or_initialize_by(city: "Berlin")
+
+  # Do any children exist that are persisted?
+  person.addresses.exists?
+
+%h3 polymorphic behaviour
+
+%p
+  When a child embedded document can belong to more than one type of parent
+  document, you can tell Mongoid to support this by adding the <tt>as</tt>
+  option to the definition on the parents, and the <tt>polymorphic</tt>
+  option on the child.
+
+:coderay
+  #!ruby
+
+  class Office
+    include Mongoid::Document
+    embeds_many :addresses, as: :locatable
+  end
+
+  class Person
+    include Mongoid::Document
+    embeds_many :addresses, as: :locatable
+  end
+
+  class Address
+    include Mongoid::Document
+    embedded_in :locatable, polymorphic: true
+  end
+
+%h3 recursive embedding / cyclic relations
+
+%p
+  A document can recursively embed itself using <tt>recursively_embeds_many</tt>, which
+  provides accessors for the parent and children.
+
+:coderay
+  #!ruby
+
+  class Tag
+    include Mongoid::Document
+    recursively_embeds_many
+    field :name
+  end
+
+  programming = Tag.new(:name => 'programming')
+  ruby = programming.child_tags.build(:name => 'ruby')
+  python = programming.child_tags.build(:name => 'python')
+
+  programming.child_tags  # [ruby, python]
+  ruby.parent_tag         # [programming]
+  python.parent_tag       # [programming]
+
+%h3 cascading callbacks
+
+%p
+  If you want the embedded document callbacks to fire when calling a persistence
+  operation on it's parent, you will need to provide the cascade callbacks
+  option to the relation.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    embeds_many :addresses, cascade_callbacks: true
+  end
+
+%p
+  <i>Gotcha</i>: You run the risk of having the callbacks on an embedded document
+  fire more than once if this option is set to true and you call the
+  operation on the child. In these cases it's best to always call from the parent.
+
+:coderay
+  #!ruby
+  # This will fire the callbacks twice
+  person.addresses.create(street: "Unter den Linden")
+  # This fires the callbacks once
+  person.addresses.build(street: "Maybachufer")
+  person.save
+
+%h1 referenced relations
+
+%p
+  Referenced relations are associations between documents that reside
+  in separate collections in MongoDB. The link between the documents
+  is handled similar to a relational database where a "foreign key"
+  needs to be stored on one or both sides of the relation, but note
+  that accessing a referenced relation required a separate query to
+  the database since joins cannot be performed.
+
+%h1 referenced one to one
+
+%p= image_tag "/images/referenced-1-1.png", class: "diagram"
+
+%p
+  One to one relationships where the children are referenced in the parent
+  document are defined using Mongoid's <tt>has_one</tt> and
+  <tt>belongs_to</tt> macros.
+
+%h3 defining
+
+%p
+  The parent document of the relation should use the <tt>has_one</tt>
+  macro to indicate is has 1 referenced child, where the document that
+  is referenced in it uses <tt>belongs_to</tt>.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    has_one :game
+  end
+
+  class Game
+    include Mongoid::Document
+    field :name, type: String
+    belongs_to :person
+  end
+
+%p
+  Definitions are required on both sides to the relation in order for it to
+  work properly.
+
+%h3 storage
+
+%p
+  When defining a relation of this nature, each document is stored in it's
+  respective collection, but the child document contains a "foreign key"
+  reference to the parent.
+
+:coderay
+  #!ruby
+
+  # The parent person document.
+  { "_id" : ObjectId("4d3ed089fb60ab534684b7e9") }
+
+  # The child post document.
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7f1"),
+    "person_id" : ObjectId("4d3ed089fb60ab534684b7e9")
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the child game.
+  person.game
+
+  # Set the child game.
+  person.game = [ Game.new ]
+
+  # Return the parent person.
+  game.person
+
+  # Set the parent person.
+  game.person = Person.new
+
+%h3 building and creating
+
+%p
+  From the parent side, documents in the referenced child can be initialized or
+  created using the specially defined methods.
+
+:coderay
+  #!ruby
+
+  # Create a new child game given the provided attributes.
+  person.build_game(name: "Tron")
+
+  # Create a persisted child game.
+  person.create_game(name: "Tron")
+
+  # Replace the parent with a new one from the attributes.
+  game.build_person(title: "Prince")
+
+  # Replace the parent with a newly saved one from the attributes.
+  game.create_person(title: "Prince")
+
+%h3 removal
+
+%p
+  Documents in the referenced many can be removed by either calling delete
+  on the child or setting it to nil.
+
+:coderay
+  #!ruby
+
+  # Delete the child document
+  person.game.delete
+  person.game.destroy
+  person.game = nil
+
+%h3 polymorphic behaviour
+
+%p
+  When a child referenced document can belong to more than one type of parent
+  document, you can tell Mongoid to support this by adding the <tt>as</tt>
+  option to the definition on the parents, and the <tt>polymorphic</tt>
+  option on the child.
+
+:coderay
+  #!ruby
+
+  class Arcade
+    include Mongoid::Document
+    has_one :game, as: :playable
+  end
+
+  class Person
+    include Mongoid::Document
+    has_one :game, as: :playable
+  end
+
+  class Game
+    include Mongoid::Document
+    belongs_to :playable, polymorphic: true
+  end
+
+%h3 dependent behaviour
+
+%p
+  You can tell Mongoid what to do with child relations of a has one
+  when unsetting the relation via the dependent option.
+  The valid options are:
+
+%ul
+  %li <tt>:delete</tt>: Delete the child document.
+  %li <tt>:destroy</tt>: Destroy the child document.
+  %li <tt>:nullify</tt>: Orphan the child document.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    has_one :game, as: :playable, dependent: :delete
+  end
+
+  class Arcade
+    include Mongoid::Document
+    has_one :game, as: :playable, dependent: :nullify
+  end
+
+  # Deletes the existing game on the person.
+  person.game = []
+  person.game = nil
+
+  # Orphans the existing game on the arcade (no delete).
+  person.game = []
+  person.game = nil
+
+%p
+  If the dependent option is not defined, the default is to nullify.
+
+%h1 referenced one to many
+
+%p= image_tag "/images/referenced-1-n.png", class: "diagram"
+
+%p
+  One to many relationships where the children are stored in a
+  separate collection from the parent document are defined using
+  Mongoid's <tt>has_many</tt> and <tt>belongs_to</tt> macros. This
+  exhibits similar behaviour to Active Record.
+
+%h3 defining
+
+%p
+  The parent document of the relation should use the <tt>has_many</tt>
+  macro to indicate is has <i>n</i> number of referenced children, where
+  the document that is referenced uses <tt>belongs_to</tt>.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    has_many :posts
+  end
+
+  class Post
+    include Mongoid::Document
+    field :title, type: String
+    belongs_to :person
+  end
+
+%p
+  Definitions are required on both sides to the relation in order for it to
+  work properly.
+
+%h3 storage
+
+%p
+  When defining a relation of this nature, each document is stored in it's
+  respective collection, but the child document contains a "foreign key"
+  reference to the parent.
+
+:coderay
+  #!ruby
+
+  # The parent person document.
+  { "_id" : ObjectId("4d3ed089fb60ab534684b7e9") }
+
+  # The child post document.
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7f1"),
+    "person_id" : ObjectId("4d3ed089fb60ab534684b7e9")
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the child posts.
+  person.posts
+
+  # Set the child posts.
+  person.posts = [ Post.new ]
+
+  # Return the parent person.
+  post.person
+
+  # Set the parent person.
+  post.person = Person.new
+
+%h3 building and creating
+
+%p
+  From the parent side, documents in the referenced child can be appended to using
+  traditional array syntax or the special association proxy methods. On the
+  child side the only option is to replace the existing with a newly built or
+  created document.
+
+:coderay
+  #!ruby
+
+  # Append one or many child posts, saving them if the person is persisted.
+  person.posts << Post.new
+  person.posts.push(Post.new)
+  person.posts.concat([ post ])
+
+  # Appends and returns a new child post from the attirbutes.
+  person.posts.build(title: "Berlin never sleeps.")
+  person.posts.new(title: "Berlin never sleeps.")
+
+  # Appends, saves, and returns a new child post from the attirbutes.
+  person.posts.create(title: "Berlin is far cooler than New York.")
+
+  # Appends, saves, and returns a new child post from the attributes,
+  # raising an error if validation fails.
+  person.posts.create!(title: "Berlin is bad for the liver.")
+
+  # Replace the parent with a new one from the attributes.
+  post.build_person(title: "Prince")
+
+  # Replace the parent with a newly saved one from the attributes.
+  post.create_person(title: "Prince")
+
+%h3 removal
+
+%p
+  Documents in the referenced many can be removed in several different manners,
+  either through the relation, criteria, or accessors.
+
+:coderay
+  #!ruby
+
+  # Delete all referenced documents
+  person.posts.delete_all
+  person.posts.clear
+  person.posts = []
+
+  # Delete all matching referenced documents.
+  person.posts.delete_all(conditions: { title: "Berlin" })
+  person.posts.where(title: "Berlin").delete_all
+
+  # Destroy all referenced documents, running destroy callbacks.
+  person.posts.destroy_all
+
+  # Destroy all matching referenced documents, running callbacks.
+  person.posts.destroy_all(conditions: { title: "Berlin" })
+  person.posts.where(title: "Berlin").destroy_all
+
+  # Delete the parent referenced document.
+  post.person.delete
+
+  # Destroy the parent referenced document.
+  post.person.destroy
+
+%h3 finding
+
+%p
+  Finding documents in the referenced children is handled through <tt>find</tt>
+  or by using chained criteria on the relation.
+
+:coderay
+  #!ruby
+
+  # Find a child by a single or multiple ids.
+  person.posts.find(id)
+  person.posts.find([ id_one, id_two ])
+
+  # Find matching referenced children.
+  person.posts.where(title: "Berlin")
+
+  # Find or create a matching (saved) child.
+  person.posts.find_or_create_by(title: "Berlin")
+
+  # Find or initialize a matching (new) child.
+  person.posts.find_or_initialize_by(title: "Berlin")
+
+  # Do any children exist that are persisted?
+  person.posts.exists?
+
+%h3 polymorphic behaviour
+
+%p
+  When a child referenced document can belong to more than one type of parent
+  document, you can tell Mongoid to support this by adding the <tt>as</tt>
+  option to the definition on the parents, and the <tt>polymorphic</tt>
+  option on the child.
+
+:coderay
+  #!ruby
+
+  class Company
+    include Mongoid::Document
+    has_many :posts, as: :postable
+  end
+
+  class Person
+    include Mongoid::Document
+    has_many :posts, as: :postable
+  end
+
+  class Post
+    include Mongoid::Document
+    belongs_to :postable, polymorphic: true
+  end
+
+%h3 dependent behaviour
+
+%p
+  You can tell Mongoid what to do with child relations of a has many
+  when unsetting the relation via the dependent option. This also applies
+  to calling <tt>#delete</tt> on the relation. The valid options are:
+
+%ul
+  %li <tt>:delete</tt>: Delete the child documents.
+  %li <tt>:destroy</tt>: Destroy the child documents.
+  %li <tt>:nullify</tt>: Orphan the child documents.
+
+:coderay
+  #!ruby
+  class Company
+    include Mongoid::Document
+    has_many :posts, as: :postable, dependent: :delete
+  end
+
+  class Person
+    include Mongoid::Document
+    has_many :posts, as: :postable, dependent: :nullify
+  end
+
+  # Delete all the child relations:
+  company.posts = []
+  company.posts = nil
+
+  # Orphan all the child relations:
+  person.posts = []
+  person.posts = nil
+
+  # Delete a single child relation:
+  company.posts.delete(post)
+
+  # Orphan a single child relation:
+  person.posts.delete(post)
+
+%p
+  If the dependent option is not defined, the default is to nullify.
+
+%h1 referenced many to many
+
+%p= image_tag "/images/referenced-n-n.png", class: "diagram"
+
+%p
+  Many to many relationships where the inverse documents are stored in a
+  separate collection from the base document are defined using
+  Mongoid's <tt>has_and_belongs_to_many</tt> macro. This
+  exhibits similar behaviour to Active Record with the exception that
+  no join collection is needed, the foreign key ids are stored as
+  arrays on either side of the relation.
+
+%h3 defining
+
+%p
+  Both sides of the relation use the same macro.
+
+:coderay
+  #!ruby
+
+  class Person
+    include Mongoid::Document
+    field :title, type: String
+    has_and_belongs_to_many :tags
+  end
+
+  class Tag
+    include Mongoid::Document
+    field :name, type: String
+    has_and_belongs_to_many :people
+  end
+
+%p
+  You can create a one sided many to many if you want to mimic a has_many
+  that stores the keys as an array on the parent.
+
+:coderay
+  #!ruby
+
+  class Movie
+    include Mongoid::Document
+    field :title, type: String
+    has_and_belongs_to_many :ratings, inverse_of: nil
+  end
+
+  class Rating
+    include Mongoid::Document
+  end
+
+%h3 storage
+
+%p
+  When defining a relation of this nature, each document is stored in it's
+  respective collection, and each document contains a "foreign key"
+  reference to the other in the form of an array.
+
+:coderay
+  #!ruby
+
+  # The person document.
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+    "tag_ids" : [ ObjectId("4d3ed089fb60ab534684b7f2") ]
+  }
+
+  # The tag document.
+  {
+    "_id" : ObjectId("4d3ed089fb60ab534684b7f2"),
+    "person_ids" : [ ObjectId("4d3ed089fb60ab534684b7e9") ]
+  }
+
+%h3 accessors
+
+%p
+  Accessing the relations is handled through the methods created based on the
+  names of the relations. The following example shows basic access on both
+  sides of the relation.
+
+:coderay
+  #!ruby
+
+  # Return the tags that belong to a person.
+  person.tags
+
+  # Set the tags from the person.
+  person.tags = [ Tag.new ]
+
+  # Return the people that belong to a tag.
+  tag.people
+
+  # Set the people from the tag.
+  tag.people = [ Person.new ]
+
+%h3 building and creating
+
+%p
+  From either side, documents in the referenced inverse can be appended to using
+  traditional array syntax or the special association proxy methods.
+
+:coderay
+  #!ruby
+
+  # Append one or many tags, saving them if the person is persisted.
+  person.tags << Tag.new
+  person.tags.push(Tag.new)
+  person.tags.concat([ tag_one, tag_two ])
+
+  # Appends and returns a new tag from the attributes.
+  person.tags.build(name: "Buch")
+  person.tags.new(name: "Buch")
+
+  # Appends, saves, and returns a new tag from the attributes.
+  person.tags.create(name: "Bar")
+
+  # Appends, saves, and returns a new tag from the attributes,
+  # raising an error if validation fails.
+  person.tags.create!(name: "Bar")
+
+  # Append one or many people, saving them if the tag is persisted.
+  tag.people << Person.new
+  tag.people.push(Person.new)
+  tag.people.concat([ person_one, person_two ])
+
+  # Appends and returns a new person from the attributes.
+  tag.people.build(title: "Mr")
+  tag.people.new(title: "Mr")
+
+  # Appends, saves, and returns a new person from the attributes.
+  tag.people.create(title: "Sire")
+
+  # Appends, saves, and returns a new person from the attributes,
+  # raising an error if validation fails.
+  tag.people.create!(title: "Douchebag")
+
+%h3 removal
+
+%p
+  Documents in the relation can be removed in several different manners,
+  either through the relation, criteria, or accessors.
+
+:coderay
+  #!ruby
+
+  # Delete all referenced documents
+  person.tags.delete_all
+  person.tags.clear
+  person.tags = []
+
+  # Delete all matching referenced documents.
+  person.tags.delete_all(conditions: { name: "Ruby" })
+  person.tags.where(name: "Rails").delete_all
+
+  # Destroy all referenced documents, running destroy callbacks.
+  person.tags.destroy_all
+
+  # Destroy all matching referenced documents, running callbacks.
+  person.tags.destroy_all(conditions: { name: "Ruby" })
+  person.tags.where(name: "MongoDB").destroy_all
+
+  # Delete all referenced documents
+  tag.people.delete_all
+  tag.people.clear
+  tag.people = []
+
+  # Delete all matching referenced documents.
+  tag.people.delete_all(conditions: { title: "Sir" })
+  tag.people.where(title: "Grand Poobah").delete_all
+
+  # Destroy all referenced documents, running destroy callbacks.
+  tag.people.destroy_all
+
+  # Destroy all matching referenced documents, running callbacks.
+  tag.people.destroy_all(conditions: { title: "Marshall" })
+  tag.people.where(title: "Heiness").destroy_all
+
+%h3 dependent behaviour
+
+%p
+  You can tell Mongoid what to do with inverse relations of a many to many
+  when unsetting the relation via the dependent option. This also applies
+  to calling <tt>#delete</tt> on the relation. The valid options are:
+
+%ul
+  %li <tt>:delete</tt>: Delete the inverse documents.
+  %li <tt>:destroy</tt>: Destroy the inverse documents.
+  %li <tt>:nullify</tt>: Orphan the inverse documents.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    has_and_belongs_to_many :preferences, dependent: :nullify
+  end
+
+  # Orphan all the inverse relations:
+  person.preferences = []
+  person.preferences = nil
+
+  # Orphan a single child relation:
+  person.preferences.delete(preference)
+
+%p
+  If the dependent option is not defined, the default is to nullify.
+
+%h1 metadata
+
+%p
+  All relations in Mongoid contain metadata that holds information
+  about the relation in question, and is a valuable tool for third
+  party developers to use to extend Mongoid.
+
+%p
+  You can access the metadata of the relation in a few different ways.
+
+:coderay
+  #!ruby
+
+  # Get the metadata for a named relation from the class or document.
+  Model.reflect_on_association(:relation_name)
+  model.reflect_on_association(:relation_name)
+
+  # Get the metadata that the current object has in its relation.
+  model.metadata
+
+  # Get the metadata with a specific relation itself on a specific
+  # document.
+  person.addresses.metadata
+
+%h3 the metadata object
+
+%p
+  The metadata object itself contains more information than one might
+  know what to do with.
+
+  %ul
+    %li <tt>Metadata#class_name</tt>
+    %li <tt>Metadata#embedded?</tt>
+    %li <tt>Metadata#extension</tt>
+    %li <tt>Metadata#foreign_key</tt>
+    %li <tt>Metadata#foreign_key_default</tt>
+    %li <tt>Metadata#foreign_key_setter</tt>
+    %li <tt>Metadata#indexed?</tt>
+    %li <tt>Metadata#inverse</tt>
+    %li <tt>Metadata#inverse_foreign_key</tt>
+    %li <tt>Metadata#inverse_klass</tt>
+    %li <tt>Metadata#inverse_setter</tt>
+    %li <tt>Metadata#inverse_type</tt>
+    %li <tt>Metadata#inverse_type_setter</tt>
+    %li <tt>Metadata#key</tt>
+    %li <tt>Metadata#klass</tt>
+    %li <tt>Metadata#macro</tt>
+    %li <tt>Metadata#polymorphic?</tt>
+    %li <tt>Metadata#setter</tt>
+    %li <tt>Metadata#stores_foreign_key?</tt>
+    %li <tt>Metadata#validate?</tt>
+
+%h1 Nested attributes
+
+%p
+  Nested attributes allow you to save attributes on associated records
+  through the parent. By default nested attribute updating is turned off for
+  referential associations and turned on for embed associations.
+
+%p
+  You can enable it using the
+  %tt accepts_nested_attributes_for
+  class method.
+
+%p When you enable nested attributes an attribute writer is defined on the model.
+
+%p
+  The attribute writer is named after the association,
+  which means that in the following example, four new methods are
+  added to your model:
+
+%ul
+  %li <tt>author_attributes=(attributes)</tt>
+  %li <tt>pages_attributes=(attributes)</tt>
+  %li <tt>publisher_attributes=(attributes)</tt>
+  %li <tt>reviews_attributes=(attributes)</tt>
+
+:coderay
+  #!ruby
+
+  class Book
+    include Mongoid::Document
+    has_one :author
+    has_many :pages
+    embeds_one :publisher
+    embeds_many :reviews
+
+    accepts_nested_attributes_for :author, :pages
+  end
+
+%p
+  Note that the
+  %tt :autosave
+  option needs to be enabled for relational associations that
+  %tt accepts_nested_attributes_for
+  is used for if you don't want to manually save the relation on update.
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_one :avatar, autosave: true
+    accepts_nested_attributes_for :avatar
+  end
+
+%h3 One-to-one
+
+%p Consider a Member model that has one Avatar:
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_one :avatar
+    accepts_nested_attributes_for :avatar
+  end
+
+%p Enabling nested attributes on a one-to-one association allows you to create the member and avatar in one go:
+
+:coderay
+  #!ruby
+  params =
+    { member:
+      { name: "Jack", avatar_attributes: { icon: "smiling" } }
+    }
+  member = Member.create(params[:member])
+  member.avatar.id # => 2
+  member.avatar.icon # => 'smiling'
+
+%p It also allows you to update the avatar through the member:
+
+:coderay
+  #!ruby
+  params =
+    { member:
+      { avatar_attributes: { id: "2", icon: "sad" } }
+    }
+  member.update_attributes(params[:member])
+  member.avatar.icon # => 'sad'
+
+%p
+  By default you will only be able to set and update attributes on the associated model.
+  If you want to destroy the associated model through the
+  %tt attributes
+  hash, you have to
+  enable it first using the
+  %tt :allow_destroy
+  option.
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_one :avatar
+    accepts_nested_attributes_for :avatar, :allow_destroy => true
+  end
+
+%p
+  Now, when you add the
+  %tt _destroy
+  key to the
+  %tt attributes
+  hash,
+  with a value that evaluates to true, you will destroy the associated model:
+
+:coderay
+  #!ruby
+  member.avatar_attributes = { id: "2", _destroy: "1" }
+  member.avatar.marked_for_destruction? # => true
+  member.save
+  member.reload.avatar # => nil
+
+%p Note that the model will not be destroyed until the parent is saved.
+
+%h3 One-to-many
+
+%p Consider a member that has a number of posts:
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_many :posts
+    accepts_nested_attributes_for :posts
+  end
+
+%p
+  You can now set or update attributes on an associated post
+  model through the
+  %tt attribute
+  hash.
+
+%p
+  For each hash that does not have an
+  %tt id key
+  a new record will be instantiated,
+  unless the hash also contains a
+  %tt _destroy
+  key that evaluates to true.
+
+:coderay
+  #!ruby
+  params = { member: {
+    name: "joe", posts_attributes: [
+      { title: "Kari, the awesome Ruby documentation browser!" },
+      { title: "The egalitarian assumption..." },
+      { title: "", _destroy: "1" } # this will be ignored
+    ]
+  }}
+
+  member = Member.create(params['member'])
+  member.posts.length # => 2
+  member.posts.first.title # => 'Kari, the awesome Ruby documentation browser!'
+  member.posts.second.title # => 'The egalitarian assumption...'
+
+%p
+  You may also set a
+  %tt :reject_if proc
+  to silently ignore any new record hashes if they fail to pass your criteria.
+  For example, the previous example could be rewritten as:
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_many :posts
+    accepts_nested_attributes_for \
+      :posts,
+      reject_if: proc { |attributes| attributes["title"].blank? }
+  end
+
+  params = { member: {
+    name: "joe", posts_attributes: [
+      { title: "Kari, the awesome Ruby documentation browser!" },
+      { title: "The egalitarian assumption of the modern citizen" },
+      { title: "" } # this will be ignored because of the :reject_if proc
+    ]
+  }}
+
+  member = Member.create(params["member"])
+  member.posts.length # => 2
+  member.posts.first.title # => "Kari, the awesome Ruby documentation browser!"
+  member.posts.second.title # => "The egalitarian assumption of the modern citizen"
+
+%p
+  Alternatively,
+  %tt :reject_if
+  also accepts a symbol for using methods:
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_many :posts
+    accepts_nested_attributes_for :posts, reject_if: :new_record?
+  end
+
+  class Member
+    include Mongoid::Document
+    has_many :posts
+    accepts_nested_attributes_for :posts, reject_if: :reject_posts
+
+    def reject_posts(attributed)
+      attributed["title"].blank?
+    end
+  end
+
+%p
+  If the hash contains an
+  %tt id key
+  that matches an already associated record, the matching record will be modified:
+
+:coderay
+  #!ruby
+
+  member.attributes = {
+    name: "Joe",
+    posts_attributes: [
+      { id: 1, title: "[UPDATED] An, as of yet, undisclosed..." },
+      { id: 2, title: "[UPDATED] other post" }
+    ]
+  }
+
+  member.posts.first.title # => "[UPDATED] An, as of yet, undisclosed..."
+  member.posts.second.title # => "[UPDATED] other post"
+
+%p
+  By default the associated records are protected from being destroyed.
+  If you want to destroy any of the associated records through the
+  %tt attributes hash
+  , you have to enable it first using the
+  %tt :allow_destroy option.
+  This will
+  allow you to also use the
+  %tt _destroy
+  key to destroy existing records:
+
+:coderay
+  #!ruby
+  class Member
+    include Mongoid::Document
+    has_many :posts
+    accepts_nested_attributes_for :posts, allow_destroy: true
+  end
+
+  params = { member: {
+    posts_attributes: [{ id: "2", _destroy: "1" }]
+  }}
+
+  member.attributes = params["member"]
+  member.posts.detect { |p| p.id == 2 }.marked_for_destruction? # => true
+  member.posts.length # => 2
+  member.save
+  member.reload.posts.length # => 1
+
+%h3 Many-to-Many
+
+%p The behaviour is the same as in One-To-Many associations.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    has_and_belongs_to_many :social_circles
+    accepts_nested_attributes_for :social_circles
+  end
+
+  class SocialCircle
+    include Mongoid::Document
+    has_and_belongs_to_many :people
+  end
+
+%h3 Saving
+
+%p
+  All changes to models, including the destruction of those marked for destruction,
+  are saved and destroyed automatically and atomically when the parent model is saved.
+
+%h1 validations
+
+%p
+  It is important to note that by default, Mongoid will validate the
+  children of any relation that are loaded into memory. The relations that
+  this applies to are:
+
+  %ul
+    %li <tt>embeds_many</tt>
+    %li <tt>embeds_one</tt>
+    %li <tt>has_many</tt>
+    %li <tt>has_one</tt>
+    %li <tt>has_and_belongs_to_many</tt>
+
+%p
+  If you do not want this behaviour, you may turn it off when defining
+  the relation.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+
+    embeds_many :addresses, validate: false
+    has_many :posts, validate: false
+  end
+

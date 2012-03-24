@@ -1,0 +1,117 @@
+- content_for :head do
+  %title Mongoid: Rails
+
+%h1 rails
+
+%p
+  Mongoid was built and targeted towards Rails applications, even though it
+  will work in any environment. However if you are using Rails consult the
+  next two sections on how Mongoid hooks into a Rails application.
+
+%p
+  For a sample Rails application and examples of domain modeling, please see
+  the Mongoid demo application,
+  <a href="http://github.com/mongoid/echo">Echo</a>. Note that currently the
+  application is only models and specs.
+
+%h1 multi parameter attributes
+
+%p
+  If you want to use multi-paramater attributes with Rails, you will
+  need to include an extra Mongoid module to support it.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    include Mongoid::MultiParameterAttributes
+  end
+
+%h1 railties
+
+%p
+  Mongoid provides some railties and initializers that one should be
+  aware of when writing a Rails application with Mongoid.
+
+%h3 configuration
+
+%p
+  You can set Mongoid configuration options in your <tt>application.rb</tt>
+  along with other Rails environment specific options by accessing
+  <tt>config.mongoid</tt>. Options set here will override those set in
+  your <tt>config/mongoid.yml</tt>.
+
+:coderay
+  #!ruby
+  module MyApplication
+    class Application < Rails::Application
+      config.mongoid.logger = Logger.new($stdout, :warn)
+      config.mongoid.persist_in_safe_mode = true
+    end
+  end
+
+%h3 model preloading
+
+%p
+  In order to properly set up single collection inheritance, Mongoid
+  needs to preload all models before every request in development mode.
+  This can get slow, so if you are not using any inheritance it is
+  recommended you turn this feature off.
+
+:coderay
+  #!ruby
+  config.mongoid.preload_models = false
+
+%h3 exceptions
+
+%p
+  Similar to Active Record, Mongoid tells raise to return specific http
+  codes when some errors are raised.
+
+  %ul
+    %li <tt>Mongoid::Errors::DocumentNotFound</tt>: 404
+    %li <tt>Mongoid::Errors::Validations</tt>: 422
+
+%h3 unicorn and passenger
+
+%p
+  When using Unicorn or Passenger, each time a child process is forked
+  when using app preloading or smart spawning, Mongoid will automatically
+  reconnect to the master database. If you are doing this in your
+  application manually you may remove your code.
+
+%h1 rake tasks
+
+%p
+  Mongoid provides the following rake tasks when used in a Rails 3 environment:
+
+%p
+  <tt>db:create</tt>: Exists only for dependency purposes, does not actually
+  do anything.
+
+%p
+  <tt>db:create_indexes</tt>: Reads all index definitions from the models and
+  attempts to create them in the database.
+
+%p
+  <tt>db:drop</tt>: Drops all collections in the database with the exception of
+  the system collections.
+
+%p
+  <tt>db:migrate</tt>: Exists only for dependency purposes, does not actually
+  do anything.
+
+%p
+  <tt>db:schema:load</tt>: Exists only for framework dependency purposes, does
+  not actually do anything.
+
+%p
+  <tt>db:seed</tt>: Seeds the database from db/seeds.rb
+
+%p
+  <tt>db:setup</tt>: Creates indexes and seeds the database.
+
+%p
+  <tt>db:test:prepare</tt>: Exists only for framework dependency purposes, does
+  not actually do anything.
+

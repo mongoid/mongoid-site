@@ -1,0 +1,33 @@
+.code {
+  font-family: "Bitstream Vera Sans Mono", "Courier", monospace;
+}
+
+.code .comment {
+  color: #999988;
+  font-style: italic;
+}
+
+.code .constant {
+  color: #008080;
+}
+
+.code .keyword {
+  font-weight: bold;
+}
+
+.code .string {
+  color: #DD1144;
+}
+
+.code .symbol {
+  color: #990073;
+}
+
+pre {
+  padding: 20px;
+}
+
+td pre {
+  background: none;
+  border: none;
+}
