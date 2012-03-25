@@ -1,7 +1,7 @@
 - content_for :head do
   %title Mongoid: Performance
 
-%h1 performance
+%h1 Performance
 
 %p
   The data used in the metrics is that of what would
@@ -24,7 +24,7 @@
   * The script to run the performance metrics can be found
   <a href="https://github.com/mongoid/mongoid/blob/master/perf/benchmark.rb">here</a>.
 
-%h3 notes
+%h2 Notes
 
 %p
   Many to many relations are not recommended for over 10,000 documents when using
@@ -32,226 +32,182 @@
   calling #build or #create. This is due to the large array appending occuring
   in these operations.
 
-%p
-  When performing appends to one to many relations we execute in batch
-  (appending all at once instead of one at a time) due to the slow performance of
-  MongoDB's $push atomic operator.
+.well
+  %table
+    %tr
+      %td.samurai= image_tag "/images/samurai.png"
+      %td.note
+        When performing appends to one to many relations we execute in batch
+        (appending all at once instead of one at a time) due to the slow performance of
+        MongoDB's $push atomic operator.
 
-%table.performance
+%table.table.table-bordered.table-striped
+  %thead
+    %tr
+      %th Operation
+      %th Time
+      %th Ops/sec
   %tr
     %td.header{ colspan: 3 } root (1,000,000 operations)
   %tr
-    %td.green
-      .op Model#create
-      .time [ 417.93 ]
-      .rate [ 2,392/sec ]
+    %td <code>Model#create</code>
+    %td 417.93
+    %td 2,392
   %tr
-    %td.green
-      .op Model#all.each
-      .time [ 40.87 ]
-      .rate [ 24,476/sec ]
+    %td <code>Model#all.each</code>
+    %td 40.87
+    %td 24,476
   %tr
-    %td.green
-      .op Model#find
-      .time [ 0.001 ]
-      .rate
+    %td <code>Model#find</code>
+    %td 0.001
+    %td
   %tr
-    %td.green
-      .op Model#save
-      .time [ 487.93 ]
-      .rate [ 2,049/sec ]
+    %td <code>Model#save</code>
+    %td 487.93
+    %td 2,049
   %tr
-    %td.green
-      .op Model#update_attribute
-      .time [ 339.54 ]
-      .rate [ 2,945/sec ]
-
-%table.performance
+    %td <code>Model#update_attribute</code>
+    %td 339.54
+    %td 2,945
   %tr
     %td.header{ colspan: 3 } embedded 1-n (10,000 operations)
   %tr
-    %td.green
-      .op relation#build
-      .time [ 2.253 ]
-      .rate [ 4,438/sec ]
+    %td <code>relation#build</code>
+    %td 2.253
+    %td 4,438
   %tr
-    %td.green
-      .op relation#clear
-      .time [ 1.230 ]
-      .rate [ 8,130/sec ]
+    %td <code>relation#clear</code>
+    %td 1.230
+    %td 8,130
   %tr
-    %td.green
-      .op relation#create
-      .time [ 4.899 ]
-      .rate [ 2,041/sec ]
+    %td <code>relation#create</code>
+    %td 4.899
+    %td 2,041
   %tr
-    %td.green
-      .op relation#count
-      .time [ 0.011 ]
-      .rate
+    %td <code>relation#count</code>
+    %td 0.011
+    %td
   %tr
-    %td.green
-      .op relation#delete_all
-      .time [ 1.377 ]
-      .rate [ 7,262/sec ]
+    %td <code>relation#delete_all</code>
+    %td 1.377
+    %td 7,262
   %tr
-    %td.green
-      .op relation#push (batch)
-      .time [ 3.496 ]
-      .rate [ 2,860/sec ]
+    %td <code>relation#push</code> (batch)
+    %td 3.496
+    %td 2,860
   %tr
-    %td.green
-      .op relation#each
-      .time [ 0.027 ]
-      .rate [ 370,370/sec ]
+    %td <code>relation#each</code>
+    %td 0.027
+    %td 370,370
   %tr
-    %td.green
-      .op relation#find
-      .time [ 0.044 ]
-      .rate
+    %td <code>relation#find</code>
+    %td 0.044
+    %td
   %tr
-    %td.green
-      .op relation#delete
-      .time [ 0.045 ]
-      .rate
-
-%table.performance
+    %td <code>relation#delete</code>
+    %td 0.045
+    %td
   %tr
     %td.header{ colspan: 3 } embedded 1-1 (10,000 operations)
   %tr
-    %td.green
-      .op relation#=
-      .time [ 3.902 ]
-      .rate [ 2,562/sec ]
-
-%table.performance
+    %td <code>relation#=</code>
+    %td 3.902
+    %td 2,562
   %tr
     %td.header{ colspan: 3 } relational 1-n (100,000 operations)
   %tr
-    %td.green
-      .op relation#build
-      .time [ 18.521 ]
-      .rate [ 5,399/sec ]
+    %td <code>relation#build</code>
+    %td 18.521
+    %td 5,399
   %tr
-    %td.green
-      .op relation#clear
-      .time [ 4.085 ]
-      .rate [ 24,479/sec ]
+    %td <code>relation#clear</code>
+    %td 4.085
+    %td 24,479
   %tr
-    %td.green
-      .op relation#create
-      .time [ 45.464 ]
-      .rate [ 2,199/sec ]
+    %td <code>relation#create</code>
+    %td 45.464
+    %td 2,199
   %tr
-    %td.green
-      .op relation#count
-      .time [ 0.051 ]
-      .rate
+    %td <code>relation#count</code>
+    %td 0.051
+    %td
   %tr
-    %td.green
-      .op relation#delete_all
-      .time [ 5.596 ]
-      .rate [ 17,869/sec ]
+    %td <code>relation#delete_all</code>
+    %td 5.596
+    %td 17,869
   %tr
-    %td.green
-      .op relation#push (batch)
-      .time [ 34.551 ]
-      .rate [ 2,894/sec ]
+    %td <code>relation#push</code> (batch)
+    %td 34.551
+    %td 2,894
   %tr
-    %td.green
-      .op relation#each
-      .time [ 0.055 ]
-      .rate [ 1,818,181/sec ]
+    %td <code>relation#each</code>
+    %td 0.055
+    %td 1,818,181
   %tr
-    %td.green
-      .op relation#find
-      .time [ 0.020 ]
-      .rate
+    %td <code>relation#find</code>
+    %td 0.020
+    %td
   %tr
-    %td.green
-      .op relation#delete
-      .time [ 0.410 ]
-      .rate
-
-%table.performance
+    %td <code>relation#delete</code>
+    %td 0.410
+    %td
   %tr
     %td.header{ colspan: 3 } relational 1-1 (100,000 operations)
   %tr
-    %td.yellow
-      .op relation#=
-      .time [ 54.991 ]
-      .rate [ 1,818/sec ]
-
-%table.performance
+    %td <code>relation#=</code>
+    %td 54.991
+    %td 1,818
   %tr
     %td.header{ colspan: 3 } relational n-n (10,000 operations)
   %tr
-    %td.green
-      .op relation#build
-      .time [ 1.325 ]
-      .rate [ 7,547/sec ]
+    %td <code>relation#build</code>
+    %td 1.325
+    %td 7,547
   %tr
-    %td.green
-      .op relation#clear
-      .time [ 0.350 ]
-      .rate [ 28,571/sec ]
-
+    %td <code>relation#clear</code>
+    %td 0.350
+    %td 28,571
   %tr
-    %td.green
-      .op relation#count
-      .time [ 0.001 ]
-      .rate
+    %td <code>relation#count</code>
+    %td 0.001
+    %td
   %tr
-    %td.green
-      .op relation#delete_all
-      .time [ 0.001 ]
-      .rate [ 10,000,000/sec ]
+    %td <code>relation#delete_all</code>
+    %td 0.001
+    %td 10,000,000
   %tr
-    %td.green
-      .op relation#push (batch)
-      .time [ 2.628 ]
-      .rate [ 3,805/sec ]
+    %td <code>relation#push</code> (batch)
+    %td 2.628
+    %td 3,805
   %tr
-    %td.green
-      .op relation#each
-      .time [ 0.005 ]
-      .rate [ 2,000,000/sec ]
+    %td <code>relation#each</code>
+    %td 0.005
+    %td 2,000,000
   %tr
-    %td.green
-      .op relation#find
-      .time [ 0.010 ]
-      .rate
+    %td <code>relation#find</code>
+    %td 0.010
+    %td
   %tr
-    %td.green
-      .op relation#delete
-      .time [ 0.060 ]
-      .rate
-
-%table.performance
+    %td <code>relation#delete</code>
+    %td 0.060
+    %td
   %tr
     %td.header{ colspan: 3 } eager loading 1-1 (10,000 docs)
   %tr
-    %td.yellow
-      .op Model#each (without eager load)
-      .time [ 5.617 ]
-      .rate [ 1,780/sec ]
+    %td <code>Model#each</code> (without eager load)
+    %td 5.617
+    %td 1,780
   %tr
-    %td.green
-      .op Model#includes (with eager load)
-      .time [ 2.966 ]
-      .rate [ 3,371/sec ]
-
-%table.performance
+    %td <code>Model#includes</code> (with eager load)
+    %td 2.966
+    %td 3,371
   %tr
     %td.header{ colspan: 3 } eager loading 1-n (10,000 docs)
   %tr
-    %td.green
-      .op Model.all#each (without eager load)
-      .time [ 4.300 ]
-      .rate [ 2,325/sec ]
+    %td <code>Model.all#each</code> (without eager load)
+    %td 4.300
+    %td 2,325
   %tr
-    %td.green
-      .op Model#includes (with eager load)
-      .time [ 2.094 ]
-      .rate [ 4,775/sec ]
-
+    %td <code>Model#includes</code> (with eager load)
+    %td 2.094
+    %td 4,775

@@ -123,3 +123,8 @@ p.doc {
 td.doc {
   width: 210px;
 }
+
+td.header {
+  text-transform: capitalize;
+  font-weight: bold;
+}
