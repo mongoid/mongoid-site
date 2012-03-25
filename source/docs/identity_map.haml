@@ -1,89 +1,120 @@
 - content_for :head do
   %title Mongoid: IdentityMap
 
-%h1 identity map
+%h1 Identity Map
 
-%p
-  The identity map in Mongoid is a current aid to assist with excessive
-  database queries in relations, and is necessary for eager loading to
-  work. It's functionality will be extended in future releases.
+.page-nav
+  %ul.nav.nav-pills
+    %li= link_to "Usage", "#usage"
+    %li= link_to "Unit of Work", "#unit_of_work"
+    %li= link_to "Testing", "#testing"
 
-%p
-  To enable the identity map, simply change the configuration option in
-  your mongoid.yml.
+%section#usage
+  %h2 Usage
+  %p
+    The identity map in Mongoid is a current aid to assist with excessive
+    database queries in relations, and is necessary for eager loading to
+    work.
 
-:coderay
-  #!ruby
-  identity_map_enabled: true
+  %p
+    To enable the identity map, simply change the configuration option in
+    your <code>mongoid.yml</code>.
 
-%p
-  When a document is now loaded from the database, is is automatically
-  added to the identity map by it's class and id. Subsequent request for
-  that document by it's id will not hit the database, but rather pull
-  the document back from the identity map itself. It's primary function
-  in this capacity is to aid in cutting down queries for belongs_to
-  relations when iterating over the parents.
+  :coderay
+    #!yaml
+    identity_map_enabled: true
 
-%h2 access
+  %p
+    When a document is now loaded from the database, is is automatically
+    added to the identity map by it's class and id. Subsequent request for
+    that document by it's id will not hit the database, but rather pull
+    the document back from the identity map itself. It's primary function
+    in this capacity is to aid in cutting down queries for belongs_to
+    relations when iterating over the parents.
 
-%p
-  You can access documents in the map directly via the <tt>get</tt> method.
-  It requires the class of the document you want and an id.
+  %p
+    You can access documents in the map directly via the <tt>get</tt> method.
+    It requires the class of the document you want and an id.
 
-:coderay
-  #!ruby
-  Mongoid::IdentityMap.get(Person, id)
+  :coderay
+    #!ruby
+    Mongoid::IdentityMap.get(Person, id)
 
-%p
-  Note in future releases the Mongoid finders will hook directly into the
-  map so you don't have to access it directly.
+  %p
+    When performing <code>Model.find</code> queries with the identity map
+    enabled, Mongoid will automatically look for the document in the
+    identity map first and return it if it exists before hitting the database.
 
-%h2 the unit of work
+%section#unit_of_work
+  %h2 The Unit of Work
 
-%p
-  To prevent database objects from becoming stale, the documents in the
-  identity map should only exist in a single unit of work, which is
-  usually a single request to the application.
+  %p
+    To prevent database objects from becoming stale, the documents in the
+    identity map should only exist in a single unit of work, which is
+    usually a single request to the application.
 
-%h3 rails
+  %h3 Rails
 
-%p
-  No extra work is needed for Rails users, Mongoid will automatically
-  clear out the identity map after each request.
+  %p
+    No extra work is needed for Rails users, Mongoid will automatically
+    clear out the identity map after each request.
 
-%h3 sinatra
+  %h3 Sinatra
 
-%p
-  You can require the Mongoid identity map middleware in your application
-  to clear out the map with each request:
+  %p
+    You can require the Mongoid identity map middleware in your application
+    to clear out the map with each request:
 
-:coderay
-  #!ruby
-  use Rack::Mongoid::Middleware::IdentityMap
+  :coderay
+    #!ruby
+    use Rack::Mongoid::Middleware::IdentityMap
 
-%h3 non rack based applications
+  %h3 Non Rack Based Applications
 
-%p
-  For users not using rack based apps, you will need to wrap your requests
-  or application defined unit of work in a <tt>Mongoid.unit_of_work</tt>
-  block:
+  %p
+    For users not using rack based apps, you will need to wrap your requests
+    or application defined unit of work in a <code>Mongoid.unit_of_work</code>
+    block:
 
-:coderay
-  #!ruby
-  Mongoid.unit_of_work do
-    Person.create(title: "Grand Poobah")
-  end
+  :coderay
+    #!ruby
+    Mongoid.unit_of_work do
+      Person.create(title: "Grand Poobah")
+    end
 
-%h2 testing
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            The unit of work can also be used to temporarily disable the
+            identity map and force documents to load from the database.
 
-%p
-  If you have the identity map enabled in your application, you should set up
-  a global hook to clear out the map before each test so the test suite does
-  not create memory bloat. For example in RSpec in <tt>spec_helper.rb</tt>.
+  :coderay
+    #!ruby
 
-:coderay
-  #!ruby
-  RSpec.configure do |config|
-    config.before(:each) { Mongoid::IdentityMap.clear }
-  end
+    # Disable the identity map for the current thread only.
+    Mongoid.unit_of_work(disable: :current) do
+      Band.find(1)
+    end
+
+    # Disable the identity map for all threads.
+    Mongoid.unit_of_work(disable: :all) do
+      Band.find(1)
+    end
+
+%section#testing
+  %h2 Testing
+
+  %p
+    If you have the identity map enabled in your application, you should set up
+    a global hook to clear out the map before each test so the test suite does
+    not create memory bloat. For example in RSpec in <code>spec_helper.rb</code>.
+
+  :coderay
+    #!ruby
+    RSpec.configure do |config|
+      config.before(:each) { Mongoid::IdentityMap.clear }
+    end
 
