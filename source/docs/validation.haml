@@ -1,239 +1,206 @@
 - content_for :head do
   %title Mongoid: Validation
 
-%h1 validations
+%h1 Validations
 
 %p
-  Mongoid includes <tt>ActiveModel::Validation</tt> to supply the basic validation plus an
-  additional associated and uniqueness validator.
+  Mongoid includes <code>ActiveModel::Validations</code> to supply the basic
+  validation plus an additional associated and uniqueness validator.
 
 %p
-  See <tt>#{link_to "ActiveModel::Validations", "http://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb"}</tt> documentation for more information.
+  See <code>#{link_to "ActiveModel::Validations", "http://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb"}</code> documentation for more information.
 
 %p Common options that can be passed to all validations:
 
 %ul
   %li
-    <tt>:allow_nil</tt> Specify whether to validate on a nil attribute.
+    <code>:allow_nil</code> Specify whether to validate on a nil attribute.
   %li
-    <tt>:if</tt> Only run if the supplied value evaluates to true.
+    <code>:if</code> Only run if the supplied value evaluates to true.
   %li
-    <tt>:on</tt> Only run when specified, supports <tt>:create</tt> and <tt>:update</tt>.
+    <code>:on</code> Only run when specified, supports <code>:create</code>
+    and <code>:update</code>.
   %li
-    <tt>:unless</tt> Only run if the supplied value evaluates to false.
+    <code>:unless</code> Only run if the supplied value evaluates to false.
 
 %p
   In addition to those validations, information is provided with each macro
   about its specific options.
 
-%h4 <tt>validates_acceptance_of</tt>
-
-%p
-  %i Validate the acceptance of a boolean field:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:message</tt> Supply a custom error message.
-  %li
-    <tt>:accept</tt> Specify the accepted value. Default: <tt>"1"</tt>
-
-:coderay
-  #!ruby
-  validates_acceptance_of :terms
-
-%h4 <tt>validates_associated</tt>
-
-%p
-  %i Validate associated documents along with the parent:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:message</tt> Supply a custom error message.
-
-:coderay
-  #!ruby
-  validates_associated :addresses, :employers
-
-%h4 <tt>validates_confirmation_of</tt>
-
-%p
-  %i Validate confirmation of a field via an accessor with "_confirmation" as its suffix:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:message</tt> Supply a custom error message.
-
-:coderay
-  #!ruby
-  validates_confirmation_of :password
-
-%h4 <tt>validates_exclusion_of</tt>
-
-%p
-  %i Validate items are excluded from a collection:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:in</tt> A list or range the item must not be included in.
-  %li
-    <tt>:message</tt> Supply a custom error message.
-
-:coderay
-  #!ruby
-  validates_exclusion_of :employers, in: ["Hashrocket"]
-
-%h4 <tt>validates_format_of</tt>
-
-%p
-  %i Validate the format of a field:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:in</tt> A list or range the item must not be included in.
-  %li
-    <tt>:allow_blank</tt> Specify whether to validate blank attributes.
-  %li
-    <tt>:with</tt> The regular expression to match against.
-  %li
-    <tt>:without</tt> The regular expression to check it does not match.
-  %li
-    <tt>:message</tt> Supply a custom error message.
-
-:coderay
-  #!ruby
-  validates_format_of :title, with: /\A\w+\Z/
-
-%h4 <tt>validates_inclusion_of</tt>
-
-%p
-  %i Validate the inclusion of an item in a collection:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:allow_blank</tt> Specify whether to validate blank attributes.
-  %li
-    <tt>:in</tt> The list or range the check the value against.
-  %li
-    <tt>:message</tt> Supply a custom error message.
-
-:coderay
-  #!ruby
-  validates_inclusion_of :employers, in: ["Hashrocket"]
-
-%h4 <tt>validates_length_of</tt>
-
-%p
-  %i Validate the length of a field:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:allow_blank</tt> Specify whether to validate blank attributes.
-  %li
-    <tt>:in</tt> Specify the range the length of the attribute can fall within.
-  %li
-    <tt>:maximum</tt> Specify the maximum length of the attribute.
-  %li
-    <tt>:message</tt> Supply a custom error message.
-  %li
-    <tt>:minimum</tt> Specify the minimum length of the attribute.
-  %li
-    <tt>:tokenizer</tt> A block to define how the string should be broken up.
-  %li
-    <tt>:too_long</tt> Define a custom message if the attribute is too long.
-  %li
-    <tt>:too_short</tt> Define a custom message if the attribute is too short.
-  %li
-    <tt>:within</tt> Specify the range the length of the attribute can fall within.
-  %li
-    <tt>:wrong_length</tt> Define a custom message for an incorrect length.
-
-:coderay
-  #!ruby
-  validates_length_of :password, minimum: 8, maximum: 16
-
-%h4 <tt>validates_numericality_of</tt>
-
-%p
-  %i Validate the numericality of a field:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:equal_to</tt> Specify a value the field must be exactly.
-  %li
-    <tt>:even</tt> Set that the value must be even.
-  %li
-    <tt>:greater_than</tt> Specify a value the field must be greater than.
-  %li
-    <tt>:greater_than_or_equal_to</tt>
-    Specify a value the field must be greater than or equal to.
-  %li
-    <tt>:less_than</tt>
-    Specify a value the field must be less than.
-  %li
-    <tt>:less_than_or_equal_to</tt> Specify a value the field must be less than or equal to.
-  %li
-    <tt>:message</tt> Supply a custom error message.
-  %li
-    <tt>:odd</tt> Set that the value must be odd.
-  %li
-    <tt>:only_integer</tt> Set whether the value has to be an integer.
-
-:coderay
-  #!ruby
-  validates_numericality_of :age, even: true
-
-%h4 <tt>validates_presence_of</tt>
-
-%p
-  %i Validate that a field exists:
-
-%p Options:
-
-%ul
-  %li
-    <tt>:message</tt> Supply a custom error message.
-
-:coderay
-  #!ruby
-  validates_presence_of :first_name
-
-%h4 <tt>validates_uniqueness_of</tt>
-
-%p
-  %i Validate that the field is unique in the database:
-
-%p
-  Note that for embedded documents, this will only check that the
-  field is unique within the context of the parent document, not the
-  entire database.
-
-%p Options:
-
-%ul
-  %li
-    <tt>:message</tt> Supply a custom error message.
-  %li
-    <tt>:case_sensitive</tt> Whether to use case sensitive matching. Defaults to true.
-  %li
-    <tt>:scope</tt> Scope uniqueness checks to the value of this field.
-
-:coderay
-  #!ruby
-  validates_uniqueness_of :ssn
-
+%table.table.table-bordered.table-striped
+  %thead
+    %tr
+      %th Validation
+      %th Macro
+      %th Options
+  %tbody
+    %tr
+      %td.doc
+        %p.doc
+          %i Validate acceptance of terms.
+      %td
+        :coderay
+          #!ruby
+          validates_acceptance_of :terms
+          validates :terms, acceptance: true
+      %td
+        :coderay
+          #!ruby
+          :message
+          :accept # Specify the accepted value. Default: 1.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate associated documents when the parent is validated. This
+            only validates documents in memory.
+      %td
+        :coderay
+          #!ruby
+          validates_associated :albums
+          validates :albums, associated: true
+      %td
+        :coderay
+          #!ruby
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate confirmation of a field, with a "_confirmation" suffix.
+      %td
+        :coderay
+          #!ruby
+          validates_confirmation_of :password
+          validates :password, confirmation: true
+      %td
+        :coderay
+          #!ruby
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate items are not in a list.
+      %td
+        :coderay
+          #!ruby
+          validates_exclusion_of :employers, in: [ "SoundCloud" ]
+          validates :employers, exclusion: { in: [ "SoundCloud" ] }
+      %td
+        :coderay
+          #!ruby
+          :in # Required list of values.
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate the format of a field.
+      %td
+        :coderay
+          #!ruby
+          validates_format_of :title, with: /\A\w+\Z/
+          validates :title, format: { with: /\A\w+\Z/ }
+      %td
+        :coderay
+          #!ruby
+          :allow_blank # Whether the field can be blank.
+          :in # A list or range of values.
+          :message
+          :with # A regular expression to match.
+          :without # A regular expression not to match.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate items are included in a list.
+      %td
+        :coderay
+          #!ruby
+          validates_inclusion_of :employers, in: [ "SoundCloud" ]
+          validates :employers, inclusion: { in: [ "SoundCloud" ] }
+      %td
+        :coderay
+          #!ruby
+          :allow_blank # Whether the field can be blank.
+          :in # Required list of values.
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate the length of a field.
+      %td
+        :coderay
+          #!ruby
+          validates_length_of :password, minimum: 8, maximum: 16
+          validates :password, length: { minimum: 8, maximum: 16 }
+      %td
+        :coderay
+          #!ruby
+          :allow_blank # Whether to validate blank attributes.
+          :in # The range the length can fall within.
+          :maximum # The maximum length of the attribute.
+          :message
+          :minimum # The minimum length of the attribute.
+          :tokenizer # A block tokenizer.
+          :too_long # Custom message if too long.
+          :too_short # Custom message if too short.
+          :within # Range the length can fall within.
+          :wrong_length # Custom message for an incorrect length.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate the numericality of a field.
+      %td
+        :coderay
+          #!ruby
+          validates_numericality_of :age, even: true
+          validates :age, numericality: { even: true }
+      %td
+        :coderay
+          #!ruby
+          :equal_to # A value the field must be exactly.
+          :even # Set that the value must be even.
+          :greater_than
+          :greater_than_or_equal_to
+          :less_than
+          :less_than_or_equal_to
+          :message
+          :odd # Set that the value must be odd.
+          :only_integer # Set whether the value has to be an integer.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate that an attribute exists.
+      %td
+        :coderay
+          #!ruby
+          validates_presence_of :name
+          validates :name, presence: true
+      %td
+        :coderay
+          #!ruby
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate that an attribute is unique.
+            Note that for embedded documents, this will only check that the
+            field is unique within the context of the parent document, not the
+            entire database.
+      %td
+        :coderay
+          #!ruby
+          validates_uniqueness_of :name
+          validates :name, uniqueness: true
+      %td
+        :coderay
+          #!ruby
+          :message
+          :case_sensitive # Whether to use case sensitive matching.
+          :scope # Scope checks to the value of this field.
