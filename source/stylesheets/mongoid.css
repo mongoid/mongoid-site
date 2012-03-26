@@ -19,6 +19,7 @@ h1 {
 #header {
   background-color: #000000;
   background-image: url("/images/header.png");
+  background-repeat: no-repeat;
   border-bottom: 5px solid #e6a486;
   height: 500px;
   left: 0px;
