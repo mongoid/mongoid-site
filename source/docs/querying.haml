@@ -531,6 +531,45 @@
 %section#scoping
   %h2 Scoping
 
+  %p
+    Scopes provide a convenient way to reuse common criteria with more
+    business domain style syntax.
+
   %h3 Named Scopes
 
-  %h3 Default scopes
+  %p
+    Named scopes are simply criteria defined at class load that are referenced
+    by a provided name. Just like normal criteria, they are lazy and chainable.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :country, type: String
+      field :genres, type: Array
+
+      scope :english, where(country: "England")
+      scope :rock, where(:genres.in => [ "rock" ])
+    end
+
+    Band.english.rock # Get the English rock bands.
+
+  %p
+    Named scopes can take procs and blocks for accepting parameters or
+    extending functionality.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :country, type: String
+
+      scope :named, ->(name){ where(name: name) }
+    end
+
+    Band.named("Depeche Mode") # Find Depeche Mode.
+
+  %h3 Default Scopes
+
+  %h3 Class Methods
