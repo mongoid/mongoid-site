@@ -58,11 +58,13 @@
     %table.table.table-bordered.table-striped
       %thead
         %tr
-          %th Description
-          %th Syntax
+          %th Operation
+          %th Mongoid
+          %th Moped
       %tbody
         %tr
           %td.doc
+            <code>Criteria#count</code>
             %p.doc
               %i Get a count of persisted documents.
           %td
@@ -70,8 +72,14 @@
               #!ruby
               Band.count
               Band.where(name: "Photek").count
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.count
+              collections[:bands].find(name: "Photek").count
         %tr
           %td.doc
+            <code>Criteria#each</code>
             %p.doc
               %i
                 Iterate over all documents in the collection.
@@ -81,8 +89,13 @@
               Band.each do |band|
                 p band.name
               end
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find
         %tr
           %td.doc
+            <code>Criteria#exists?</code>
             %p.doc
               %i
                 Determine if any documents exist in the database. Will return
@@ -92,8 +105,16 @@
               #!ruby
               Band.exists?
               Band.where(name: "Photek").exists?
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.count
+              collections[:bands].find(
+                { name: "Photek" }
+              ).count
         %tr
           %td.doc
+            <code>Criteria#find</code>
             %p.doc
               %i
                 Find a document or multiple documents by their ids. Will raise
@@ -102,10 +123,37 @@
             :coderay
               #!ruby
               Band.find("4baa56f1230048567300485c")
-              Band.find("4baa56f1230048567300485c", "4baa56f1230048567300485d")
-              Band.where(name: "Photek").find("4baa56f1230048567300485c")
+              Band.find(
+                "4baa56f1230048567300485c",
+                "4baa56f1230048567300485d"
+              )
+              Band.where(name: "Photek").find(
+                "4baa56f1230048567300485c"
+              )
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(
+                { _id: "4baa56f1230048567300485c" }
+              )
+              collections[:bands].find(
+                { _id:
+                  { "$in" => [
+                    "4baa56f1230048567300485c",
+                    "4baa56f1230048567300485d"
+                    ]
+                  }
+                }
+              )
+              collections[:bands].find(
+                {
+                  _id: "4baa56f1230048567300485c",
+                  name: "Photek"
+                }
+              )
         %tr
           %td.doc
+            <code>Model.find_or_create_by</code>
             %p.doc
               %i
                 Find a document by the provided attributes, and if not found
@@ -113,9 +161,14 @@
           %td
             :coderay
               #!ruby
-              Band.find_or_create_by(name: "Depeche Mode")
+              Band.find_or_create_by(name: "Photek")
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek")
         %tr
           %td.doc
+            <code>Model.find_or_initialize_by</code>
             %p.doc
               %i
                 Find a document by the provided attributes, and if not found
@@ -123,9 +176,14 @@
           %td
             :coderay
               #!ruby
-              Band.find_or_initialize_by(name: "Depeche Mode")
+              Band.find_or_initialize_by(name: "Photek")
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek")
         %tr
           %td.doc
+            <code>Criteria#first</code>
             %p.doc
               %i
                 Get the first document. If no sort options are provided, Mongoid
@@ -135,8 +193,16 @@
               #!ruby
               Band.first
               Band.where(:members.with_size => 3).first
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.sort(_id: 1).limit(-1)
+              collections[:bands].find(
+                { members: { "$size" => 3 }}
+              ).sort(_id: 1).limit(-1)
         %tr
           %td.doc
+            <code>Criteria#last</code>
             %p.doc
               %i
                 Get the last document. If no sort options are provided, Mongoid
@@ -146,6 +212,13 @@
               #!ruby
               Band.last
               Band.where(:members.with_size => 3).last
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.sort(_id: -1).limit(-1)
+              collections[:bands].find(
+                { members: { "$size" => 3 }}
+              ).sort(_id: -1).limit(-1)
 
   %h3 Eager Loading
 
@@ -182,6 +255,278 @@
 
 %section#query_plus
   %h2 Queries + Persistence
+
+  %p
+    Mongoid supports persistence operations off of criteria
+    in a light capacity for when you want to expressively perform multi
+    document inserts, updates, and deletion.
+
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Criteria#create</code>
+          %p.doc
+            %i Create a newly persisted document.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").create
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(name: "Photek")
+            collections[:bands].insert(
+              { _id: ..., name: "Photek" }
+            )
+      %tr
+        %td.doc
+          <code>Criteria#build</code>
+          %p.doc
+            %i Create a new document (unsaved).
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").build
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(name: "Photek")
+      %tr
+        %td.doc
+          <code>Criteria#update</code>
+          %p.doc
+            %i Update attributes of all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").update(label: "Mute")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$set" => { label: "Mute" }})
+      %tr
+        %td.doc
+          <code>Criteria#add_to_set</code>
+          %p.doc
+            %i Perform an $addToSet on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").add_to_set(:label, "Mute")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$addToSet" => { label: "Mute" }})
+      %tr
+        %td.doc
+          <code>Criteria#bit</code>
+          %p.doc
+            %i Perform a $bit on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").bit(:likes, { and: 14, or: 4 })
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$bit" => { likes: { and: 14, or: 4} }})
+      %tr
+        %td.doc
+          <code>Criteria#inc</code>
+          %p.doc
+            %i Perform an $inc on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").inc(:likes, 123)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$inc" => { likes: 123 }})
+      %tr
+        %td.doc
+          <code>Criteria#pop</code>
+          %p.doc
+            %i Perform a $pop on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").pop(:members, -1)
+            Band.where(name: "Photek").pop(:members, 1)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$pop" => { members: -1 }})
+
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$pop" => { members: 1 }})
+      %tr
+        %td.doc
+          <code>Criteria#pull</code>
+          %p.doc
+            %i Perform a $pull on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").pull(:members, "Maynard")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$pull" => { members: "Maynard" }})
+      %tr
+        %td.doc
+          <code>Criteria#pull_all</code>
+          %p.doc
+            %i Perform a $pullAll on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").
+              pull_all(:members, [ "Maynard", "Danny" ])
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all(
+              { "$pullAll" => { members: [ "Maynard", "Danny" ] }}
+            )
+      %tr
+        %td.doc
+          <code>Criteria#push</code>
+          %p.doc
+            %i Perform a $push on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").push(:members, "Maynard")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all(
+              { "$push" => { members: "Maynard" }}
+            )
+      %tr
+        %td.doc
+          <code>Criteria#push_all</code>
+          %p.doc
+            %i Perform a $pushAll on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").
+              push_all(:members, [ "Maynard", "Danny" ])
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all(
+              { "$pushAll" => { members: [ "Maynard", "Danny" ] }}
+            )
+      %tr
+        %td.doc
+          <code>Criteria#rename</code>
+          %p.doc
+            %i Perform a $rename on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").rename(:name, :title)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$rename" => { "name" => "title" }})
+      %tr
+        %td.doc
+          <code>Criteria#set</code>
+          %p.doc
+            %i Perform a $set on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").set(:likes, 10000)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$set" => { likes: 10000 }})
+      %tr
+        %td.doc
+          <code>Criteria#unset</code>
+          %p.doc
+            %i Perform a $unset on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").unset(:likes)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$unset" => { likes: true }})
+      %tr
+        %td.doc
+          <code>Criteria#delete</code>
+          %p.doc
+            %i Delete all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(label: "Mute").delete
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(label: "Mute").remove_all
+      %tr
+        %td.doc
+          <code>Criteria#destroy</code>
+          %p.doc
+            %i Destroy all matching documents and run callbacks.
+        %td
+          :coderay
+            #!ruby
+            Band.where(label: "Mute").destroy
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(label: "Mute").remove_all
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          Be careful with using <code>Criteria#destroy</code> in this context as
+          it will load every matching document into memory in order to run the
+          destroy callbacks.
+
 
 %section#scoping
   %h2 Scoping

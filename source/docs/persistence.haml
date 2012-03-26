@@ -29,7 +29,7 @@
   %p
     Mongoid's standard persistence methods come in the form of common methods
     you would find in other mapping frameworks. The following table is a cheat
-    sheet with the method in Mongoid on the right, and the MongoDB operation
+    sheet with the method in Mongoid on the right, and the Moped driver operation
     on the left.
 
   .well
@@ -46,11 +46,11 @@
       %tr
         %th Operation
         %th Mongoid
-        %th MongoDB
+        %th Moped
     %tbody
       %tr
         %td.doc
-          <code>Model.create</code><br/>
+          <code>Model.create</code>
           %p.doc
             %i Insert a document into the dataabase
         %td
@@ -67,10 +67,10 @@
         %td
           :coderay
             #!ruby
-            collections["people"].insert({
-              "_id" : ...,
-              "first_name" : "Heinrich",
-              "last_name" : "Heine"
+            collections[:people].insert({
+              _id: ...,
+              first_name: "Heinrich",
+              last_name: "Heine"
             })
       %tr
         %td
@@ -93,10 +93,10 @@
         %td
           :coderay
             #!ruby
-            collections["people"].insert({
-              "_id" : ...,
-              "first_name" : "Heinrich",
-              "last_name" : "Heine"
+            collections[:people].insert({
+              _id: ...,
+              first_name: "Heinrich",
+              last_name: "Heine"
             })
       %tr
         %td
@@ -121,18 +121,14 @@
         %td
           :coderay
             #!ruby
-            collections["people"].insert({
-              "_id" : ...,
-              "first_name" : "Heinrich",
-              "last_name" : "Heine"
+            collections[:people].insert({
+              _id: ...,
+              first_name: "Heinrich",
+              last_name: "Heine"
             })
 
-            collections["people"].update({
-              { "_id" : ... },
-              { "$set" : {
-                  "first_name" : "Christian Johan"
-              }}
-            })
+            collections[:people].find(_id: ...).
+              update("$set" => { first_name: "Christian Johan" })
       %tr
         %td
           <code>Model#save!</code>
@@ -155,18 +151,14 @@
         %td
           :coderay
             #!ruby
-            collections["people"].insert({
-              "_id" : ...,
-              "first_name" : "Heinrich",
-              "last_name" : "Heine"
+            collections[:people].insert({
+              _id: ...,
+              first_name: "Heinrich",
+              last_name: "Heine"
             })
 
-            collections["people"].update({
-              { "_id" : ... },
-              { "$set" : {
-                  "first_name" : "Christian Johan"
-              }}
-            })
+            collections[:people].find(_id: ...).
+              update("$set" => { first_name: "Christian Johan" })
       %tr
         %td
           <code>Model#update_attributes</code>
@@ -183,13 +175,11 @@
         %td
           :coderay
             #!ruby
-            collections["people"].update({
-              { "_id" : ... },
-              { "$set" : {
-                "first_name" : "Jean",
-                "last_name" : "Zorg"
-              }}
-            })
+            collections[:people].find(_id: ...).
+              update("$set" => {
+                first_name: "Jean",
+                last_name: "Zorg"
+              })
       %tr
         %td
           <code>Model#update_attributes!</code>
@@ -206,13 +196,11 @@
         %td
           :coderay
             #!ruby
-            collections["people"].update({
-              { "_id" : ... },
-              { "$set" : {
-                "first_name" : "Jean",
-                "last_name" : "Zorg"
-              }}
-            })
+            collections[:people].find(_id: ...).
+              update("$set" => {
+                first_name: "Jean",
+                last_name: "Zorg"
+              })
       %tr
         %td
           <code>Model#update_attribute</code>
@@ -226,10 +214,8 @@
         %td
           :coderay
             #!ruby
-            collections["people"].update({
-              { "_id" : ... },
-              { "$set" : { "first_name" : "Jean" }}
-            })
+            collections[:people].find(_id: ...).
+              update("$set" => { first_name: "Jean" })
       %tr
         %td
           <code>Model#delete</code>
@@ -244,7 +230,7 @@
         %td
           :coderay
             #!ruby
-            collections["people"].remove("_id" : ... )
+            collections[:people].find(_id: ...).remove
       %tr
         %td
           <code>Model#destroy</code>
@@ -259,7 +245,7 @@
         %td
           :coderay
             #!ruby
-            collections["people"].remove("_id" : ... )
+            collections[:people].find(_id: ...).remove
       %tr
         %td
           <code>Model.delete_all</code>
@@ -276,11 +262,10 @@
         %td
           :coderay
             #!ruby
-            collections["people"].remove
+            collections[:people].find.remove_all
 
-            collections["people"].remove(
-              { "first_name" : "Heinrich" }
-            )
+            collections[:people].find(first_name: "Heinrich").
+              remove_all
       %tr
         %td
           <code>Model.destroy_all</code>
@@ -298,11 +283,10 @@
         %td
           :coderay
             #!ruby
-            collections["people"].remove
+            collections[:people].find.remove_all
 
-            collections["people"].remove(
-              { "first_name" : "Heinrich" }
-            )
+            collections[:people].find(first_name: "Heinrich").
+              remove_all
 
 %section#atomic
   %h2 Atomic Persistence
@@ -326,7 +310,7 @@
         %tr
           %th Operation
           %th Mongoid
-          %th MongoDB
+          %th Moped
       %tbody
         %tr
           %td.doc
@@ -340,10 +324,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$addToSet" : { "aliases" : "Bond" } }
-              )
+              collections[:people].find(_id: ...).
+                update("$addToSet" => { aliases: "Bond" })
         %tr
           %td
             <code>Model#bit</code><br/>
@@ -356,10 +338,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$bit" : { "age" : { "and" : 10, "or" : 12 } } }
-              )
+              collections[:people].find(_id: ...).
+                update("$bit" => { age: { and: 10, or: 12 }})
         %tr
           %td
             <code>Model#inc</code><br/>
@@ -372,10 +352,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$inc" : { "age" : 1 } }
-              )
+              collections[:people].find(_id: ...).
+                update("$inc" => { age: 1 })
         %tr
           %td
             <code>Model#pop</code><br/>
@@ -388,10 +366,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$pop" : { "aliases" : 1 } }
-              )
+              collections[:people].find(_id: ...).
+                update("$pop" => { aliases: 1 })
         %tr
           %td
             <code>Model#pull</code><br/>
@@ -404,10 +380,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$pull" : { "aliases" : "Bond" } }
-              )
+              collections[:people].find(_id: ...).
+                update("$pull" => { aliases: "Bond" })
         %tr
           %td
             <code>Model#pull_all</code><br/>
@@ -420,10 +394,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$pullAll" : { "aliases" : [ "Bond", "James" ] } }
-              )
+              collections[:people].find(_id: ...).
+                update("$pullAll" => { aliases: [ "Bond", "James" ]})
         %tr
           %td
             <code>Model#push</code><br/>
@@ -436,10 +408,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$push" : { "aliases" : "007" } }
-              )
+              collections[:people].find(_id: ...).
+                update("$push" => { aliases: "007" })
         %tr
           %td
             <code>Model#push_all</code><br/>
@@ -452,10 +422,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$pushAll" : { "aliases" : [ "007", "008" ] } }
-              )
+              collections[:people].find(_id: ...).
+                update("$pushAll" => { aliases: [ "007", "008" ]})
         %tr
           %td
             <code>Model#rename</code><br/>
@@ -468,10 +436,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$rename" : { "bday" : "dob" } }
-              )
+              collections[:people].find(_id: ...).
+                update("$rename" => { "bday" => "dob" })
         %tr
           %td
             <code>Model#set</code><br/>
@@ -484,10 +450,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$set" : { "name" : "Tyler Durden" } }
-              )
+              collections[:people].find(_id: ...).
+                update("$set" => { name: "Tyler Durden" })
         %tr
           %td
             <code>Model#unset</code><br/>
@@ -500,10 +464,8 @@
           %td
             :coderay
               #!ruby
-              collections["people"].update(
-                { "_id" : ... },
-                { "$unset" : { "name" : 1 } }
-              )
+              collections[:people].find(_id: ...).
+                update("$unset" => { name: 1 })
 
 %section#safe_mode
   %h2 Safe Mode
