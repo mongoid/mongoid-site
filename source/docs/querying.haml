@@ -34,7 +34,11 @@
   :coderay
     #!ruby
     Band.where(name: "Depeche Mode")
-    Band.in(name: [ "Tool", "Deftones" ]).union.in(name: [ "Melvins" ])
+    Band.
+      where(:founded.gte => "1980-1-1").
+      in(name: [ "Tool", "Deftones" ]).
+      union.
+      in(name: [ "Melvins" ])
 
   %p
     With each chained method on a criteria, a newly cloned criteria
@@ -175,3 +179,13 @@
         %td.note
           In order for eager loading to work, the <a>Identity Map</a>
           must be enabled.
+
+%section#query_plus
+  %h2 Queries + Persistence
+
+%section#scoping
+  %h2 Scoping
+
+  %h3 Named Scopes
+
+  %h3 Default scopes
