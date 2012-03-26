@@ -18,11 +18,15 @@
         .navbar-inner
           .container
             %ul.nav
-              %li.divider-vertical
-              %li.link
+              %li.dropdown.link#project
                 = link_to "/" do
                   = image_tag "/images/mongoid-logo-small-green.png"
-              %li.divider-vertical
+              %li.link
+                = link_to "/origin/index.html" do
+                  = image_tag "/images/origin-logo-small-white.png"
+              %li.link
+                = link_to "/moped/index.html" do
+                  = image_tag "/images/origin-logo-small-white.png"
 
     #navigation
       .subnav
