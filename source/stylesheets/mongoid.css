@@ -80,6 +80,23 @@ h1 {
   z-index: 1020;
 }
 
+.page-nav-fixed {
+  background-color: #FFFFFF;
+  border-color: #D5D5D5;
+  border-radius: 0 0 0 0;
+  border-width: 0 0 1px;
+  box-shadow: 0 1px 0 #FFFFFF inset, 0 1px 5px rgba(0, 0, 0, 0.1);
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 80px;
+  z-index: 500;
+}
+
+.page-nav-fixed .nav {
+  margin-bottom: 0px;
+}
+
 .nav-pills > li > a {
   border-radius: 5px 5px 5px 5px;
   margin-bottom: 2px;
@@ -109,10 +126,6 @@ h1 {
 
 .page-nav {
   margin-top: 30px;
-}
-
-section {
-  margin-top: 40px;
 }
 
 p.doc {

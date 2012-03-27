@@ -17,14 +17,15 @@
   replacing, appending and persisting.
 
 .page-nav
-  %ul.nav.nav-pills
-    %li= link_to "Common Behaviour", "#common"
-    %li= link_to "Metadata", "#metadata"
-    %li= link_to "Embedded 1-1", "#embeds_one"
-    %li= link_to "Embedded 1-n", "#embeds_many"
-    %li= link_to "Referenced 1-1", "#has_one"
-    %li= link_to "Referenced 1-n", "#has_many"
-    %li= link_to "Referenced n-n", "#has_and_belongs_to_many"
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Common Behaviour", "#common"
+      %li= link_to "Metadata", "#metadata"
+      %li= link_to "Embedded 1-1", "#embeds_one"
+      %li= link_to "Embedded 1-n", "#embeds_many"
+      %li= link_to "Referenced 1-1", "#has_one"
+      %li= link_to "Referenced 1-n", "#has_many"
+      %li= link_to "Referenced n-n", "#has_and_belongs_to_many"
 
 %section#common
   %h2 Common Behaviour
