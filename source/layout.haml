@@ -3,6 +3,7 @@
   %head
     %meta{name: "description", content: "A Ruby ODM for MongoDB"}
     %meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
+
     = stylesheet_link_tag "bootstrap.min.css"
     = stylesheet_link_tag "mongoid.css"
     = stylesheet_link_tag "mongoid-coderay.css"
@@ -12,7 +13,7 @@
     = javascript_include_tag "mongoid.js"
     = yield_content :head
 
-  %body{:"data-offset" => 60, :"data-target" => ".subnav", :"data-spy" => "scroll" }
+  %body
     #header
       .navbar.navbar-fixed-top
         .navbar-inner
