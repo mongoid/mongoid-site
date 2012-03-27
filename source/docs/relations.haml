@@ -121,6 +121,69 @@
       has_many :posts, validate: false
     end
 
+  %h3 Polymorphism
+
+  %p
+    When a child embedded document can belong to more than one type of parent
+    document, you can tell Mongoid to support this by adding the <code>as</code>
+    option to the definition on the parents, and the <code>polymorphic</code>
+    option on the child. On the child object, and additional field will be
+    stored that indicates the type of the parent.
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Polymorhic behaviour is allowed on all relations with the
+            exception of <code>has_and_belongs_to_many</code>.
+
+  :coderay
+    #!ruby
+
+    class Band
+      include Mongoid::Document
+      embeds_many :photos, as: :photographic
+      has_one :address, as: :addressable
+    end
+
+    class Photo
+      include Mongoid::Document
+      embedded_in :photographic, polymorphic: true
+    end
+
+    class Address
+      include Mongoid::Document
+      belongs_to :addressable, polymorphic: true
+    end
+
+  %h3 Cascading Callbacks
+
+  %p
+    If you want the embedded document callbacks to fire when calling a persistence
+    operation on it's parent, you will need to provide the cascade callbacks
+    option to the relation.
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Cascading callbacks is only available on <code>embeds_one</code>
+            and <code>embeds_many</code> relations.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      embeds_many :albums, cascade_callbacks: true
+      embeds_one :label, cascade_callbacks: true
+    end
+
+    band.save # Fires all save callbacks on the band, albums, and label.
+
 %section#metadata
   %h2 Metadata
 
@@ -285,7 +348,6 @@
       %td <code>Metadata#versioned?</code>
       %td Returns whether the relation is an embedded version.
 
-
 %section#embeds_one
   %h2 Embedded 1-1
 
@@ -294,175 +356,202 @@
     document are defined using Mongoid's <code>embeds_one</code> and
     <code>embedded_in</code> macros.
 
-%h3 defining
+  %h3 Defining
 
-%p
-  The parent document of the relation should use the <tt>embeds_one</tt>
-  macro to indicate is has 1 embedded child, where the document that
-  is embedded uses <tt>embedded_in</tt>.
+  %p
+    The parent document of the relation should use the <code>embeds_one</code>
+    macro to indicate is has 1 embedded child, where the document that
+    is embedded uses <code>embedded_in</code>.
 
-:coderay
-  #!ruby
+  :coderay
+    #!ruby
 
-  class Person
-    include Mongoid::Document
-    embeds_one :name
-  end
+    class Band
+      include Mongoid::Document
+      embeds_one :label
+    end
 
-  class Name
-    include Mongoid::Document
-    field :vorname, type: String
-    field :nachname, type: String
-    embedded_in :person
-  end
+    class Label
+      include Mongoid::Document
+      field :name, type: String
+      embedded_in :band
+    end
 
-%p
-  Definitions are required on both sides to the relation in order for it to
-  work properly.
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Definitions are required on both sides to the relation in order
+            for it to work properly.
 
-%h3 storage
+  %h3 Storage
 
-%p
-  Documents that are embedded using the <tt>embeds_one</tt> macro are stored
-  as a hash inside the parent in the parent's database collection.
+  %p
+    Documents that are embedded using the <code>embeds_one</code> macro are stored
+    as a hash inside the parent in the parent's database collection.
 
-:coderay
-  #!javascript
+  :coderay
+    #!javascript
 
-  {
-    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
-    "name" : {
-      "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
-      "vorname" : "Heinrich",
-      "nachname" : "Heine"
+    {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+      "label" : {
+        "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
+        "name" : "Mute",
+      }
     }
-  }
 
-%h3 accessors
+  %h3 Operations
 
-%p
-  Accessing the relations is handled through the methods created based on the
-  names of the relations. The following example shows basic access on both
-  sides of the relation.
+  %p
+    Once the relation is defined, the following operations are available, and
+    the following table shows any database operations that are performed if
+    applicable. The previously defined models will be used for example code.
 
-:coderay
-  #!ruby
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Model\#{name}</code>
+          %p.doc
+            %i Get the embedded document.
+        %td
+          :coderay
+            #!ruby
+            band.label
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}=</code>
+          %p.doc
+            %i
+              Set the embedded document. If the parent document is persisted,
+              then the child will be atomically saved immediately. If setting
+              to <code>nil</code> then the child will be deleted.
+        %td
+          :coderay
+            #!ruby
+            band.label = Label.new(name: "Mute")
 
-  # Return the child name.
-  person.name
+            band.label = nil
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].
+              find(_id: ...).
+              update(
+                "$set" => { label: { name: "Mute" }}
+              )
 
-  # Set the child name.
-  person.name = Name.new
+            collections[:bands].
+              find(_id: ...).
+              update("$unset" => { label: true })
 
-  # Return the parent person.
-  name.person
+      %tr
+        %td.doc
+          <code>Model\#{parent_name}</code>
+          %p.doc
+            %i
+              Get the parent document from the child.
+        %td
+          :coderay
+            #!ruby
+            label.band
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{parent_name}=</code>
+          %p.doc
+            %i
+              Set the parent document from the child.
+        %td
+          :coderay
+            #!ruby
+            label.band = Band.new
+        %td
+      %tr
+        %td.doc
+          <code>Model#build_{name}</code>
+          %p.doc
+            %i
+              Build a new document on the relation.
+        %td
+          :coderay
+            #!ruby
+            band.build_label(name: "Mute")
 
-  # Set the parent person.
-  name.person = Person.new
+            label.build_band(name: "Depeche Mode")
+        %td
+      %tr
+        %td.doc
+          <code>Model#create_{name}</code>
+          %p.doc
+            %i
+              Create a new document from either side of the relation.
+              This persists the child immediately if executing from the parent,
+              and persists the entire tree if executed from the child.
+        %td
+          :coderay
+            #!ruby
+            band.create_label(name: "Mute")
 
-%h3 building and creating
+            label.create_band({
+              name: "Depeche Mode"
+            })
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].
+              find(_id: ...).
+              update(
+                "$set" => { label: { name: "Mute" }}
+              )
 
-%p
-  From the parent side, documents in the embedded child can be initialized or
-  created using the specially defined methods.
+            collections[:bands].
+              insert({
+                name: "Depeche Mode",
+                label: { name: "Mute" }
+              })
+      %tr
+        %td.doc
+          <code>Model#create_{name}</code>
+          %p.doc
+            %i
+              Create a new document from either side of the relation.
+              This persists the child immediately if executing from the parent,
+              and persists the entire tree if executed from the child.
+        %td
+          :coderay
+            #!ruby
+            band.create_label(name: "Mute")
 
-:coderay
-  #!ruby
+            label.create_band({
+              name: "Depeche Mode"
+            })
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].
+              find(_id: ...).
+              update(
+                "$set" => { label: { name: "Mute" }}
+              )
 
-  # Create a new child name given the provided attributes.
-  person.build_name(vorname: "Heinrich", nachname: "Heine")
+            collections[:bands].
+              insert({
+                name: "Depeche Mode",
+                label: { name: "Mute" }
+              })
 
-  # Create a persisted child name.
-  person.create_name(vorname: "Heinrich", nachname: "Heine")
 
-  # Replace the parent with a new one from the attributes.
-  name.build_person(title: "Prince")
 
-  # Replace the parent with a newly saved one from the attributes.
-  name.create_person(title: "Prince")
-
-%h3 removal
-
-%p
-  Documents in the embedded many can be removed by either calling delete
-  on the child or setting it to nil.
-
-:coderay
-  #!ruby
-
-  # Delete the child document
-  person.name.delete
-  person.name.destroy
-  person.name = nil
-
-%h3 polymorphic behaviour
-
-%p
-  When a child embedded document can belong to more than one type of parent
-  document, you can tell Mongoid to support this by adding the <tt>as</tt>
-  option to the definition on the parents, and the <tt>polymorphic</tt>
-  option on the child.
-
-:coderay
-  #!ruby
-
-  class Doctor
-    include Mongoid::Document
-    embeds_one :name, as: :namable
-  end
-
-  class Nurse
-    include Mongoid::Document
-    embeds_one :name, as: :namable
-  end
-
-  class Name
-    include Mongoid::Document
-    embedded_in :namable, polymorphic: true
-  end
-
-%h3 inheritance
-%p
-  When embedding models that inherit from a different class, monogid will store the class of this object in the field <tt>_type</tt>.
-
-:coderay
-  #!ruby
-  class Person
-    embeds_one :profession
-  end
-  class Profession
-    include Mongoid::Document
-    embedded_in :person
-  end
-  class Doctor < Person; end;
-  class Nurse < Person; end;
-
-%h3 cascading callbacks
-
-%p
-  If you want the embedded document callbacks to fire when calling a persistence
-  operation on it's parent, you will need to provide the cascade callbacks
-  option to the relation.
-
-:coderay
-  #!ruby
-  class Person
-    include Mongoid::Document
-    embeds_one :name, cascade_callbacks: true
-  end
-
-%p
-  <i>Gotcha</i>: You run the risk of having the callbacks on an embedded document
-  fire more than once if this option is set to true and you call the
-  operation on the child. In these cases it's best to always call from the parent.
-
-:coderay
-  #!ruby
-  # This will fire the callbacks twice
-  person.create_name(first: "Bob")
-  # This fires the callbacks once
-  person.build_name(first: "Joe")
-  person.save
 
 %h1 embedded one to many
 
