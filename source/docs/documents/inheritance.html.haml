@@ -64,6 +64,36 @@
   # Returns only Firefox documents
   Firefox.where(name: "Window 1")
 
+
+%p
+  To query for subclasses within an embedded collection you need to
+  leverage the <tt>_type</tt> attribute in each subclassed object.
+  <tt>Canvas</tt> and <tt>Shape</tt> documents, would not have it,
+  but <tt>Browser</tt>, <tt>Firefox</tt>, <tt>Circle</tt>, and
+  <tt>Rectangle</tt> would. Keep in mind that <tt>_type</tt>
+  is a string that stores the name of the document's class, and
+  as such can only be used to query for a specific subclass, and
+  not anything it is a subclass of. 
+
+%p
+  If, for example, <tt>Rectangle</tt>
+  was a subclass of <tt>Parallelogram</tt> which was in turn a 
+  subclass of <tt>Shape</tt>, you could search the <tt>Canvas</tt>'s
+  shapes collection for objects with a <tt>_type</tt> of <tt>"Parallelogram"</tt>
+  but it would never return a <tt>Rectangle</tt> object, and vice-versa.
+
+:coderay
+  #!ruby
+  # Returns all the Rectangle shapes in a previously
+  # found Canvas
+  my_canvas.shapes.where(_type: "Rectangle")
+  # Returns no entries (see above) 
+  my_canvas.shapes.where(_type: "Shape")
+  # Returns all the Canvasas that have Circles
+  Canvas.where("shapes._type"=>"Circle")
+  # Returns no entries (see above)
+  Canvas.where("shapes._type'=>"Shape")
+
 %h3 associations
 
 %p
