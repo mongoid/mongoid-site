@@ -259,6 +259,17 @@
     require "rails/test_unit/railtie"
     # require "sprockets/railtie" # Uncomment this line for Rails 3.1+
 
+  %p
+    For Rails 3.2+ you'll also need to remove configuration options for
+    Active Record that reside in your environments, ie
+    <code>myapp/config/environments/development.rb</code>. Make sure the
+    lines are commented out like as follows.
+
+  :coderay
+    #!ruby
+    # config.active_record.mass_assignment_sanitizer = :strict
+    # config.active_record.auto_explain_threshold_in_seconds = 0.5
+
   %h3 Sinatra, Padrino, and others
 
   %p
