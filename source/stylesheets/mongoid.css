@@ -103,6 +103,11 @@ h1 {
   margin-top: 2px;
   padding-bottom: 15px;
   padding-top: 15px;
+  text-transform: uppercase;
+}
+
+.page-nav a {
+  font-size: 12px;
 }
 
 .dropdown-toggle .caret {
