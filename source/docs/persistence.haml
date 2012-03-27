@@ -68,7 +68,6 @@
           :coderay
             #!ruby
             collections[:people].insert({
-              _id: ...,
               first_name: "Heinrich",
               last_name: "Heine"
             })
@@ -94,7 +93,6 @@
           :coderay
             #!ruby
             collections[:people].insert({
-              _id: ...,
               first_name: "Heinrich",
               last_name: "Heine"
             })
@@ -122,12 +120,11 @@
           :coderay
             #!ruby
             collections[:people].insert({
-              _id: ...,
               first_name: "Heinrich",
               last_name: "Heine"
             })
 
-            collections[:people].find(_id: ...).
+            collections[:people].find(...).
               update("$set" => { first_name: "Christian Johan" })
       %tr
         %td
@@ -152,12 +149,11 @@
           :coderay
             #!ruby
             collections[:people].insert({
-              _id: ...,
               first_name: "Heinrich",
               last_name: "Heine"
             })
 
-            collections[:people].find(_id: ...).
+            collections[:people].find(...).
               update("$set" => { first_name: "Christian Johan" })
       %tr
         %td
@@ -175,7 +171,7 @@
         %td
           :coderay
             #!ruby
-            collections[:people].find(_id: ...).
+            collections[:people].find(...).
               update("$set" => {
                 first_name: "Jean",
                 last_name: "Zorg"
@@ -196,7 +192,7 @@
         %td
           :coderay
             #!ruby
-            collections[:people].find(_id: ...).
+            collections[:people].find(...).
               update("$set" => {
                 first_name: "Jean",
                 last_name: "Zorg"
@@ -214,7 +210,7 @@
         %td
           :coderay
             #!ruby
-            collections[:people].find(_id: ...).
+            collections[:people].find(...).
               update("$set" => { first_name: "Jean" })
       %tr
         %td
@@ -230,7 +226,7 @@
         %td
           :coderay
             #!ruby
-            collections[:people].find(_id: ...).remove
+            collections[:people].find(...).remove
       %tr
         %td
           <code>Model#destroy</code>
@@ -245,7 +241,7 @@
         %td
           :coderay
             #!ruby
-            collections[:people].find(_id: ...).remove
+            collections[:people].find(...).remove
       %tr
         %td
           <code>Model.delete_all</code>
@@ -324,7 +320,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$addToSet" => { aliases: "Bond" })
         %tr
           %td
@@ -338,7 +334,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$bit" => { age: { and: 10, or: 12 }})
         %tr
           %td
@@ -352,7 +348,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$inc" => { age: 1 })
         %tr
           %td
@@ -366,7 +362,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$pop" => { aliases: 1 })
         %tr
           %td
@@ -380,7 +376,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$pull" => { aliases: "Bond" })
         %tr
           %td
@@ -394,7 +390,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$pullAll" => { aliases: [ "Bond", "James" ]})
         %tr
           %td
@@ -408,7 +404,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$push" => { aliases: "007" })
         %tr
           %td
@@ -422,7 +418,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$pushAll" => { aliases: [ "007", "008" ]})
         %tr
           %td
@@ -436,7 +432,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$rename" => { "bday" => "dob" })
         %tr
           %td
@@ -450,7 +446,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$set" => { name: "Tyler Durden" })
         %tr
           %td
@@ -464,7 +460,7 @@
           %td
             :coderay
               #!ruby
-              collections[:people].find(_id: ...).
+              collections[:people].find(...).
                 update("$unset" => { name: 1 })
 
 %section#safe_mode
