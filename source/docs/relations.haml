@@ -8,7 +8,8 @@
   and in the database. Embedded relations describe documents who are
   stored inside other documents in the database. Referenced relations
   describe documents that reference documents in another collection by
-  storing data (usually an id) about the other document in itself.
+  storing foreign key data (usually an id) about the other document
+  in itself.
 
 %p
   All relation objects in Mongoid are proxies to the actual document or
@@ -183,6 +184,55 @@
     end
 
     band.save # Fires all save callbacks on the band, albums, and label.
+
+  %h3 Dependent Behaviour
+
+  %p
+    You can provided dependent options to referenced associations to
+    instruct Mongoid how to handle situations where one side of the
+    relation is deleted, or is attempted to be deleted. The options
+    are as follows:
+
+  %ul
+    %li <code>:delete</code>: Delete the child document.
+    %li <code>:destroy</code>: Destroy the child document.
+    %li <code>:nullify</code>: Orphan the child document.
+    %li <code>:restrict</code>: Raise an error if the child is not empty.
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p Dependent options are not available on embedded relations.
+
+  %p
+    The default behaviour of each association when no dependent option
+    is provided is to nullify.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      has_many :albums, dependent: :delete
+      belongs_to :label, dependent: :nullify
+    end
+
+    class Album
+      include Mongoid::Document
+      belongs_to :band
+    end
+
+    class Label
+      include Mongoid::Document
+      has_many :bands, dependent: :restrict
+    end
+
+    label = Label.first
+    label.bands.push(Band.first)
+    label.delete # Raises an error since bands is not empty.
+
+    Band.first.delete # Will delete all associated albums.
 
 %section#metadata
   %h2 Metadata
@@ -550,12 +600,8 @@
                 label: { name: "Mute" }
               })
 
-
-
-
-%h1 embedded one to many
-
-%p= image_tag "/images/embedded-1-n.png", class: "diagram"
+%section#embeds_many
+  %h2 Embedded 1-n
 
 %p
   One to many relationships where the children are embedded in the parent
@@ -720,32 +766,6 @@
   # Do any children exist that are persisted?
   person.addresses.exists?
 
-%h3 polymorphic behaviour
-
-%p
-  When a child embedded document can belong to more than one type of parent
-  document, you can tell Mongoid to support this by adding the <tt>as</tt>
-  option to the definition on the parents, and the <tt>polymorphic</tt>
-  option on the child.
-
-:coderay
-  #!ruby
-
-  class Office
-    include Mongoid::Document
-    embeds_many :addresses, as: :locatable
-  end
-
-  class Person
-    include Mongoid::Document
-    embeds_many :addresses, as: :locatable
-  end
-
-  class Address
-    include Mongoid::Document
-    embedded_in :locatable, polymorphic: true
-  end
-
 %h3 recursive embedding / cyclic relations
 
 %p
@@ -769,46 +789,9 @@
   ruby.parent_tag         # [programming]
   python.parent_tag       # [programming]
 
-%h3 cascading callbacks
 
-%p
-  If you want the embedded document callbacks to fire when calling a persistence
-  operation on it's parent, you will need to provide the cascade callbacks
-  option to the relation.
-
-:coderay
-  #!ruby
-  class Person
-    include Mongoid::Document
-    embeds_many :addresses, cascade_callbacks: true
-  end
-
-%p
-  <i>Gotcha</i>: You run the risk of having the callbacks on an embedded document
-  fire more than once if this option is set to true and you call the
-  operation on the child. In these cases it's best to always call from the parent.
-
-:coderay
-  #!ruby
-  # This will fire the callbacks twice
-  person.addresses.create(street: "Unter den Linden")
-  # This fires the callbacks once
-  person.addresses.build(street: "Maybachufer")
-  person.save
-
-%h1 referenced relations
-
-%p
-  Referenced relations are associations between documents that reside
-  in separate collections in MongoDB. The link between the documents
-  is handled similar to a relational database where a "foreign key"
-  needs to be stored on one or both sides of the relation, but note
-  that accessing a referenced relation required a separate query to
-  the database since joins cannot be performed.
 
 %h1 referenced one to one
-
-%p= image_tag "/images/referenced-1-1.png", class: "diagram"
 
 %p
   One to one relationships where the children are referenced in the parent
@@ -916,70 +899,8 @@
   person.game.destroy
   person.game = nil
 
-%h3 polymorphic behaviour
-
-%p
-  When a child referenced document can belong to more than one type of parent
-  document, you can tell Mongoid to support this by adding the <tt>as</tt>
-  option to the definition on the parents, and the <tt>polymorphic</tt>
-  option on the child.
-
-:coderay
-  #!ruby
-
-  class Arcade
-    include Mongoid::Document
-    has_one :game, as: :playable
-  end
-
-  class Person
-    include Mongoid::Document
-    has_one :game, as: :playable
-  end
-
-  class Game
-    include Mongoid::Document
-    belongs_to :playable, polymorphic: true
-  end
-
-%h3 dependent behaviour
-
-%p
-  You can tell Mongoid what to do with child relations of a has one
-  when unsetting the relation via the dependent option.
-  The valid options are:
-
-%ul
-  %li <tt>:delete</tt>: Delete the child document.
-  %li <tt>:destroy</tt>: Destroy the child document.
-  %li <tt>:nullify</tt>: Orphan the child document.
-
-:coderay
-  #!ruby
-  class Person
-    include Mongoid::Document
-    has_one :game, as: :playable, dependent: :delete
-  end
-
-  class Arcade
-    include Mongoid::Document
-    has_one :game, as: :playable, dependent: :nullify
-  end
-
-  # Deletes the existing game on the person.
-  person.game = []
-  person.game = nil
-
-  # Orphans the existing game on the arcade (no delete).
-  person.game = []
-  person.game = nil
-
-%p
-  If the dependent option is not defined, the default is to nullify.
 
 %h1 referenced one to many
-
-%p= image_tag "/images/referenced-1-n.png", class: "diagram"
 
 %p
   One to many relationships where the children are stored in a
@@ -1142,72 +1063,6 @@
   # Do any children exist that are persisted?
   person.posts.exists?
 
-%h3 polymorphic behaviour
-
-%p
-  When a child referenced document can belong to more than one type of parent
-  document, you can tell Mongoid to support this by adding the <tt>as</tt>
-  option to the definition on the parents, and the <tt>polymorphic</tt>
-  option on the child.
-
-:coderay
-  #!ruby
-
-  class Company
-    include Mongoid::Document
-    has_many :posts, as: :postable
-  end
-
-  class Person
-    include Mongoid::Document
-    has_many :posts, as: :postable
-  end
-
-  class Post
-    include Mongoid::Document
-    belongs_to :postable, polymorphic: true
-  end
-
-%h3 dependent behaviour
-
-%p
-  You can tell Mongoid what to do with child relations of a has many
-  when unsetting the relation via the dependent option. This also applies
-  to calling <tt>#delete</tt> on the relation. The valid options are:
-
-%ul
-  %li <tt>:delete</tt>: Delete the child documents.
-  %li <tt>:destroy</tt>: Destroy the child documents.
-  %li <tt>:nullify</tt>: Orphan the child documents.
-
-:coderay
-  #!ruby
-  class Company
-    include Mongoid::Document
-    has_many :posts, as: :postable, dependent: :delete
-  end
-
-  class Person
-    include Mongoid::Document
-    has_many :posts, as: :postable, dependent: :nullify
-  end
-
-  # Delete all the child relations:
-  company.posts = []
-  company.posts = nil
-
-  # Orphan all the child relations:
-  person.posts = []
-  person.posts = nil
-
-  # Delete a single child relation:
-  company.posts.delete(post)
-
-  # Orphan a single child relation:
-  person.posts.delete(post)
-
-%p
-  If the dependent option is not defined, the default is to nullify.
 
 %h1 referenced many to many
 
@@ -1383,35 +1238,6 @@
   # Destroy all matching referenced documents, running callbacks.
   tag.people.destroy_all(conditions: { title: "Marshall" })
   tag.people.where(title: "Heiness").destroy_all
-
-%h3 dependent behaviour
-
-%p
-  You can tell Mongoid what to do with inverse relations of a many to many
-  when unsetting the relation via the dependent option. This also applies
-  to calling <tt>#delete</tt> on the relation. The valid options are:
-
-%ul
-  %li <tt>:delete</tt>: Delete the inverse documents.
-  %li <tt>:destroy</tt>: Destroy the inverse documents.
-  %li <tt>:nullify</tt>: Orphan the inverse documents.
-
-:coderay
-  #!ruby
-  class Person
-    include Mongoid::Document
-    has_and_belongs_to_many :preferences, dependent: :nullify
-  end
-
-  # Orphan all the inverse relations:
-  person.preferences = []
-  person.preferences = nil
-
-  # Orphan a single child relation:
-  person.preferences.delete(preference)
-
-%p
-  If the dependent option is not defined, the default is to nullify.
 
 %h3 Saving
 
