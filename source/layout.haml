@@ -10,10 +10,11 @@
     = stylesheet_link_tag "bootstrap-responsive.min.css"
     = javascript_include_tag "jquery-1.7.2.min.js"
     = javascript_include_tag "bootstrap-dropdown.js"
+    = javascript_include_tag "bootstrap-scrollspy.js"
     = javascript_include_tag "mongoid.js"
     = yield_content :head
 
-  %body
+  %body{ "data-offset" => 260, "data-target" => ".page-nav", "data-spy" => "scroll" }
     #header
       .navbar.navbar-fixed-top
         .navbar-inner

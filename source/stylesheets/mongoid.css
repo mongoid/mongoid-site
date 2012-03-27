@@ -5,7 +5,7 @@ a {
 }
 
 a:hover {
-  color: #910b0b;
+  color: #;
 }
 
 body {
@@ -97,6 +97,14 @@ h1 {
   margin-bottom: 0px;
 }
 
+.page-nav-fixed .nav-pills > li > a {
+  border-radius: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  margin-right: 0px;
+  padding-bottom: 13px;
+}
+
 .nav-pills > li > a {
   border-radius: 5px 5px 5px 5px;
   margin-bottom: 2px;
@@ -117,6 +125,10 @@ h1 {
 
 .samurai {
   width: 80px;
+}
+
+section {
+  padding-top: 140px;
 }
 
 .note {
