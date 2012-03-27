@@ -4,7 +4,7 @@
 %h1 Indexing
 
 %p
-  You can define indexes on documents using the index macro. Provide a name
+  You can define indexes on documents using the index macro. Provide the key
   for the index along with a direction. For additional options, supply them
   in the options hash.
 
@@ -13,7 +13,7 @@
   class Person
     include Mongoid::Document
     field :ssn
-    index ssn: 1, options: { unique: true }
+    index ssn: 1, options: { unique: true, name: "ssn_index" }
   end
 
 %p
@@ -98,18 +98,6 @@
 :coderay
   #!ruby
   rake db:mongoid:remove_indexes
-
-%p
-  Note that you must following standard Rails class and module naming and
-  organization patterns in order for this to work properly with respect to
-  namespacing and camel-casing.
-
-:coderay
-  #!ruby
-  Model # must reside in /app/models/model.rb
-  MyModel # must be in /app/models/my_model.rb
-  MYModel # must be in /app/models/m_y_model.rb
-  Namespaced::Model # must be in /app/models/namespaced/model.rb
 
 %p
   If you want indexes autocreated when the model classes are loaded, add this
