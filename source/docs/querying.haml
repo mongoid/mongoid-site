@@ -564,12 +564,78 @@
       include Mongoid::Document
       field :name, type: String
       field :country, type: String
+      field :active, type: Boolean, default: true
 
       scope :named, ->(name){ where(name: name) }
+      scope :active, where(active: true) do
+        def deutsch
+          tap |scope| do
+            scope.selector.store("origin" => "Deutschland")
+          end
+        end
+      end
     end
 
     Band.named("Depeche Mode") # Find Depeche Mode.
+    Band.active.deutsch # Find active German bands.
 
   %h3 Default Scopes
 
+  %p
+    Default scopes can be useful when you find yourself applying the same
+    criteria to most queries, and want something to be there by default.
+    Default scopes take either criteria objects or procs that return criteria
+    objects for cases like multi-tenant applications.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :active, type: Boolean, default: true
+
+      default_scope where(active: true)
+    end
+
+    Band.each do |band|
+      # All bands here are active.
+    end
+
+  %p
+    You can tell Mongoid not to apply the default scope by using
+    <code>unscoped</code>, which can be inline or take a block.
+
+  :coderay
+    #!ruby
+    Band.unscoped.where(name: "Depeche Mode")
+    Band.unscoped do
+      Band.where(name: "Depeche Mode")
+    end
+
+  %p
+    You can also tell Mongoid to explicitly apply the default scope
+    again later to always ensure it's there.
+
+  :coderay
+    #!ruby
+    Band.unscoped.where(name: "Depeche Mode").scoped
+
   %h3 Class Methods
+
+  %p
+    Class methods on models that return criteria objects are also
+    treated like scopes, and can be chained as well.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :active, type: Boolean, default: true
+
+      def self.active
+        where(active: true)
+      end
+    end
+
+    Band.active
