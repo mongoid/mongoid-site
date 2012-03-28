@@ -610,35 +610,6 @@
                 name: "Depeche Mode",
                 label: { name: "Mute" }
               })
-      %tr
-        %td.doc
-          <code>Model#create_{name}</code>
-          %p.doc
-            %i
-              Create a new document from either side of the relation.
-              This persists the child immediately if executing from the parent,
-              and persists the entire tree if executed from the child.
-        %td
-          :coderay
-            #!ruby
-            band.create_label(name: "Mute")
-
-            label.create_band({
-              name: "Depeche Mode"
-            })
-        %td
-          :coderay
-            #!ruby
-            collections[:bands].find(...).
-              update(
-                "$set" => { label: { name: "Mute" }}
-              )
-
-            collections[:bands].
-              insert({
-                name: "Depeche Mode",
-                label: { name: "Mute" }
-              })
 
 %section#embeds_many
   %h2 Embedded 1-n
@@ -999,116 +970,168 @@
             band.albums.exists?
         %td
 
-%h1 referenced one to one
+%section#has_one
+  %h2 Referenced 1-1
 
-%p
-  One to one relationships where the children are referenced in the parent
-  document are defined using Mongoid's <tt>has_one</tt> and
-  <tt>belongs_to</tt> macros.
+  %p
+    One to one relationships where the children are referenced in the parent
+    document are defined using Mongoid's <code>has_one</code> and
+    <code>belongs_to</code> macros.
 
-%h3 defining
+  %h3 Defining
 
-%p
-  The parent document of the relation should use the <tt>has_one</tt>
-  macro to indicate is has 1 referenced child, where the document that
-  is referenced in it uses <tt>belongs_to</tt>.
+  %p
+    The parent document of the relation should use the <code>has_one</code>
+    macro to indicate is has 1 referenced child, where the document that
+    is referenced in it uses <code>belongs_to</code>.
 
-:coderay
-  #!ruby
+  :coderay
+    #!ruby
 
-  class Person
-    include Mongoid::Document
-    has_one :game
-  end
+    class Band
+      include Mongoid::Document
+      has_one :studio
+    end
 
-  class Game
-    include Mongoid::Document
-    field :name, type: String
-    belongs_to :person
-  end
+    class Studio
+      include Mongoid::Document
+      field :name, type: String
+      belongs_to :band
+    end
 
-%p
-  Definitions are required on both sides to the relation in order for it to
-  work properly.
+  %p
+    Definitions are required on both sides to the relation in order for it to
+    work properly.
 
-%h3 storage
+  %h3 Storage
 
-%p
-  When defining a relation of this nature, each document is stored in it's
-  respective collection, but the child document contains a "foreign key"
-  reference to the parent.
+  %p
+    When defining a relation of this nature, each document is stored in it's
+    respective collection, but the child document contains a "foreign key"
+    reference to the parent.
 
-:coderay
-  #!ruby
+  :coderay
+    #!ruby
 
-  # The parent person document.
-  { "_id" : ObjectId("4d3ed089fb60ab534684b7e9") }
+    # The parent band document.
+    { "_id" : ObjectId("4d3ed089fb60ab534684b7e9") }
 
-  # The child post document.
-  {
-    "_id" : ObjectId("4d3ed089fb60ab534684b7f1"),
-    "person_id" : ObjectId("4d3ed089fb60ab534684b7e9")
-  }
+    # The child studio document.
+    {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7f1"),
+      "band_id" : ObjectId("4d3ed089fb60ab534684b7e9")
+    }
 
-%h3 accessors
+  %h3 Operations
 
-%p
-  Accessing the relations is handled through the methods created based on the
-  names of the relations. The following example shows basic access on both
-  sides of the relation.
+  %p
+    Once the relation is defined, the following operations are available, and
+    the following table shows any database operations that are performed if
+    applicable. The previously defined models will be used for example code.
 
-:coderay
-  #!ruby
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Model\#{name}</code>
+          %p.doc
+            %i Get the child document.
+        %td
+          :coderay
+            #!ruby
+            band.studio
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}=</code>
+          %p.doc
+            %i
+              Set the child document. If the parent document is persisted,
+              then the child will be saved immediately. If setting
+              to <code>nil</code> then the child will be deleted.
+        %td
+          :coderay
+            #!ruby
+            band.studio = Studio.new(name: "Abbey Road")
 
-  # Return the child game.
-  person.game
+            band.studio = nil
+        %td
+          :coderay
+            #!ruby
+            collections[:studios].insert(
+              { name: "Abbey Road", band_id: ... }
+            )
 
-  # Set the child game.
-  person.game = [ Game.new ]
+            collections[:studios].find(...).remove
 
-  # Return the parent person.
-  game.person
+      %tr
+        %td.doc
+          <code>Model\#{parent_name}</code>
+          %p.doc
+            %i
+              Get the parent document from the child.
+        %td
+          :coderay
+            #!ruby
+            studio.band
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{parent_name}=</code>
+          %p.doc
+            %i
+              Set the parent document from the child.
+        %td
+          :coderay
+            #!ruby
+            studio.band = Band.new
+        %td
+      %tr
+        %td.doc
+          <code>Model#build_{name}</code>
+          %p.doc
+            %i
+              Build a new document on the relation. This does not save the
+              new document.
+        %td
+          :coderay
+            #!ruby
+            band.build_studio(name: "Abbey Road")
 
-  # Set the parent person.
-  game.person = Person.new
+            studio.build_band(name: "Depeche Mode")
+        %td
+      %tr
+        %td.doc
+          <code>Model#create_{name}</code>
+          %p.doc
+            %i
+              Create a new document from either side of the relation.
+              This persists the child immediately if executing from the parent,
+              and persists the parent if executed from the child.
+        %td
+          :coderay
+            #!ruby
+            band.create_studio(name: "Abbey Road")
 
-%h3 building and creating
+            studio.create_band(name: "Depeche Mode")
+        %td
+          :coderay
+            #!ruby
+            collections[:studios].insert(
+              { name: "Abbey Road", band_id: ... }
+            )
 
-%p
-  From the parent side, documents in the referenced child can be initialized or
-  created using the specially defined methods.
+            collections[:bands].insert(
+              { name: "Depeche Mode" }
+            )
 
-:coderay
-  #!ruby
-
-  # Create a new child game given the provided attributes.
-  person.build_game(name: "Tron")
-
-  # Create a persisted child game.
-  person.create_game(name: "Tron")
-
-  # Replace the parent with a new one from the attributes.
-  game.build_person(title: "Prince")
-
-  # Replace the parent with a newly saved one from the attributes.
-  game.create_person(title: "Prince")
-
-%h3 removal
-
-%p
-  Documents in the referenced many can be removed by either calling delete
-  on the child or setting it to nil.
-
-:coderay
-  #!ruby
-
-  # Delete the child document
-  person.game.delete
-  person.game.destroy
-  person.game = nil
-
-
-%h1 referenced one to many
+%section#has_many
+  %h2 Referenced 1-n
 
 %p
   One to many relationships where the children are stored in a
