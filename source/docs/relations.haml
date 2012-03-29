@@ -1133,167 +1133,348 @@
 %section#has_many
   %h2 Referenced 1-n
 
-%p
-  One to many relationships where the children are stored in a
-  separate collection from the parent document are defined using
-  Mongoid's <tt>has_many</tt> and <tt>belongs_to</tt> macros. This
-  exhibits similar behaviour to Active Record.
+  %p
+    One to many relationships where the children are stored in a
+    separate collection from the parent document are defined using
+    Mongoid's <code>has_many</code> and <code>belongs_to</code> macros. This
+    exhibits similar behaviour to Active Record.
 
-%h3 defining
+  %h3 Defining
 
-%p
-  The parent document of the relation should use the <tt>has_many</tt>
-  macro to indicate is has <i>n</i> number of referenced children, where
-  the document that is referenced uses <tt>belongs_to</tt>.
+  %p
+    The parent document of the relation should use the <code>has_many</code>
+    macro to indicate is has <i>n</i> number of referenced children, where
+    the document that is referenced uses <code>belongs_to</code>.
 
-:coderay
-  #!ruby
+  :coderay
+    #!ruby
 
-  class Person
-    include Mongoid::Document
-    has_many :posts
-  end
+    class Band
+      include Mongoid::Document
+      has_many :members
+    end
 
-  class Post
-    include Mongoid::Document
-    field :title, type: String
-    belongs_to :person
-  end
+    class Member
+      include Mongoid::Document
+      field :name, type: String
+      belongs_to :band
+    end
 
-%p
-  Definitions are required on both sides to the relation in order for it to
-  work properly.
+  %p
+    Definitions are required on both sides to the relation in order for it to
+    work properly.
 
-%h3 storage
+  %h3 Storage
 
-%p
-  When defining a relation of this nature, each document is stored in it's
-  respective collection, but the child document contains a "foreign key"
-  reference to the parent.
+  %p
+    When defining a relation of this nature, each document is stored in it's
+    respective collection, but the child document contains a "foreign key"
+    reference to the parent.
 
-:coderay
-  #!ruby
+  :coderay
+    #!ruby
 
-  # The parent person document.
-  { "_id" : ObjectId("4d3ed089fb60ab534684b7e9") }
+    # The parent band document.
+    { "_id" : ObjectId("4d3ed089fb60ab534684b7e9") }
 
-  # The child post document.
-  {
-    "_id" : ObjectId("4d3ed089fb60ab534684b7f1"),
-    "person_id" : ObjectId("4d3ed089fb60ab534684b7e9")
-  }
+    # The child member document.
+    {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7f1"),
+      "band_id" : ObjectId("4d3ed089fb60ab534684b7e9")
+    }
 
-%h3 accessors
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Model\#{name}</code>
+          %p.doc
+            %i Get the related documents.
+        %td
+          :coderay
+            #!ruby
+            band.members
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}=</code>
+          %p.doc
+            %i
+              Set the related documents. If the parent document is persisted,
+              then the child will be saved immediately. If setting
+              to <code>nil</code> or <code>[]</code> then the children will be
+              deleted.
+        %td
+          :coderay
+            #!ruby
+            band.members = [ Member.new(name: "Fletch") ]
 
-%p
-  Accessing the relations is handled through the methods created based on the
-  names of the relations. The following example shows basic access on both
-  sides of the relation.
+            band.members = nil
+            band.members = []
+        %td
+          :coderay
+            #!ruby
+            collections[:members].insert(
+              { name: "Fletch", band_id: ... }
+            )
 
-:coderay
-  #!ruby
+            collections[:members].find(...).remove
 
-  # Return the child posts.
-  person.posts
+      %tr
+        %td.doc
+          <code>Model\#{parent_name}</code>
+          %p.doc
+            %i
+              Get the parent document from any child.
+        %td
+          :coderay
+            #!ruby
+            member.band
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{parent_name}=</code>
+          %p.doc
+            %i
+              Set the parent document from a child.
+        %td
+          :coderay
+            #!ruby
+            member.band = Band.new
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}.<<</code><br/>
+          <code>Model\#{name}.push</code>
+          %p.doc
+            %i
+              Push a new document onto the relation. If the parent is
+              persisted, then the child documents will be automatically
+              saved.
+        %td
+          :coderay
+            #!ruby
+            band.members << Member.new(name: "Fletch")
+            band.members.push(Member.new(name: "Fletch"))
+        %td
+          :coderay
+            #!ruby
+            collections[:members].insert(
+              { name: "Fletch", band_id: ... }
+            )
+      %tr
+        %td.doc
+          <code>Model\#{name}.concat</code>
+          %p.doc
+            %i
+              Push multiplpe document onto the relation. If the parent is
+              persisted, then the child documents will be automatically
+              saved in a single batch.
+        %td
+          :coderay
+            #!ruby
+            band.members.concat(
+              Member.new(name: "Fletch"),
+              Member.new(name: "Martin")
+            )
+        %td
+          :coderay
+            #!ruby
+            collections[:members].insert([
+              { name: "Fletch", band_id: ... },
+              { name: "Martin", band_id: ... }
+            ])
+      %tr
+        %td.doc
+          <code>Model\#{name}.build</code><br/>
+          <code>Model\#{name}.new</code>
+          %p.doc
+            %i
+              Build a new document in the relation with the provided
+              attributes. Does not save the new document.
+        %td
+          :coderay
+            #!ruby
+            band.members.build(name: "Violator")
+            band.members.new(name: "Violator")
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}.create</code><br/>
+          <code>Model\#{name}.create!</code>
+          %p.doc
+            %i
+              Create a new document in the relation with the provided
+              attributes and saves. With the bang version an error will
+              be raised if validation fails.
+        %td
+          :coderay
+            #!ruby
+            band.members.create(name: "Violator")
+            band.members.create!(name: "Violator")
+        %td
+          :coderay
+            #!ruby
+            collections[:members].insert(
+              { name: "Fletch", band_id: ... }
+            )
+      %tr
+        %td.doc
+          <code>Model\#{name}.clear</code><br/>
+          <code>Model\#{name}.delete_all</code>
+          %p.doc
+            %i
+              Deletes all documents from the relation, without
+              running any callbacks.
+        %td
+          :coderay
+            #!ruby
+            band.members.clear
+            band.members.delete_all
+            band.members.delete_all(name: "Fletch")
+            band.members.
+              where(name: "Fletch").delete_all
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find(band_id: ...).remove_all
 
-  # Set the child posts.
-  person.posts = [ Post.new ]
+            collections[:members].
+              find(band_id: ..., name: "Fletch").remove_all
+      %tr
+        %td.doc
+          <code>Model\#{name}.destroy_all</code>
+          %p.doc
+            %i
+              Deletes all documents from the relation, while
+              running the destroy callbacks.
+        %td
+          :coderay
+            #!ruby
+            band.members.destroy_all
+            band.members.destroy_all(name: "Fletch")
+            band.members.
+              where(name: "Fletch").destroy_all
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find(band_id: ...).remove_all
 
-  # Return the parent person.
-  post.person
+            collections[:members].
+              find(band_id: ..., name: "Fletch").remove_all
+      %tr
+        %td.doc
+          <code>Model\#{name}.delete</code>
+          %p.doc
+            %i
+              Deletes the matching document from the relation.
+        %td
+          :coderay
+            #!ruby
+            band.members.delete(member)
+        %td
+          :coderay
+            #!ruby
+            collections[:members].
+              find(band_id: ..., name: "Fletch").remove
+      %tr
+        %td.doc
+          <code>Model\#{name}.find</code>
+          %p.doc
+            %i
+              Return documents in the relation with matching ids. Will
+              raise an error if all the ids are not found by default.
+        %td
+          :coderay
+            #!ruby
+            band.members.find(id)
 
-  # Set the parent person.
-  post.person = Person.new
+            band.members.find(id_one, id_two)
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find({
+              band_id: ..., _id: id
+            })
 
-%h3 building and creating
-
-%p
-  From the parent side, documents in the referenced child can be appended to using
-  traditional array syntax or the special association proxy methods. On the
-  child side the only option is to replace the existing with a newly built or
-  created document.
-
-:coderay
-  #!ruby
-
-  # Append one or many child posts, saving them if the person is persisted.
-  person.posts << Post.new
-  person.posts.push(Post.new)
-  person.posts.concat([ post ])
-
-  # Appends and returns a new child post from the attirbutes.
-  person.posts.build(title: "Berlin never sleeps.")
-  person.posts.new(title: "Berlin never sleeps.")
-
-  # Appends, saves, and returns a new child post from the attirbutes.
-  person.posts.create(title: "Berlin is far cooler than New York.")
-
-  # Appends, saves, and returns a new child post from the attributes,
-  # raising an error if validation fails.
-  person.posts.create!(title: "Berlin is bad for the liver.")
-
-  # Replace the parent with a new one from the attributes.
-  post.build_person(title: "Prince")
-
-  # Replace the parent with a newly saved one from the attributes.
-  post.create_person(title: "Prince")
-
-%h3 removal
-
-%p
-  Documents in the referenced many can be removed in several different manners,
-  either through the relation, criteria, or accessors.
-
-:coderay
-  #!ruby
-
-  # Delete all referenced documents
-  person.posts.delete_all
-  person.posts.clear
-  person.posts = []
-
-  # Delete all matching referenced documents.
-  person.posts.delete_all(conditions: { title: "Berlin" })
-  person.posts.where(title: "Berlin").delete_all
-
-  # Destroy all referenced documents, running destroy callbacks.
-  person.posts.destroy_all
-
-  # Destroy all matching referenced documents, running callbacks.
-  person.posts.destroy_all(conditions: { title: "Berlin" })
-  person.posts.where(title: "Berlin").destroy_all
-
-  # Delete the parent referenced document.
-  post.person.delete
-
-  # Destroy the parent referenced document.
-  post.person.destroy
-
-%h3 finding
-
-%p
-  Finding documents in the referenced children is handled through <tt>find</tt>
-  or by using chained criteria on the relation.
-
-:coderay
-  #!ruby
-
-  # Find a child by a single or multiple ids.
-  person.posts.find(id)
-  person.posts.find([ id_one, id_two ])
-
-  # Find matching referenced children.
-  person.posts.where(title: "Berlin")
-
-  # Find or create a matching (saved) child.
-  person.posts.find_or_create_by(title: "Berlin")
-
-  # Find or initialize a matching (new) child.
-  person.posts.find_or_initialize_by(title: "Berlin")
-
-  # Do any children exist that are persisted?
-  person.posts.exists?
-
+            collections[:members].find({
+              band_id: ..., _id: { "$in" => [ id_one, id_two ] }
+            })
+      %tr
+        %td.doc
+          <code>Model\#{name}.find_or_create_by</code>
+          %p.doc
+            %i
+              Search for the document in the relation, and if not found
+              create a newly persisted one.
+        %td
+          :coderay
+            #!ruby
+            band.members.
+              find_or_create_by(name: "Fletch")
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find({
+              band_id: ..., name: "Fletch"
+            })
+            collections[:members].insert(
+              { name: "Fletch", band_id: ... }
+            )
+      %tr
+        %td.doc
+          <code>Model\#{name}.find_or_initialize_by</code>
+          %p.doc
+            %i
+              Search for the document in the relation, and if not found
+              add a new one.
+        %td
+          :coderay
+            #!ruby
+            band.members.
+              find_or_initialize_by(name: "Fletch")
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find({
+              band_id: ..., name: "Fletch"
+            })
+      %tr
+        %td.doc
+          <code>Model\#{name}.where</code>
+          %p.doc
+            %i
+              Find matching documents in the relation. This can be any
+              criteria method, not just where.
+        %td
+          :coderay
+            #!ruby
+            band.members.where(name: "Fletch")
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find({
+              band_id: ..., name: "Fletch"
+            })
+      %tr
+        %td.doc
+          <code>Model\#{name}.exists?</code>
+          %p.doc
+            %i
+              Returns whether or not the relation has any documents.
+        %td
+          :coderay
+            #!ruby
+            band.members.exists?
+        %td
+          :coderay
+            #!ruby
+            collections[:members].find(band_id: ...).count
 
 %h1 referenced many to many
 
