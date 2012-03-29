@@ -1716,12 +1716,12 @@
         %td
           :coderay
             #!ruby
-            collections[:tags].find(band_ids: ...).remove_all
+            collections[:tags].find(_id: { "$in" => ... }).remove_all
             collections[:bands].find(...).
               update("$pullAll" => { tag_ids: ... })
 
             collections[:tags].
-              find(band_ids: ..., name: "electro").remove_all
+              find(_id: { "$in" => ... }, name: "electro").remove_all
             collections[:bands].find(...).
               update("$pullAll" => { tag_ids: ... })
       %tr
@@ -1741,12 +1741,12 @@
         %td
           :coderay
             #!ruby
-            collections[:tags].find(band_ids: ...).remove_all
+            collections[:tags].find(_id: { "$in" => ... }).remove_all
             collections[:bands].find(...).
               update("$pullAll" => { tag_ids: ... })
 
             collections[:tags].
-              find(band_ids: ..., name: "electro").remove_all
+              find(_id: { "$in" => ... }, name: "electro").remove_all
             collections[:bands].find(...).
               update("$pullAll" => { tag_ids: ... })
       %tr
@@ -1763,7 +1763,7 @@
           :coderay
             #!ruby
             collections[:tags].
-              find(band_ids: ..., name: "electro").remove
+              find(_id: { "$in" => ... }, name: "electro").remove
             collections[:bands].find(...).
               update("$pull" => { tag_ids: ... })
       %tr
