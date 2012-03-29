@@ -1183,6 +1183,13 @@
       "band_id" : ObjectId("4d3ed089fb60ab534684b7e9")
     }
 
+  %h3 Operations
+
+  %p
+    Once the relation is defined, the following operations are available, and
+    the following table shows any database operations that are performed if
+    applicable. The previously defined models will be used for example code.
+
   %table.table.table-bordered.table-striped
     %thead
       %tr
@@ -1300,8 +1307,8 @@
         %td
           :coderay
             #!ruby
-            band.members.build(name: "Violator")
-            band.members.new(name: "Violator")
+            band.members.build(name: "Fletch")
+            band.members.new(name: "Fletch")
         %td
       %tr
         %td.doc
@@ -1315,8 +1322,8 @@
         %td
           :coderay
             #!ruby
-            band.members.create(name: "Violator")
-            band.members.create!(name: "Violator")
+            band.members.create(name: "Fletch")
+            band.members.create!(name: "Fletch")
         %td
           :coderay
             #!ruby
@@ -1476,184 +1483,381 @@
             #!ruby
             collections[:members].find(band_id: ...).count
 
-%h1 referenced many to many
+%section#has_and_belongs_to_many
+  %h2 Referenced n-n
 
-%p= image_tag "/images/referenced-n-n.png", class: "diagram"
+  %p
+    Many to many relationships where the inverse documents are stored in a
+    separate collection from the base document are defined using
+    Mongoid's <code>has_and_belongs_to_many</code> macro. This
+    exhibits similar behaviour to Active Record with the exception that
+    no join collection is needed, the foreign key ids are stored as
+    arrays on either side of the relation.
 
-%p
-  Many to many relationships where the inverse documents are stored in a
-  separate collection from the base document are defined using
-  Mongoid's <tt>has_and_belongs_to_many</tt> macro. This
-  exhibits similar behaviour to Active Record with the exception that
-  no join collection is needed, the foreign key ids are stored as
-  arrays on either side of the relation.
+  %h3 Defining
 
-%h3 defining
+  %p
+    Both sides of the relation use the same macro.
 
-%p
-  Both sides of the relation use the same macro.
+  :coderay
+    #!ruby
 
-:coderay
-  #!ruby
+    class Band
+      include Mongoid::Document
+      has_and_belongs_to_many :tags
+    end
 
-  class Person
-    include Mongoid::Document
-    field :title, type: String
-    has_and_belongs_to_many :tags
-  end
+    class Tag
+      include Mongoid::Document
+      field :name, type: String
+      has_and_belongs_to_many :bands
+    end
 
-  class Tag
-    include Mongoid::Document
-    field :name, type: String
-    has_and_belongs_to_many :people
-  end
+  %p
+    You can create a one sided many to many if you want to mimic a has_many
+    that stores the keys as an array on the parent.
 
-%p
-  You can create a one sided many to many if you want to mimic a has_many
-  that stores the keys as an array on the parent.
+  :coderay
+    #!ruby
 
-:coderay
-  #!ruby
+    class Band
+      include Mongoid::Document
+      has_and_belongs_to_many :tags, inverse_of: nil
+    end
 
-  class Movie
-    include Mongoid::Document
-    field :title, type: String
-    has_and_belongs_to_many :ratings, inverse_of: nil
-  end
+    class Tag
+      include Mongoid::Document
+      field :name, type: String
+    end
 
-  class Rating
-    include Mongoid::Document
-  end
+  %h3 Storage
 
-%h3 storage
+  %p
+    When defining a relation of this nature, each document is stored in it's
+    respective collection, and each document contains a "foreign key"
+    reference to the other in the form of an array.
 
-%p
-  When defining a relation of this nature, each document is stored in it's
-  respective collection, and each document contains a "foreign key"
-  reference to the other in the form of an array.
+  :coderay
+    #!ruby
 
-:coderay
-  #!ruby
+    # The band document.
+    {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+      "tag_ids" : [ ObjectId("4d3ed089fb60ab534684b7f2") ]
+    }
 
-  # The person document.
-  {
-    "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
-    "tag_ids" : [ ObjectId("4d3ed089fb60ab534684b7f2") ]
-  }
+    # The tag document.
+    {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7f2"),
+      "band_ids" : [ ObjectId("4d3ed089fb60ab534684b7e9") ]
+    }
 
-  # The tag document.
-  {
-    "_id" : ObjectId("4d3ed089fb60ab534684b7f2"),
-    "person_ids" : [ ObjectId("4d3ed089fb60ab534684b7e9") ]
-  }
+  %h3 Operations
 
-%h3 accessors
+  %p
+    Once the relation is defined, the following operations are available, and
+    the following table shows any database operations that are performed if
+    applicable. The previously defined models will be used for example code.
 
-%p
-  Accessing the relations is handled through the methods created based on the
-  names of the relations. The following example shows basic access on both
-  sides of the relation.
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Many to many relations require usually double the amount of
+            hits to the database to keep both sides of the relation in
+            sync, since keys are stored on both sides. Due to this they
+            are slower and should be used with caution.
 
-:coderay
-  #!ruby
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Model\#{name}</code>
+          %p.doc
+            %i Get the related documents.
+        %td
+          :coderay
+            #!ruby
+            band.tags
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}=</code>
+          %p.doc
+            %i
+              Set the related documents. If the parent document is persisted,
+              then the child will be saved immediately along with the parent to
+              keep the keys consistent. If setting to <code>nil</code> or
+              <code>[]</code> then the children will be deleted.
+        %td
+          :coderay
+            #!ruby
+            band.tags = [ Tag.new(name: "electro") ]
 
-  # Return the tags that belong to a person.
-  person.tags
+            band.tags = nil
+            band.tags = []
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].insert(
+              { name: "electro", band_ids: ... }
+            )
+            collections[:bands].find(...).
+              update("$push" => { tag_ids: ... })
 
-  # Set the tags from the person.
-  person.tags = [ Tag.new ]
+            collections[:tags].find(...).remove
+            collections[:bands].find(...).
+              update("$pull" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.<<</code><br/>
+          <code>Model\#{name}.push</code>
+          %p.doc
+            %i
+              Push a new document onto the relation. If the parent is
+              persisted, then the child documents will be automatically
+              saved.
+        %td
+          :coderay
+            #!ruby
+            band.tags << Tag.new(name: "electro")
+            band.tags.push(Tag.new(name: "electro"))
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].insert(
+              { name: "electro", band_ids: ... }
+            )
+            collections[:bands].find(...).
+              update("$push" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.concat</code>
+          %p.doc
+            %i
+              Push multiplpe document onto the relation. If the parent is
+              persisted, then the child documents will be automatically
+              saved in a single batch.
+        %td
+          :coderay
+            #!ruby
+            band.tags.concat(
+              Tag.new(name: "electro"),
+              Tag.new(name: "new wave")
+            )
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].insert([
+              { name: "electro", band_ids: ... },
+              { name: "new wave", band_ids: ... }
+            ])
+            collections[:bands].find(...).
+              update("$pushAll" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.build</code><br/>
+          <code>Model\#{name}.new</code>
+          %p.doc
+            %i
+              Build a new document in the relation with the provided
+              attributes. Does not save the new document.
+        %td
+          :coderay
+            #!ruby
+            band.tags.build(name: "electro")
+            band.tags.new(name: "electro")
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}.create</code><br/>
+          <code>Model\#{name}.create!</code>
+          %p.doc
+            %i
+              Create a new document in the relation with the provided
+              attributes and saves. With the bang version an error will
+              be raised if validation fails.
+        %td
+          :coderay
+            #!ruby
+            band.tags.create(name: "electro")
+            band.tags.create!(name: "electro")
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].insert(
+              { name: "electro", band_ids: ... }
+            )
+            collections[:bands].find(...).
+              update("$push" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.clear</code><br/>
+          <code>Model\#{name}.delete_all</code>
+          %p.doc
+            %i
+              Deletes all documents from the relation, without
+              running any callbacks.
+        %td
+          :coderay
+            #!ruby
+            band.tags.clear
+            band.tags.delete_all
+            band.tags.delete_all(name: "electro")
+            band.tags.
+              where(name: "electro").delete_all
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].find(band_ids: ...).remove_all
+            collections[:bands].find(...).
+              update("$pullAll" => { tag_ids: ... })
 
-  # Return the people that belong to a tag.
-  tag.people
+            collections[:tags].
+              find(band_ids: ..., name: "electro").remove_all
+            collections[:bands].find(...).
+              update("$pullAll" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.destroy_all</code>
+          %p.doc
+            %i
+              Deletes all documents from the relation, while
+              running the destroy callbacks.
+        %td
+          :coderay
+            #!ruby
+            band.tags.destroy_all
+            band.tags.destroy_all(name: "electro")
+            band.tags.
+              where(name: "electro").destroy_all
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].find(band_ids: ...).remove_all
+            collections[:bands].find(...).
+              update("$pullAll" => { tag_ids: ... })
 
-  # Set the people from the tag.
-  tag.people = [ Person.new ]
+            collections[:tags].
+              find(band_ids: ..., name: "electro").remove_all
+            collections[:bands].find(...).
+              update("$pullAll" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.delete</code>
+          %p.doc
+            %i
+              Deletes the matching document from the relation.
+        %td
+          :coderay
+            #!ruby
+            band.tags.delete(tag)
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].
+              find(band_ids: ..., name: "electro").remove
+            collections[:bands].find(...).
+              update("$pull" => { tag_ids: ... })
+      %tr
+        %td.doc
+          <code>Model\#{name}.find</code>
+          %p.doc
+            %i
+              Return documents in the relation with matching ids. Will
+              raise an error if all the ids are not found by default.
+        %td
+          :coderay
+            #!ruby
+            band.tags.find(id)
 
-%h3 building and creating
+            band.tags.find(id_one, id_two)
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].find({
+              _id: { "$in" => ... }, { "$and" => [{ _id: id }] }
+            })
 
-%p
-  From either side, documents in the referenced inverse can be appended to using
-  traditional array syntax or the special association proxy methods.
-
-:coderay
-  #!ruby
-
-  # Append one or many tags, saving them if the person is persisted.
-  person.tags << Tag.new
-  person.tags.push(Tag.new)
-  person.tags.concat([ tag_one, tag_two ])
-
-  # Appends and returns a new tag from the attributes.
-  person.tags.build(name: "Buch")
-  person.tags.new(name: "Buch")
-
-  # Appends, saves, and returns a new tag from the attributes.
-  person.tags.create(name: "Bar")
-
-  # Appends, saves, and returns a new tag from the attributes,
-  # raising an error if validation fails.
-  person.tags.create!(name: "Bar")
-
-  # Append one or many people, saving them if the tag is persisted.
-  tag.people << Person.new
-  tag.people.push(Person.new)
-  tag.people.concat([ person_one, person_two ])
-
-  # Appends and returns a new person from the attributes.
-  tag.people.build(title: "Mr")
-  tag.people.new(title: "Mr")
-
-  # Appends, saves, and returns a new person from the attributes.
-  tag.people.create(title: "Sire")
-
-  # Appends, saves, and returns a new person from the attributes,
-  # raising an error if validation fails.
-  tag.people.create!(title: "Douchebag")
-
-%h3 removal
-
-%p
-  Documents in the relation can be removed in several different manners,
-  either through the relation, criteria, or accessors.
-
-:coderay
-  #!ruby
-
-  # Delete all referenced documents
-  person.tags.delete_all
-  person.tags.clear
-  person.tags = []
-
-  # Delete all matching referenced documents.
-  person.tags.delete_all(conditions: { name: "Ruby" })
-  person.tags.where(name: "Rails").delete_all
-
-  # Destroy all referenced documents, running destroy callbacks.
-  person.tags.destroy_all
-
-  # Destroy all matching referenced documents, running callbacks.
-  person.tags.destroy_all(conditions: { name: "Ruby" })
-  person.tags.where(name: "MongoDB").destroy_all
-
-  # Delete all referenced documents
-  tag.people.delete_all
-  tag.people.clear
-  tag.people = []
-
-  # Delete all matching referenced documents.
-  tag.people.delete_all(conditions: { title: "Sir" })
-  tag.people.where(title: "Grand Poobah").delete_all
-
-  # Destroy all referenced documents, running destroy callbacks.
-  tag.people.destroy_all
-
-  # Destroy all matching referenced documents, running callbacks.
-  tag.people.destroy_all(conditions: { title: "Marshall" })
-  tag.people.where(title: "Heiness").destroy_all
-
-%h3 Saving
-
-%p
-  All changes to models, including the destruction of those marked for destruction,
-  are saved and destroyed automatically and atomically when the parent model is saved.
-
+            collections[:tags].find({
+              _id: { "$in" => ... },
+              { "$and" => [{ _id: { "$in" => [ id_one, id_two ]}}] }
+            })
+      %tr
+        %td.doc
+          <code>Model\#{name}.find_or_create_by</code>
+          %p.doc
+            %i
+              Search for the document in the relation, and if not found
+              create a newly persisted one.
+        %td
+          :coderay
+            #!ruby
+            band.tags.
+              find_or_create_by(name: "electro")
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].find({
+              _id: { "$in" => ... }, name: "electro"
+            })
+            collections[:tags].insert(
+              { name: "electro", band_ids: ... }
+            )
+      %tr
+        %td.doc
+          <code>Model\#{name}.find_or_initialize_by</code>
+          %p.doc
+            %i
+              Search for the document in the relation, and if not found
+              add a new one.
+        %td
+          :coderay
+            #!ruby
+            band.tags.
+              find_or_initialize_by(name: "electro")
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].find({
+              _id: { "$in" => ... }, name: "electro"
+            })
+      %tr
+        %td.doc
+          <code>Model\#{name}.where</code>
+          %p.doc
+            %i
+              Find matching documents in the relation. This can be any
+              criteria method, not just where.
+        %td
+          :coderay
+            #!ruby
+            band.tags.where(name: "electro")
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].find({
+              _id: { "$in" => ... }, name: "electro"
+            })
+      %tr
+        %td.doc
+          <code>Model\#{name}.exists?</code>
+          %p.doc
+            %i
+              Returns whether or not the relation has any documents.
+        %td
+          :coderay
+            #!ruby
+            band.tags.exists?
+        %td
+          :coderay
+            #!ruby
+            collections[:tags].
+              find(_id: { "$in" => ... }).count
