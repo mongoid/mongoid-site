@@ -3,10 +3,425 @@
 
 %h1 Nested Attributes
 
+%p
+  Nested attribtues provides a mechanism for updating documents and their
+  relations in a single operation, by nesting attributes in a single
+  parameters hash. This is extremely useful when wanting to edit multiple
+  documents within a single web form.
+
 .page-nav
   .container
     %ul.nav.nav-pills
-      %li= link_to "Overview", "#overview"
-      %li= link_to "1-1 Relations", "#one_to_one"
-      %li= link_to "1-n Relations", "#one_to_many"
-      %li= link_to "n-n Relations", "#many_to_many"
+      %li= link_to "Common Behaviour", "#common"
+      %li= link_to "Operations", "#operations"
+
+%section#common
+  %h2 Common Behaviour
+
+  %p
+    Nested attributes can be enabled for any relation, embedded or
+    referenced. To enable this for the relation, simply provide the relation
+    name to the <code>accepts_nested_attributes_for</code> macro.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      embeds_many :albums
+      belongs_to :producer
+      accepts_nested_attributes_for :albums, :producer
+    end
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Note that when you add nested attributes functionality to a
+            referenced relation, Mongoid will automatically enable
+            <code>autosave</code> for that relation.
+
+  %p
+    When a relation gains nested attributes behaviour, an additional method
+    is added to the base model, which should be used to update the attributes
+    with the new functionality. This method is the relation name plus
+    <code>_attributes=</code>. You can use this method directly, or more commonly
+    the name of the method can be an attribute in the updates for the base class,
+    in which case Mongoid will call the appropriate setter under the covers.
+
+  :coderay
+    #!ruby
+    band = Band.first
+    band.producer_attributes = { name: "Flood" }
+    band.attributes = { producer_attributes: { name: "Flood" }}
+
+  %p
+    Note that this will work with <i>any</i> attribute based setter method in
+    Mongoid. This includes: <code>update_attributes</code>,
+    <code>update_attributes!</code> and <code>attributes=</code>. For full
+    examples of every single scenario you could possibly imagine, see the
+    <a href="https://github.com/mongoid/mongoid/blob/master/spec/mongoid/nested_attributes_spec.rb">One Spec to Rule them All</a>.
+
+%section#operations
+  %h2 Operations
+
+  %p
+    The following table shows the means of setting nested attributes for
+    the different types of relations, as well as the required and optional
+    options.
+
+  %h3 1-1 Operations
+
+  %p
+    <i><b>1-1</b></i> operations include <code>embeds_one</code>,
+    <code>embedded_in</code>, <code>has_one</code>, and <code>belongs_to</code>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+        %th Definition
+    %tbody
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Set the relation via nested attributes, or replace
+              the existing one.
+        %td
+          :coderay
+            #!ruby
+            album.producer_attributes = { name: "Flood" }
+
+            album.attributes =
+              { producer_attributes: { name: "Flood" }}
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              belongs_to :producer
+              accepts_nested_attributes_for :producer
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Update the existing relation - an id or _id must be provided in this
+              case of the existing document.
+        %td
+          :coderay
+            #!ruby
+            album.producer_attributes =
+              { id: ..., name: "Flood" }
+
+            album.attributes = {
+              producer_attributes: { id: ..., name: "Flood" }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              belongs_to :producer
+              accepts_nested_attributes_for :producer
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Reject nested attributes if they don't match a certain criteria.
+        %td
+          :coderay
+            #!ruby
+            album.producer_attributes = { name: "Flood" }
+
+            album.attributes = {
+              producer_attributes: { name: "Flood" }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              belongs_to :producer
+              accepts_nested_attributes_for :producer,
+                reject_if: ->(attrs){ attrs[:name] == "Flood" }
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Reject nested attributes if all the fields are blank.
+        %td
+          :coderay
+            #!ruby
+            album.producer_attributes =
+              { name: "", label: "" }
+
+            album.attributes = {
+              producer_attributes = { name: "", label: "" }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              belongs_to :producer
+              accepts_nested_attributes_for :producer,
+                reject_if: :all_blank
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Delete an existing 1-1 relation via nested attributes. The attributes
+              must all match, and a _destroy truthy value must be passed.
+        %td
+          :coderay
+            #!ruby
+            album.producer_attributes =
+              { name: "Flood", _destroy: "1" }
+
+            album.attributes = {
+              producer_attributes:
+                { name: "Flood", _destroy: "1" }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              belongs_to :producer
+              accepts_nested_attributes_for :producer,
+                allow_destroy: true
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Update an existing relation, never create a new one - even
+              if the id or _id does not match.
+        %td
+          :coderay
+            #!ruby
+            album.producer_attributes =
+              { id: ..., name: "Flood" }
+
+            album.attributes = {
+              producer_attributes:
+                { id: ..., name: "Flood" }
+            }
+
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              belongs_to :producer
+              accepts_nested_attributes_for :producer,
+                update_only: true
+            end
+
+
+
+  %h3 1-n/n-n Operations
+
+  %p
+    <i><b>1-n/n-n</b></i> operations include <code>embeds_many</code>,
+    <code>has_many</code> and <code>has_and_belongs_to_many</code>. These
+    attribute hashes can take either a hash of hashes, with arbitrary keys
+    for each document, or an array with a hash for each document in it.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+        %th Definition
+    %tbody
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Create a new document on the relation
+        %td
+          :coderay
+            #!ruby
+            band.albums_attributes = {
+              "0" => { name: "Violator" }
+            }
+
+            band.albums_attributes = [
+              { name: "Violator" }
+            ]
+
+            band.attributes = {
+              albums_attributes: {
+                "0" => { name: "Violator" }
+              }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Band
+              include Mongoid::Document
+              embeds_many :albums
+              accepts_nested_attributes_for :albums
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Limit the number of new documents that can be created in a
+              single set, raising an error if more are passed in.
+        %td
+          :coderay
+            #!ruby
+            band.albums_attributes = {
+              "0" => { name: "Violator" },
+              "1" => { name: "101" },
+              "2" => { name: "Music for the Masses" }
+            }
+
+            band.attributes = {
+              albums_attributes: {
+                "0" => { name: "Violator" },
+                "1" => { name: "101" },
+                "2" => { name: "Music for the Masses" }
+              }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Band
+              include Mongoid::Document
+              embeds_many :albums
+              accepts_nested_attributes_for :albums, limit: 2
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Update existing documents in the relation - id or _id must
+              be provided in the attributes for each document.
+        %td
+          :coderay
+            #!ruby
+            band.albums_attributes = {
+              "0" => { id: ..., name: "Violator (Edit)" },
+              "1" => { id: ..., name: "101 (Edit)" }
+            }
+
+            band.albums_attributes = [
+              { id: ..., name: "Violator (Edit)" },
+              { id: ..., name: "101 (Edit)" }
+            ]
+
+            band.attributes = {
+              albums_attributes: {
+                "0" => { id: ..., name: "Violator (Edit)" },
+                "1" => { id: ..., name: "101 (Edit)" }
+              }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Band
+              include Mongoid::Document
+              embeds_many :albums
+              accepts_nested_attributes_for :albums
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Delete a document in the relation - id or _id must be passed in
+              along with the _destroy truthy value.
+        %td
+          :coderay
+            #!ruby
+            band.albums_attributes = {
+              "0" => { id: ..., _destroy: "1" },
+            }
+
+            band.albums_attributes = [
+              { id: ..., _destroy: "1" },
+            ]
+
+            band.attributes = {
+              albums_attributes: {
+                "0" => { id: ..., _destroy: "1" },
+              }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Band
+              include Mongoid::Document
+              embeds_many :albums
+              accepts_nested_attributes_for :albums,
+                allow_destroy: true
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Reject nested attributes if they don't match a certain criteria.
+        %td
+          :coderay
+            #!ruby
+            band.albums_attributes = {
+              "0" => { name: "Violator" }
+            }
+
+            band.albums_attributes = [
+              { name: "Violator" }
+            ]
+
+            band.attributes = {
+              albums_attributes: {
+                "0" => { name: "Violator" }
+              }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Band
+              include Mongoid::Document
+              embeds_many :albums
+              accepts_nested_attributes_for :albums,
+                reject_if: ->(attrs){ attrs[:name] == "Violator" }
+            end
+      %tr
+        %td.doc
+          %p.doc
+            %i
+              Reject nested attributes if all the fields are blank.
+        %td
+          :coderay
+            #!ruby
+            band.albums_attributes = {
+              "0" => { name: "" }
+            }
+
+            band.albums_attributes = [
+              { name: "" }
+            ]
+
+            band.attributes = {
+              albums_attributes: {
+                "0" => { name: "" }
+              }
+            }
+        %td
+          :coderay
+            #!ruby
+            class Album
+              include Mongoid::Document
+              embeds_many :albums
+              accepts_nested_attributes_for :albums,
+                reject_if: :all_blank
+            end
