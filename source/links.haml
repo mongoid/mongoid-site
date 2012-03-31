@@ -3,14 +3,25 @@
 
 %h1 Links
 
-%p
-  Here are a list of links that may also be of importance or interest.
+.link-button
+  = link_to "http://github.com/mongoid", rel: "tooltip", title: "The Mongoid organization on Github." do
+    = image_tag "/images/dojocat.png"
 
-  %ul
-    %li=link_to "Mongoid Organization on Github", "http://github.com/mongoid"
-    %li=link_to "Mongoid Google Group", "http://groups.google.com/group/mongoid/"
-    %li=link_to "API Documentation", "http://rdoc.info/github/mongoid/mongoid/master/frames"
-    %li=link_to "Mongoid on TravisCI", "http://travis-ci.org/#!/mongoid/mongoid"
-    %li=link_to "Durran on Twitter", "http://twitter.com/modetojoy"
-    %li=link_to "Mongoid on Twitter", "http://twitter.com/mongoid"
-    %li=link_to "MongoDB", "http://mongodb.org"
+.link-button.link-pad-left
+  = link_to "http://groups.google.com/group/mongoid", rel: "tooltip", title: "The official Google Group for Mongoid." do
+    = image_tag "/images/google.png"
+
+.link-button
+  = link_to "http://twitter.com/modetojoy", rel: "tooltip", title: "Durran (@modetojoy) on Twitter." do
+    = image_tag "/images/twitter.png"
+
+.link-button
+  = link_to "http://mongohq.com", rel: "tooltip", title: "MongoHQ provides Mongoid with databases for testing." do
+    = image_tag "/images/mongohq.png"
+
+.link-button
+  = link_to "http://travis-ci.org/#!/mongoid/mongoid", rel: "tooltip", title: "Mongoid's continuous integration on TravisCI." do
+    = image_tag "/images/travis.png"
+
+  -# %ul
+    -# %li=link_to "API Documentation", "http://rdoc.info/github/mongoid/mongoid/master/frames"

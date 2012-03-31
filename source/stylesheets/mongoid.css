@@ -12,6 +12,23 @@ body {
   background-color: #fcfcfc;
 }
 
+.clear {
+  clear: both;
+}
+
+.dropdown-toggle .caret {
+  border-bottom-color: #910b0b !important;
+  border-top-color: #910b0b !important;
+}
+
+#footer {
+  background-color: #000000;
+  border-top: 5px solid #e6a486;
+  height: 40px;
+  margin-top: 40px;
+  width: 100%;
+}
+
 h1 {
   margin-top: 30px;
 }
@@ -26,12 +43,20 @@ h1 {
   width: 100%;
 }
 
-#footer {
-  background-color: #000000;
-  border-top: 5px solid #e6a486;
-  height: 40px;
-  margin-top: 40px;
-  width: 100%;
+.link-button {
+  border: 1px dotted #CCCCCC;
+  border-radius: 11px;
+  box-shadow: 0 1px 0 #FFFFFF inset, 0 2px 5px rgba(0, 0, 0, 0.2);
+  float: left;
+  margin: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  width: 160px;
+}
+
+.link-pad-left {
+  padding-left: 10px;
+  padding-right: 0px;
 }
 
 .navbar-inner {
@@ -40,44 +65,24 @@ h1 {
   background-image: -moz-linear-gradient(center top , #333333, #000000);
 }
 
-.navbar .divider-vertical {
-  height: 60px;
+.note {
+  font-style: italic;
+  font-size: 13px;
+  padding: 20px;
 }
 
-.navbar li {
-  width: 60px;
-  text-align: center;
+p.doc {
+  color: #999999;
+  padding: 5px;
+  width: 250px;
 }
 
-#navigation {
-  background-color: #EEEEEE;
-  background-image: -moz-linear-gradient(center top , #F5F5F5 0%, #EEEEEE 100%);
-  background-repeat: repeat-x;
-  border-bottom: 1px solid #E5E5E5;
-  border-top: 1px solid #E5E5E5;
-  height: 40px;
+.page-nav {
+  margin-top: 30px;
 }
 
-.subnav {
-  background-color: #EEEEEE;
-  background-image: -moz-linear-gradient(center top , #F5F5F5 0%, #EEEEEE 100%);
-  background-repeat: repeat-x;
-  border-bottom: 1px solid #E5E5E5;
-  border-top: 1px solid #E5E5E5;
-  height: 50px;
-  width: 100%;
-}
-
-.subnav-fixed {
-  border-color: #D5D5D5;
-  border-radius: 0 0 0 0;
-  border-width: 0 0 1px;
-  box-shadow: 0 1px 0 #FFFFFF inset, 0 1px 5px rgba(0, 0, 0, 0.1);
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 60px;
-  z-index: 1020;
+.page-nav a {
+  font-size: 12px;
 }
 
 .page-nav-fixed {
@@ -114,13 +119,22 @@ h1 {
   text-transform: uppercase;
 }
 
-.page-nav a {
-  font-size: 12px;
+.navbar .divider-vertical {
+  height: 60px;
 }
 
-.dropdown-toggle .caret {
-  border-bottom-color: #910b0b !important;
-  border-top-color: #910b0b !important;
+.navbar li {
+  width: 60px;
+  text-align: center;
+}
+
+#navigation {
+  background-color: #EEEEEE;
+  background-image: -moz-linear-gradient(center top , #F5F5F5 0%, #EEEEEE 100%);
+  background-repeat: repeat-x;
+  border-bottom: 1px solid #E5E5E5;
+  border-top: 1px solid #E5E5E5;
+  height: 40px;
 }
 
 .samurai {
@@ -131,24 +145,26 @@ section {
   padding-top: 140px;
 }
 
-.note {
-  font-style: italic;
-  font-size: 13px;
-  padding: 20px;
+.subnav {
+  background-color: #EEEEEE;
+  background-image: -moz-linear-gradient(center top , #F5F5F5 0%, #EEEEEE 100%);
+  background-repeat: repeat-x;
+  border-bottom: 1px solid #E5E5E5;
+  border-top: 1px solid #E5E5E5;
+  height: 50px;
+  width: 100%;
 }
 
-.clear {
-  clear: both;
-}
-
-.page-nav {
-  margin-top: 30px;
-}
-
-p.doc {
-  color: #999999;
-  padding: 5px;
-  width: 250px;
+.subnav-fixed {
+  border-color: #D5D5D5;
+  border-radius: 0 0 0 0;
+  border-width: 0 0 1px;
+  box-shadow: 0 1px 0 #FFFFFF inset, 0 1px 5px rgba(0, 0, 0, 0.1);
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 60px;
+  z-index: 1020;
 }
 
 td.doc {

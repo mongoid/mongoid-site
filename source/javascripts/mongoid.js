@@ -13,7 +13,6 @@ $(function() {
 
   var scrollSubNav = function() {
     var _, scrollTop = $win.scrollTop();
-
     if (scrollTop >= subnavTop && !subnavFixed) {
       subnavFixed = 1;
       $subnav.addClass("subnav-fixed");
@@ -26,17 +25,11 @@ $(function() {
 
   var scrollPageNav = function() {
     var _, scrollTop = $win.scrollTop();
-
-    console.log(pagenavTop);
-    console.log(scrollTop);
-
     if (scrollTop >= pagenavTop && !pagenavFixed) {
-      console.log("add");
       pagenavFixed = 1;
       $pagenav.addClass("page-nav-fixed");
     }
     else if (scrollTop <= pagenavTop && pagenavFixed) {
-      console.log("remove")
       pagenavFixed = 0;
       $pagenav.removeClass("page-nav-fixed");
     }
@@ -47,4 +40,6 @@ $(function() {
 
   $win.bind("scroll", scrollSubNav);
   $win.bind("scroll", scrollPageNav);
+
+  $("a[rel='tooltip']").tooltip({ placement: "bottom" });
 });
