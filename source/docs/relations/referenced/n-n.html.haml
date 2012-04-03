@@ -144,8 +144,9 @@
 :coderay
   #!ruby
 
-  # Delete all referenced documents
+  # Delete all referenced documents (regardless of <tt>:dependent</tt> option)
   person.tags.delete_all
+  # Delete, Nullify, or Destroy all referenced documents (depending on <tt>:dependent</tt> option)
   person.tags.clear
   person.tags = []
 
@@ -181,7 +182,8 @@
 %p
   You can tell Mongoid what to do with inverse relations of a many to many
   when unsetting the relation via the dependent option. This also applies
-  to calling <tt>#delete</tt> on the relation. The valid options are:
+  to calling <tt>#delete</tt> on the relation (unless calling <tt>#delete_all</tt>)..
+  The valid options are:
 
 %ul
   %li <tt>:delete</tt>: Delete the inverse documents.
