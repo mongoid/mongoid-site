@@ -278,6 +278,26 @@
     root.child # child
     child.parent_node # root
 
+  %h3 Existence Predicates
+
+  %p
+    All relations have existence predicates on them in the form of
+    <code>name?</code> and <code>has_name?</code> to check if the relation
+    is blank.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      embeds_one :label
+      embeds_many :albums
+    end
+
+    band.label?
+    band.has_label?
+    band.albums?
+    band.has_albums?
+
 %section#metadata
   %h2 Metadata
 
