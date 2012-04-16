@@ -20,6 +20,7 @@
       %li= link_to "Localized Fields", "#localized_fields"
       %li= link_to "Dirty Tracking", "#dirty"
       %li= link_to "Security", "#security"
+      %li= link_to "Readonly Attributes", "#readonly"
       %li= link_to "Inheritance", "#inheritance"
 
 %section#storage
@@ -647,6 +648,36 @@
     Person.new(first_name: "Corbin") do |person|
       person.password = "password"
     end
+
+%section#readonly
+  %h2 Readonly Attributes
+
+  %p
+    You can tell Mongoid that certain attributes are readonly. This will
+    allow documents to be created with theses attributes, but changes to
+    them will be filtered out.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :origin, type: String
+
+      attr_readonly :name, origin
+    end
+
+    band = Band.create(name: "Placebo")
+    band.update_attributes(name: "Tool") # Filters out the name change.
+
+  %p
+    If you explicitly try to update or remove the attribute by itself, then
+    a <code>ReadonlyAttribute</code> error will be raised.
+
+  :coderay
+    #!ruby
+    band.update_attribute(:name, "Tool") # Raises the error.
+    band.remove_attribute(:name) # Raises the error.
 
 %section#inheritance
   %h2 Inheritance
