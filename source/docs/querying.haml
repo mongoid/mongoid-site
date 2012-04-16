@@ -15,6 +15,7 @@
       %li= link_to "Queries + Persistence", "#query_plus"
       %li= link_to "Scoping", "#scoping"
       %li= link_to "Map/Reduce", "#map_reduce"
+      %li= link_to "Aggregations", "#aggregations"
 
 %section#queries
   %h2 Queries
@@ -640,3 +641,249 @@
     Band.active
 
 %section#map_reduce
+  %h2 Map/Reduce
+
+  %p
+    Mongoid provides a DSL around MongoDB's map/reduce framework, for performing
+    custom map/reduce jobs or simple aggregations.
+
+  %h3 Map/Reduce
+
+  %p
+    You can tell Mongoid off the class or a criteria to perform a map/reduce
+    by calling <code>map_reduce</code> and providing map and reduce javascript
+    functions.
+
+  :coderay
+    #!ruby
+    map = %Q{
+      function() {
+        emit(this.name, { likes: this.likes });
+      }
+    }
+
+    reduce = %Q{
+      function(key, values) {
+        var result = { likes: 0 };
+        values.forEach(function(value) {
+          result.likes += value.likes;
+        });
+        return result;
+      }
+    }
+
+    Band.where(:likeg.gt => 100).map_reduce(map, reduce).out(inline: true)
+
+  %p
+    Just like criteria, map/reduce calls are lazily evaluated. So nothing will
+    hit the database until you iterate over the results, or make a call on the
+    wrapper that would need to force a database hit.
+
+  :coderay
+    #!ruby
+    Band.map_reduce(map, reduce).out(replace: "mr-results").each do |document|
+      p document # { "_id" => "Tool", "value" => { "likes" => 200 }}
+    end
+
+  %p
+    The only required thing you provide along with a map/reduce is where to
+    output the results. If you do not provide this an error will be raised.
+    Valid options to <code>#out</code> are:
+
+    %ul
+      %li
+        <code>inline: 1</code>: Don't store the output in a collection.
+      %li
+        <code>replace: "name"</code>: Store in a collection with the
+        provided name, and overwrite any documents that exist in it.
+      %li
+        <code>merge: "name"</code>: Store in a collection with the
+        provided name, and merge the results with the existing documents.
+      %li
+        <code>reduce: "name"</code>: Store in a collection with the
+        provided name, and reduce all existing results in that collection.
+
+  %p
+    The full API for map/reduce is as follows.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+    %tbody
+      %tr
+        %td.doc
+          <code>MapReduce#out</code>
+          %p.doc
+            %i Specify the result output location
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1)
+      %tr
+        %td.doc
+          <code>MapReduce#counts</code>
+          %p.doc
+            %i
+              Get the count statistics for the map reduce (input, emit,
+              reduce, count).
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).counts
+      %tr
+        %td.doc
+          <code>MapReduce#emitted</code>
+          %p.doc
+            %i
+              Get the number of emits.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).emitted
+      %tr
+        %td.doc
+          <code>MapReduce#finalize</code>
+          %p.doc
+            %i
+              Provide a finalize function to run at the end of the job.
+        %td
+          :coderay
+            #!ruby
+            func = %Q{
+              function(key, value) {
+                value.extra = true;
+                return value;
+              }
+            }
+            Band.map_reduce(m, r).out(inline: 1).finalize(func)
+      %tr
+        %td.doc
+          <code>MapReduce#input</code>
+          %p.doc
+            %i
+              Get the number of inputs.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).input
+      %tr
+        %td.doc
+          <code>MapReduce#js_mode</code>
+          %p.doc
+            %i
+              Execute the map/reduce in jsMode.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).js_mode
+      %tr
+        %td.doc
+          <code>MapReduce#output</code>
+          %p.doc
+            %i
+              Get the number of outputs.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).output
+      %tr
+        %td.doc
+          <code>MapReduce#reduced</code>
+          %p.doc
+            %i
+              Get the number of reduces.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).reduced
+      %tr
+        %td.doc
+          <code>MapReduce#scope</code>
+          %p.doc
+            %i
+              Provide values to set in the global js scope.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).scope(field: 10)
+      %tr
+        %td.doc
+          <code>MapReduce#time</code>
+          %p.doc
+            %i
+              Returns the execution time.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).time
+
+%section#aggregations
+  %h2 Aggregations
+
+  %p
+    Mongoid provides convenience methods for simple aggregations, which
+    can be invoked from the class or criteria. Note that with
+    <code>#min</code>, <code>#max</code> and <code>#sum</code>, if a
+    block is provided it behaves just like they would with a Ruby
+    enumerable.
+
+  :coderay
+    #!ruby
+    # Use map/reduce, return a float with the max value.
+    Band.where(:likes.gt => 100).max(:likes)
+
+    # Use enumerable, returning the document with the max value.
+    Band.where(:likes.gt => 100).max do |a,b|
+      a.likes <=> b.likes
+    end
+
+  %p The full API is as follows.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+    %tbody
+      %tr
+        %td.doc
+          <code>Criteria#avg</code>
+          %p.doc
+            %i Get the average value for the given field.
+        %td
+          :coderay
+            #!ruby
+            Band.avg(:likes)
+            Band.where(:likes.gt => 100).avg(:likes)
+      %tr
+        %td.doc
+          <code>Criteria#max</code>
+          %p.doc
+            %i Get the max value for the given field.
+        %td
+          :coderay
+            #!ruby
+            Band.max(:likes)
+            Band.where(:likes.gt => 100).max(:likes)
+      %tr
+        %td.doc
+          <code>Criteria#min</code>
+          %p.doc
+            %i Get the min value for the given field.
+        %td
+          :coderay
+            #!ruby
+            Band.min(:likes)
+            Band.where(:likes.gt => 100).min(:likes)
+      %tr
+        %td.doc
+          <code>Criteria#sum</code>
+          %p.doc
+            %i Get the sum of all values for a given field.
+        %td
+          :coderay
+            #!ruby
+            Band.sum(:likes)
+            Band.where(:likes.gt => 100).sum(:likes)
