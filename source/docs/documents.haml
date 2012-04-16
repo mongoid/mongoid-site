@@ -550,95 +550,103 @@
     person.previous_changes #=> { "name" => [ "Alan Parsons", "Alan Garner" ] }
 
 %section#security
-%h2 Security
+  %h2 Security
 
-%p
-  There are cases where you don't want Mongoid to allow attributes to be
-  set through mass assignment, like passwords. This is a common event when
-  submitting forms, and fields can be protected by using Mongoid's
-  <code>attr_protected</code> or <code>attr_accessible</code> thanks to the
-  wonders of Active Model.
+  %p
+    There are cases where you don't want Mongoid to allow attributes to be
+    set through mass assignment, like passwords. This is a common event when
+    submitting forms, and fields can be protected by using Mongoid's
+    <code>attr_protected</code> or <code>attr_accessible</code> thanks to the
+    wonders of Active Model.
 
-%h3 Protected
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          Mongoid auto-protects the <code>_id</code> and <code>_type</code>
+          attributes by default.
 
-%p
-  When defining a list of fields as protected, all other fields in the
-  document will NOT be able to be set through mass assignment.
+  %h3 Protected
 
-:coderay
-  #!ruby
-  class User
-    include Mongoid::Document
-    field :first_name, type: String
-    field :password, type: String
-    attr_protected :password
-  end
+  %p
+    When defining a list of fields as protected, all other fields in the
+    document will NOT be able to be set through mass assignment.
 
-  # Set attributes on a person properly.
-  Person.new(first_name: "Corbin")
-  person.attributes = { first_name: "Corbin" }
-  person.write_attributes(first_name: "Corbin")
+  :coderay
+    #!ruby
+    class User
+      include Mongoid::Document
+      field :first_name, type: String
+      field :password, type: String
+      attr_protected :password
+    end
 
-  # Attempt to set attributes a person, logging an error.
-  Person.new(first_name: "Corbin", password: "password")
-  person.attributes = { first_name: "Corbin", password: "password" }
-  person.write_attributes(first_name: "Corbin", password: "password")
+    # Set attributes on a person properly.
+    Person.new(first_name: "Corbin")
+    person.attributes = { first_name: "Corbin" }
+    person.write_attributes(first_name: "Corbin")
 
-%h3 Accessible
+    # Attempt to set attributes a person, logging an error.
+    Person.new(first_name: "Corbin", password: "password")
+    person.attributes = { first_name: "Corbin", password: "password" }
+    person.write_attributes(first_name: "Corbin", password: "password")
 
-%p
-  Providing a list of fields as accessible is simply the inverse of
-  protecting them. Anything not defined as accessible will cause the
-  error.
+  %h3 Accessible
 
-:coderay
-  #!ruby
-  class User
-    include Mongoid::Document
-    field :first_name, type: String
-    field :password, type: String
-    attr_accessible :first_name
-  end
+  %p
+    Providing a list of fields as accessible is simply the inverse of
+    protecting them. Anything not defined as accessible will cause the
+    error.
 
-  # Set attributes on a user properly.
-  User.new(first_name: "Corbin")
-  user.attributes = { first_name: "Corbin" }
-  user.write_attributes(first_name: "Corbin")
+  :coderay
+    #!ruby
+    class User
+      include Mongoid::Document
+      field :first_name, type: String
+      field :password, type: String
+      attr_accessible :first_name
+    end
 
-  # Attempt to set attributes on a user, will silently ignore protected ones.
-  User.new(first_name: "Corbin", password: "password")
-  user.attributes = { first_name: "Corbin", password: "password" }
-  user.write_attributes(first_name: "Corbin", password: "password")
+    # Set attributes on a user properly.
+    User.new(first_name: "Corbin")
+    user.attributes = { first_name: "Corbin" }
+    user.write_attributes(first_name: "Corbin")
 
-%p
-  You can scope the mass assignment by role by providing the role as an
-  option to the constructor or create methods.
+    # Attempt to set attributes on a user, will silently ignore protected ones.
+    User.new(first_name: "Corbin", password: "password")
+    user.attributes = { first_name: "Corbin", password: "password" }
+    user.write_attributes(first_name: "Corbin", password: "password")
 
-:coderay
-  #!ruby
-  class User
-    include Mongoid::Document
-    field :first_name, type: String
-    field :password, type: String
-    attr_accessible :first_name, as: [ :default, :admin ]
-  end
+  %p
+    You can scope the mass assignment by role by providing the role as an
+    option to the constructor or create methods.
 
-  # Set attributes on a person for the admin role
-  Person.new({ first_name: "Corbin" }, as: :admin)
-  Person.create({ first_name: "Corbin" }, as: :default)
-  Person.create!({ first_name: "Corbin" }, as: :admin)
+  :coderay
+    #!ruby
+    class User
+      include Mongoid::Document
+      field :first_name, type: String
+      field :password, type: String
+      attr_accessible :first_name, as: [ :default, :admin ]
+    end
 
-%h3 Overriding
+    # Set attributes on a person for the admin role
+    Person.new({ first_name: "Corbin" }, as: :admin)
+    Person.create({ first_name: "Corbin" }, as: :default)
+    Person.create!({ first_name: "Corbin" }, as: :admin)
 
-%p
-  In the case you want to override the security in a single call,
-  you can pass a block to the document constructor to set fields manually.
+  %h3 Overriding
 
-:coderay
-  #!ruby
-  Person.new(first_name: "Corbin") do |person|
-    person.password = "password"
-  end
+  %p
+    In the case you want to override the security in a single call,
+    you can pass a block to the document constructor to set fields manually.
+
+  :coderay
+    #!ruby
+    Person.new(first_name: "Corbin") do |person|
+      person.password = "password"
+    end
 
 %section#inheritance
   %h2 Inheritance
