@@ -298,6 +298,35 @@
     band.albums?
     band.has_albums?
 
+  %h3 Autobuilding
+
+  %p
+    One to one relations (<code>embeds_one</code>, <code>has_one</code>) have
+    an <code>autobuild</code> option which tells Mongoid to instantiate a
+    new document when the relation is accessed and it is <code>nil</code>
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Existence predicates will not trigger an autobuild, so they will
+            properly return <code>false</code> if the document is not
+            present.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      embeds_one :label, autobuild: true
+      has_one :producer, autobuild: true
+    end
+
+    band = Band.new
+    band.label # Returns a new empty label.
+    band.producer # Returns a new empty producer.
+
 %section#metadata
   %h2 Metadata
 
