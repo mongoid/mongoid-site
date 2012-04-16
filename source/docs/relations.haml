@@ -497,6 +497,18 @@
       }
     }
 
+  %p
+    You can optionally tell Mongoid to store the embedded document in a
+    different attribute other than the name, by providing a <code>:store_as</code>
+    option.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      embeds_one :label, store_as: "lab"
+    end
+
   %h3 Operations
 
   %p
@@ -668,6 +680,18 @@
         }
       ]
     }
+
+  %p
+    You can optionally tell Mongoid to store the embedded document in a
+    different attribute other than the name, by providing a <code>:store_as</code>
+    option.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      embeds_many :albums, store_as: "albs"
+    end
 
   %h3 Operations
 
@@ -1231,7 +1255,27 @@
             )
 
             collections[:members].find(...).remove
-
+      %tr
+        %td.doc
+          <code>Model\#{name}_ids</code>
+          %p.doc
+            %i Get the related document ids.
+        %td
+          :coderay
+            #!ruby
+            band.member_ids
+        %td
+      %tr
+        %td.doc
+          <code>Model\#{name}_ids=</code>
+          %p.doc
+            %i
+              Set the related document ids.
+        %td
+          :coderay
+            #!ruby
+            band.member_ids = [ id ]
+        %td
       %tr
         %td.doc
           <code>Model\#{parent_name}</code>
