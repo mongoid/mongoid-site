@@ -22,7 +22,7 @@
     %ul.nav.nav-pills
       %li= link_to "Standard", "#standard"
       %li= link_to "Atomic", "#atomic"
-      %li= link_to "Safe Mode", "#safe_mode"
+      %li= link_to "Custom", "#custom"
 
 %section#standard
   %h2 Standard
@@ -464,45 +464,70 @@
               collections[:people].find(...).
                 update("$unset" => { name: 1 })
 
-%section#safe_mode
-  %h2 Safe Mode
+%section#custom
+  %h2 Custom
 
   %p
-    For cases when you want to persist with or without safe mode on a per-query
-    basis you can use Mongoid's provided <code>#safely</code> and <code>#unsafely</code>
-    methods. These can be prepended to any persistence operation Mongoid
-    provides, and will automatically make the following command safe or unsafe.
+    There may be cases where you want to persist documents to different
+    sources from their defaults, or with different options from the default.
+    Mongoid provides run-time support for this as well as support on a per-model
+    basis.
 
-  %h3 Persisting in Safe Mode
-
-  %p
-    When you are using the default configuration settings and Mongoid's
-    <code>persist_in_safe_mode</code> option is false, you may persist a single
-    operation in safe mode by overriding it with <code>#safely</code>.
+  %h3
+    Model Level Persistence Options
 
   %p
-    Using safely, you can have the following options:
+    On a per-model basis, you can tell it to store in a custom collection name,
+    a different database, or a different session. The following example would
+    store the Band class by default into a collection named "artists" in the
+    database named "music", with the session "secondary".
+
+    .well
+      %table
+        %tr
+          %td.samurai= image_tag "/images/samurai.png"
+          %td.note
+            Note that the value supplied to the <code>session</code> option must be
+            configured under <code>sessions</code> in your mongoid.yml.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      store_in collection: "artists", database: "music", session: "secondary"
+
+  %p
+    If no `store_in` macro would have been provided, Mongoid would store the model
+    in a collection named "bands" in the default database in the default session.
+
+  %h3
+    Runtime Persistence Options
+
+  %p
+    You can change at runtime where to store, query, update, or remove documents
+    by prefixing any operation with <code>#with</code>.
+
+  :coderay
+    #!ruby
+    Band.with(database: "music-non-stop").create
+    Band.with(collection: "artists").delete_all
+    band.with(session: :tertiary).save!
+
+  %p
+    <code>#with</code>is also used for changing safe mode options temporarily
+    at runtime.
+
+  :coderay
+    #!ruby
+    Band.with(safe: true).create
+    Band.with(safe: { w: 3 }).create!
+
+  %p
+    The values that can be passed with <code>:safe</code> are:
 
   %ul
-    %li <code>fsync</code>: Whether to perform an fsync.
-    %li <code>w</code>: The number of nodes to write to before returning.
-    %li <code>wtimeout</code>: The timeout value for writing to multiple nodes.
-
-  :coderay
-    #!ruby
-    Person.safely.create(name: "Bond")
-    Person.safely(w: 3).create!(name: "James")
-    person.safely(fsync: true).inc(:aliases, 1)
-
-  %h3 Persisting Without Safe Mode
-
-  %p
-    When you override the default configuration secodeings and Mongoid's
-    <code>persist_in_safe_mode</code> option is true, you may persist a single
-    operation without safe mode by overriding it with <code>#unsafely</code>.
-
-  :coderay
-    #!ruby
-    Person.unsafely.create(name: "Bond")
-    person.unsafely.save
-    person.unsafely.add_to_set(:aliases, "Bond")
+    %li <code>true</code>: Persist in safe mode, no extra options.
+    %li <code>false</code>: Don't persist in safe mode.
+    %li <code>fsync: true|false</code>: Whether to perform an fsync.
+    %li <code>w: n</code>: The number of nodes to write to before returning.
+    %li <code>wtimeout: n</code>: The timeout value for writing to multiple nodes.
