@@ -82,11 +82,8 @@
     development:
       sessions:
         default:
+          database: mongoid
           hosts: localhost:27017
-      databases:
-        default:
-          name: mongoid
-          session: default
 
   %h3 Rails Applications
 
@@ -121,6 +118,12 @@
           # an array of host:port pairs. This session is single server.
           hosts:
             - flame.mongohq.com:27017
+          # Define the default database name.
+          database: mongoid
+          # Since this database points at a session connected to MongoHQ, we must
+          # provide the authentication details.
+          username: user
+          password: password
         # This defines a secondary session.
         secondary:
           # This configuration is a 3 node replica set.
@@ -128,34 +131,12 @@
             - dedicated1.myapp.com:27017
             - dedicated2.myapp.com:27017
             - dedicated3.myapp.com:27017
-          # We can set session specific options, like logging, and reads executing
-          # on secondary nodes.
+          database: mongoid
+          # We can set session specific options, like reads executing
+          # on secondary nodes, and defaulting the session to safe mode.
           options:
-            logger: true
-            read: :secondary
-      # This starts the database configuration settings. You may have as
-      # many databases as you like, but you must have at least 1 named
-      # 'default'. Each database definition must include a name and a session
-      # which it persists with.
-      databases:
-        # Define the default database.
-        default:
-          name: mongoid_default
-          session: default
-          # Since this database points at a session connected to MongoHQ, we must
-          # provide the authentication details.
-          username: user
-          password: password
-        # Define a secondary database, this can be named whatever you like, it
-        # does not have to be called 'secondary'.
-        secondary:
-          name: mongoid_secondary
-          session: secondary
-          options:
+            consistency: :eventual
             safe: true
-        tertiary:
-          name: mongoid_tertiary
-          session: default
       # Here we put the Mongoid specific configuration options. These are explained
       # in more detail next.
       options:
@@ -185,10 +166,6 @@
       dynamically and will get persisted. If set to false an error will get
       raised when attempting to set a value that has no field defined.
     %li
-      <code>autocreate_indexes</code>(false): When set to true Mongoid will attempt
-      to create indexes each time a class is loaded. This is not recommended for
-      any environment other than development or test.
-    %li
       <code>identity_map_enabled</code>(false): When set to true Mongoid will store
       documents loaded from the database in the identity map by their ids, so
       subsequent dataabase queries for the same document in the same unit of
@@ -201,11 +178,6 @@
     %li
       <code>include_type_for_serialization</code>(false): When set to true this will
       tell Mongoid to include the "_type" field when serializing to JSON and XML.
-    %li
-      <code>persist_in_safe_mode</code>(false): Tells Mongoid to perform all database
-      operations in MongoDB's safe mode. This will cause the driver to double
-      check operations and raise an error if they failed. Switching to true
-      will be safe but will be a slight performance hit.
     %li
       <code>preload_models</code>(false): Tells Mongoid to preload all application
       model classes on each request in environments where classes are not
@@ -281,45 +253,21 @@
     #!ruby
     Mongoid.load!("path/to/your/mongoid.yml")
 
-  %p
-    If you want to configure Mongoid programatically, this is possible as
-    well.
-
-  :coderay
-    #!ruby
-    Mongoid.configure do |config|
-      config.connect_to("my_database_name")
-    end
-
 %section#logging
   %h2 Logging
 
   %p
-    You can define your own logger for Mongoid if you do not want to use the default
-    Rails logger in your Rails' <code>application.rb</code>.
+    Changing logging options is done simply by telling Mongoid or Moped's
+    logger to have a different level.
 
   :coderay
     #!ruby
     module MyApplication
       class Application << Rails::Application
-        config.mongoid.logger = Logger.new($stdout, :warn)
+        Mongoid.logger.level = Logger::DEBUG
+        Moped.logger.level = Logger::DEBUG
       end
     end
-
-  %p
-    For custom logging outside of Rails, set the Mongoid logger directly.
-
-  :coderay
-    #!ruby
-    Mongoid.logger = Logger.new($stdout)
-
-  %p
-    You can turn off logging by setting the logger to nil programatically
-    or setting the logger to false in your mongoid.yml.
-
-  :coderay
-    #!ruby
-    logger: false
 
 %section#sharding
   %h2 Sharding
