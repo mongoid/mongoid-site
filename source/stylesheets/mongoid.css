@@ -71,6 +71,11 @@ h1 {
   padding: 20px;
 }
 
+p {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 p.doc {
   color: #999999;
   padding: 5px;
