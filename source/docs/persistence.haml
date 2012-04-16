@@ -531,3 +531,27 @@
     %li <code>fsync: true|false</code>: Whether to perform an fsync.
     %li <code>w: n</code>: The number of nodes to write to before returning.
     %li <code>wtimeout: n</code>: The timeout value for writing to multiple nodes.
+
+  %h3 Session and Collection Access
+
+  %p
+    If you want to drop down to the driver level to perform operations, you
+    can grab the Moped session or collection from the model or document instance.
+
+  :coderay
+    #!ruby
+    Band.mongo_session
+    band.mongo_session
+    Band.collection
+    band.collection
+
+  %p
+    From here you also have the same runtime persistence options using Moped's
+    <code>#with</code>. The Moped documentation will go into more detail
+    about this.
+
+  :coderay
+    #!ruby
+    Band.mongo_session.with(safe: false, database: "musik") do |session|
+      session[:artists].find(...)
+    end
