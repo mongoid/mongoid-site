@@ -156,6 +156,22 @@
               )
         %tr
           %td.doc
+            <code>Model.find_by</code>
+            %p.doc
+              %i
+                Find a document by the provided attributes, and if not found
+                raise an error or return nil depending on the
+                <code>raise_not_found_error</code> configuration option.
+          %td
+            :coderay
+              #!ruby
+              Band.find_by(name: "Photek")
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+        %tr
+          %td.doc
             <code>Model.find_or_create_by</code>
             %p.doc
               %i
@@ -168,7 +184,7 @@
           %td
             :coderay
               #!ruby
-              collections[:bands].find(name: "Photek")
+              collections[:bands].find(name: "Photek").first
         %tr
           %td.doc
             <code>Model.find_or_initialize_by</code>
@@ -183,7 +199,7 @@
           %td
             :coderay
               #!ruby
-              collections[:bands].find(name: "Photek")
+              collections[:bands].find(name: "Photek").first
         %tr
           %td.doc
             <code>Criteria#first</code>
