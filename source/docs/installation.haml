@@ -282,22 +282,23 @@
 
   %p
     For replica sets, you only need to put each member of the replica set
-    under the <code>hosts</code> section in your mongoid.yml - Mongoid and
-    Moped will take care of the rest. The default consistency is
+    under the <code>hosts</code> section in your <code>mongoid.yml</code>
+    - Mongoid and Moped will take care of the rest. The default consistency is
     <code>:eventual</code>, which means that reads will attempt to go to
     secondaries. If you don't want this, switch this option to
     <code>:strong</code>, which will send everything to the master node.
 
   :coderay
     #!yaml
-    shard:
-      hosts:
-        - repl0.myapp.com:27017
-        - repl1.myapp.com:27017
-        - repl3.myapp.com:27017
-      database: mongoid
-      options:
-        consistency: :strong
+    sessions:
+      default:
+        hosts:
+          - repl0.myapp.com:27017
+          - repl1.myapp.com:27017
+          - repl3.myapp.com:27017
+        database: mongoid
+        options:
+          consistency: :strong
 
 %section#sharding
   %h2 Sharding
@@ -324,9 +325,10 @@
 
   :coderay
     #!yaml
-    shard:
-      hosts:
-        - mongos.myapp.com:27017
-      database: mongoid
-      options:
-        consistency: :eventual
+    sessions:
+      default:
+        hosts:
+          - mongos.myapp.com:27017
+        database: mongoid
+        options:
+          consistency: :eventual
