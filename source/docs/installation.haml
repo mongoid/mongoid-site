@@ -282,8 +282,8 @@
 
   %p
     For replica sets, you only need to put each member of the replica set
-    under the <code>hosts</code> section in your <code>mongoid.yml</code>
-    - Mongoid and Moped will take care of the rest. The default consistency is
+    under the <code>hosts</code> section in your <code>mongoid.yml</code> -
+    Mongoid and Moped will take care of the rest. The default consistency is
     <code>:eventual</code>, which means that reads will attempt to go to
     secondaries. If you don't want this, switch this option to
     <code>:strong</code>, which will send everything to the master node.
