@@ -125,8 +125,8 @@
           # provide the authentication details.
           username: user
           password: password
-        # This defines a secondary session.
-        secondary:
+        # This defines a secondary session at a replica set.
+        replica_set:
           # This configuration is a 3 node replica set.
           hosts:
             - dedicated1.myapp.com:27017
@@ -138,6 +138,12 @@
           options:
             consistency: :eventual
             safe: true
+        # This defines a tertiary session at a Mongos fronted shard.
+        shard:
+          # This configuration is a Mongos shard server.
+          hosts:
+            - mongos.myapp.com:27017
+          database: mongoid
       # Here we put the Mongoid specific configuration options. These are explained
       # in more detail next.
       options:
@@ -208,6 +214,13 @@
     %li
       <code>use_utc</code>(false): Instructs Mongoid to convert all times to
       UTC times in all cases.
+
+  %p
+    If you would like to see samples, there is one in the
+    <a href="https://github.com/mongoid/mongoid/blob/master/spec/config/mongoid.yml">
+    Mongoid repository</a> and one in the
+    <a href="https://github.com/mongoid/echo/blob/master/config/mongoid.yml">
+    Echo sample application</a>.
 
 
   %h3 Getting Rid of Active Record
