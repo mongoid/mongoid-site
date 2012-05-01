@@ -215,6 +215,33 @@
               update("$set" => { first_name: "Jean" })
       %tr
         %td
+          <code>Model#touch</code>
+          %p.doc
+            %i
+              Update the document's updated_at timestamp, optionally
+              with one extra provided time field. This will cascade the
+              touch to all <code>belongs_to</code> relations of the
+              document with the option set.
+        %td
+          :coderay
+            #!ruby
+            person.touch
+            person.touch(:audited_at)
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).
+              update("$set" => { updated_at: Time.now })
+
+            collections[:people].find(...).
+              update({
+                "$set" => {
+                  updated_at: Time.now,
+                  audited_at: Time.now
+                }
+              })
+      %tr
+        %td
           <code>Model#delete</code>
           %p.doc
             %i
