@@ -327,6 +327,24 @@
     band.label # Returns a new empty label.
     band.producer # Returns a new empty producer.
 
+  %h3 Touching
+
+  %p
+    Any <code>belongs_to</code> relation, no matter where it hangs off from,
+    can take an optional <code>:touch</code> option which will call the
+    touch method on it and any parent relations with the option defined when
+    the base document calls <code>#touch</code>.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      belongs_to :label, touch: true
+    end
+
+    band = Band.first
+    band.touch #=> Calls touch on the parent label.
+
 %section#metadata
   %h2 Metadata
 
@@ -478,6 +496,9 @@
     %tr
       %td <code>Metadata#store_as</code>
       %td Returns the name of the attribute to store an embedded relation in.
+    %tr
+      %td <code>Metadata#touchable?</code>
+      %td Returns whether or not the relation has a touch option.
     %tr
       %td <code>Metadata#type</code>
       %td Returns the name of the field to get the polymorphic type.

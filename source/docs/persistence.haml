@@ -221,7 +221,8 @@
               Update the document's updated_at timestamp, optionally
               with one extra provided time field. This will cascade the
               touch to all <code>belongs_to</code> relations of the
-              document with the option set.
+              document with the option set. This operation skips validations
+              and callbacks.
         %td
           :coderay
             #!ruby
