@@ -14,6 +14,7 @@
       %li= link_to "Queries", "#queries"
       %li= link_to "Queries + Persistence", "#query_plus"
       %li= link_to "Scoping", "#scoping"
+      %li= link_to "Find and Modify", "#find_and_modify"
       %li= link_to "Map/Reduce", "#map_reduce"
       %li= link_to "Aggregations", "#aggregations"
 
@@ -166,6 +167,10 @@
             :coderay
               #!ruby
               Band.find_by(name: "Photek")
+
+              Band.find_by(name: "Tool") do |band|
+                band.impressions += 1
+              end
           %td
             :coderay
               #!ruby
@@ -656,6 +661,46 @@
 
     Band.active
 
+%section#find_and_modify
+  %h2 Find and Modify
+
+  %p
+    MongoDB's <code>$findAndModify</code> command is a unique atomic "find, perform
+    some operation, and return" operation. In Mongoid, this can be used from the
+    model class level or chained to a criteria.
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          The atomic operation that is provided to the <code>find_and_modify</code>
+          operates on the first document it locates in the database. Therefore it is
+          usually important to provide sorting criteria as well.
+
+  %h3 Execution
+
+  %p
+    Simply call <code>#find_and_modify</code> from the class or the end of a
+    criteria. Unlike other lazy Mongoid operations, this command executes
+    immediately.
+
+  :coderay
+    #!ruby
+    Queue.
+      where(pending: true).
+      asc(:created_at).
+      find_and_modify({ "$set" => { pending: false }}, new: true)
+
+  %p
+    The first parameter to <code>find_and_modify</code> is an atomic update
+    selector, and the optional second parameter is a hash of options. Valid
+    options are:
+
+    %ul
+      %li <code>new: (true|false)</code> Return the updated document.
+      %li <code>remove: (true|false)</code> Delete the found document.
+
 %section#map_reduce
   %h2 Map/Reduce
 
@@ -663,7 +708,7 @@
     Mongoid provides a DSL around MongoDB's map/reduce framework, for performing
     custom map/reduce jobs or simple aggregations.
 
-  %h3 Map/Reduce
+  %h3 Execution
 
   %p
     You can tell Mongoid off the class or a criteria to perform a map/reduce
