@@ -1,5 +1,5 @@
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
-helpers do
-
-end
+page "/mongoid/*", layout: "mongoid"
+page "/origin/*", layout: "origin"
+page "/moped/*", layout: "moped"

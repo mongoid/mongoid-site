@@ -1,0 +1,64 @@
+!!! Strict
+%html
+  %head
+    %meta{name: "description", content: "A Ruby ODM for MongoDB"}
+    %meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
+
+    = stylesheet_link_tag "bootstrap.min.css"
+    = stylesheet_link_tag "mongoid.css"
+    = stylesheet_link_tag "mongoid-coderay.css"
+    = stylesheet_link_tag "bootstrap-responsive.min.css"
+    = javascript_include_tag "jquery-1.7.2.min.js"
+    = javascript_include_tag "bootstrap-dropdown.js"
+    = javascript_include_tag "bootstrap-scrollspy.js"
+    = javascript_include_tag "bootstrap-tooltip.js"
+    = javascript_include_tag "mongoid.js"
+    = yield_content :head
+
+  %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
+    #header.mongoid
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container
+            %ul.nav
+              %li.dropdown.link#project
+                = link_to "/mongoid/index.html" do
+                  = image_tag "/images/mongoid-logo-small-green.png"
+              %li.link
+                = link_to "/origin/index.html" do
+                  = image_tag "/images/origin-logo-small-white.png"
+              %li.link
+                = link_to "/moped/index.html" do
+                  = image_tag "/images/origin-logo-small-white.png"
+
+    #navigation
+      .subnav
+        .container
+          %ul.nav.nav-pills
+            %li= link_to "HOME", "/mongoid/index.html"
+            %li.dropdown#docs
+              %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}
+                DOCS
+                %b.caret
+              %ul.dropdown-menu
+                %li= link_to "Installation", "/mongoid/docs/installation.html"
+                %li= link_to "Documents", "/mongoid/docs/documents.html"
+                %li= link_to "Persistence", "/mongoid/docs/persistence.html"
+                %li= link_to "Querying", "/mongoid/docs/querying.html"
+                %li= link_to "Relations", "/mongoid/docs/relations.html"
+                %li= link_to "Nested Attributes", "/mongoid/docs/nested_attributes.html"
+                %li= link_to "Identity Map", "/mongoid/docs/identity_map.html"
+                %li= link_to "Callbacks", "/mongoid/docs/callbacks.html"
+                %li= link_to "Validation", "/mongoid/docs/validation.html"
+                %li= link_to "Indexing", "/mongoid/docs/indexing.html"
+                %li= link_to "Rails", "/mongoid/docs/rails.html"
+                %li= link_to "Extras", "/mongoid/docs/extras.html"
+                %li= link_to "Upgrading", "/mongoid/docs/upgrading.html"
+                %li= link_to "Contributing", "/mongoid/docs/contributing.html"
+                %li= link_to "Performance", "/mongoid/docs/performance.html"
+            %li= link_to "LINKS", "/mongoid/links.html"
+
+    #content
+      .container
+        = yield
+    #footer
