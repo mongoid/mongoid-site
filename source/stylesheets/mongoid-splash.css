@@ -1,3 +1,17 @@
 body {
   background-color: #000000;
 }
+
+#logos {
+  margin-top: 200px;
+}
+
+#logos .splash {
+  margin: 20px;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  border: none;
+}
