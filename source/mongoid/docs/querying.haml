@@ -641,6 +641,33 @@
     #!ruby
     Band.unscoped.where(name: "Depeche Mode").scoped
 
+  %p
+    If you are using a default scope on a model that is part of a relation like a
+    <code>has_many</code>, <code>has_and_belongs_to_many</code>, or
+    <code>embeds_many</code>, you must reload the relation to have scoping reapplied.
+    This is important to note if you change a value of a document in the relation
+    that would affect it's visibility within the scoped relation.
+
+  :coderay
+    #!ruby
+    class Label
+      include Mongoid::Document
+      embeds_many :bands
+    end
+
+    class Band
+      include Mongoid::Document
+      field :active, default: true
+      embedded_in :label
+      default_scoped where(active: true)
+    end
+
+    label.bands.push(band)
+    label.bands #=> [ band ]
+    band.update_attribute(:active, false)
+    label.bands #=> [ band ] Must reload.
+    label.reload.bands #=> []
+
   %h3 Class Methods
 
   %p
