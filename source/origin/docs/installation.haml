@@ -1,0 +1,139 @@
+- content_for :head do
+  %title Origin: Installation
+
+%h1 Getting Started
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Installation", "#installation"
+      %li= link_to "Basics", "#basics"
+      %li= link_to "Forwarding", "#forwarding"
+
+%section#installation
+  %h2 Installation
+
+  %p
+    The preferred method for installing Origin is with bundler. Simply add
+    Origin to your <code>Gemfile</code>.
+
+  :coderay
+    #!ruby
+    gem "origin", "~> 1.0"
+
+  %p
+    Alternatively you can get the Origin gem direcly from rubygems.org:
+
+  :coderay
+    #!ruby
+    $ gem install origin
+
+%section#basics
+  %h2 Basics
+
+  %p
+    Origin provides a DSL to mix in to any object to give it the ability
+    to build MongoDB queries easily. Simply include the module
+    <code>Origin::Queryable</code> to get started.
+
+  :coderay
+    #!ruby
+    class Query
+      include Origin::Queryable
+    end
+
+  %p
+    The Queryable provides a default constructor that takes 2 optional
+    parameters, a hash of aliased field mappings, and a hash of name and
+    serializer pairs. We will discuss those options in the serialization
+    and aliases sections.
+
+  %p
+    Once you have your queryable object, you can begin creating queries.
+
+  :coderay
+    #!ruby
+    query = Query.new
+    query.where(name: "Syd").desc(:name)
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          %p
+            Each time a method on the queryable is called, it clones itself and
+            returns a new copy with the next selection added. This is to not
+            modify the previous queryable in case it needs reuse later on without
+            the additional selection.
+
+  %p
+    At any time you can ask the queryable for a <code>selector</code> or it's
+    <code>options</code>, which can then be used with your favourite driver
+    to query the database for documents.
+
+  :coderay
+    #!ruby
+    query = Query.new
+    query.where(name: "Syd").only(:name)
+
+    # With Moped
+    session[:users].find(query.selector).select(query.options.fields)
+
+    # With the 10gen driver
+    collection.find(query.selector, query.options)
+
+  %p
+    The query's <code>selector</code> is a hash that represents the MongoDB
+    selector.
+
+  :coderay
+    #!ruby
+    query = Query.new
+    query.where(name: "Syd").between(age: 18..25)
+    query.selector #=> { "name" => "Syd", "age" => { "$gte" => 18, "$lte" => 25 }}
+
+  %p
+    The query's <code>options</code> is a hash that represents various options
+    that can be passed with a query, such as field limiting, skip, limit, and
+    sorting options.
+
+  :coderay
+    #!ruby
+    query = Query.new
+    query.only(:name).skip(10).limit(20).desc(:name)
+
+    query.options #=> { fields: { "name" => 1 }, skip: 10, limit: 20, sort: { "name" => -1 }}
+
+    query.options.fields #=> { "name" => 1 }
+    query.options.limit #=> 20
+    query.options.skip #=> 10
+    query.options.sort #=> { "name" => -1 }
+
+%section#forwarding
+  %h2 Forwarding
+
+  %p
+    In many cases for convenience you may not want to instantiate a new
+    <code>Queryable</code> object manually, but provide an easier way to
+    generate them from models. Origin provides a <code>Origin::Forwardable</code>
+    module to allow you to specify a method to create queryables from, and
+    subsequently injects all of it's public API into the model in question.
+
+  :coderay
+    #!ruby
+    class Query
+      include Origin::Queryable
+    end
+
+    class Band
+      extend Origin::Forwardable
+      select_with :query
+
+      def self.query
+        Query.new
+      end
+    end
+
+    Band.where(name: /^depeceh/i).gt(likes: 10000)
+    Band.nin(name: [ "New Order", "Pet Shop Boys" ]).asc(:likes)
