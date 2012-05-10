@@ -176,3 +176,75 @@
           :coderay
             #!ruby
             { fields: { "name" => -1, "age" => -1 }}
+
+%section#sorting
+  %h2 Sorting
+
+  %p
+    Origin's sorting syntax is special in that there are many different
+    ways to add sorting criteria, and the underlying options can be
+    configured to change depending on which driver you are using. You
+    can mix and match ascending and descending in different styles if
+    your heart desires.
+
+  %h3 Sort Ascending
+
+  %p
+    There are a few different ways to sort fields in ascending order.
+    Choose the syntax you like the best.
+
+  :coderay
+    #!ruby
+    queryable.asc(:first_name, :last_name)
+    queryable.order_by(:first_name.asc, :last_name.asc)
+    queryable.order_by("first_name ASC, last_name ASC")
+    queryable.order_by(first_name: 1, last_name: 1)
+    queryable.order_by(first_name: "asc", last_name: "asc")
+    queryable.order_by(first_name: :asc, last_name: :asc)
+    queryable.order_by([[ :first_name, 1 ], [ :last_name, 1 ]])
+    queryable.order_by([[ :first_name, :asc ], [ :last_name, :asc ]])
+
+  %p
+    All of the previous calls translate to the following options:
+
+  :coderay
+    #!ruby
+    { sort: { "first_name" => 1, "last_name" => 1 }}
+
+  %h3 Sort Descending
+
+  %p
+    There are a few different ways to sort fields in descending order.
+    Choose the syntax you like the best.
+
+  :coderay
+    #!ruby
+    queryable.desc(:first_name, :last_name)
+    queryable.order_by(:first_name.desc, :last_name.desc)
+    queryable.order_by("first_name DESC, last_name DESC")
+    queryable.order_by(first_name: 1, last_name: 1)
+    queryable.order_by(first_name: "desc", last_name: "desc")
+    queryable.order_by(first_name: :desc, last_name: :desc)
+    queryable.order_by([[ :first_name, 1 ], [ :last_name, 1 ]])
+    queryable.order_by([[ :first_name, :desc ], [ :last_name, :desc ]])
+
+  %p
+    All of the previous calls translate to the following options:
+
+  :coderay
+    #!ruby
+    { sort: { "first_name" => -1, "last_name" => -1 }}
+
+  %h3 Changing Driver Syntax
+
+  %p
+    By default the sorting syntax is for Moped. If you are using the
+    10gen driver by itself, then when creating the queryable tell it
+    to use 10gen's syntax by passing <code>:mongo</code> as the third
+    argument to the queryable constructor.
+
+  :coderay
+    #!ruby
+    queryable = Query.new({}, {}, :mongo)
+    queryable.order_by([[ :first_name, :desc ], [ :last_name, :desc ]])
+    queryable.options #=> { sort: [[ "first_name", -1 ], [ "last_name", -1 ]]}
