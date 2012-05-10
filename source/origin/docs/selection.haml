@@ -294,6 +294,24 @@
               { "$or" => [{ "name" => "Martin" }, { "name" => "Dave" }]}
         %tr
           %td.doc
+            <code>Queryable#where</code>
+            %p.doc
+              %i
+                Add $where selection or standard document matching. If provided
+                a string, we assume this is javascript and use $where. When
+                a hash is provided this is a standard selection.
+          %td
+            :coderay
+              #!ruby
+              queryable.where(name: "Syd")
+              queryable.where("this.name == 'Syd'")
+          %td
+            :coderay
+              #!ruby
+              { "name" => "Syd" }
+              { "$where" => "this.name == 'Syd'" }
+        %tr
+          %td.doc
             <code>Queryable#with_size</code>
             %p.doc
               %i
@@ -328,19 +346,81 @@
               { "name" => { "$type" => 2 }}
         %tr
           %td.doc
-            <code>Queryable#where</code>
+            <code>Queryable#within_box</code>
             %p.doc
               %i
-                Add $where selection or standard document matching. If provided
-                a string, we assume this is javascript and use $where. When
-                a hash is provided this is a standard selection.
+                Adds $within/$box selection. Matches documents that have geo
+                locations inside the provided box.
           %td
             :coderay
               #!ruby
-              queryable.where(name: "Syd")
-              queryable.where("this.name == 'Syd'")
+              queryable.within_box(location: [[ 1, 10 ], [ 10, 1 ]])
           %td
             :coderay
               #!ruby
-              { "name" => "Syd" }
-              { "$where" => "this.name == 'Syd'" }
+              {
+                "location" => {
+                  "$within" => { "$box" => [[ 1, 10 ], [ 10, 1 ]]}
+                }
+              }
+        %tr
+          %td.doc
+            <code>Queryable#within_circle</code>
+            %p.doc
+              %i
+                Adds $within/$center selection. Matches documents that have geo
+                locations inside the provided circle with a radius.
+          %td
+            :coderay
+              #!ruby
+              queryable.within_circle(location: [[ 1, 10 ], 0.5 ])
+          %td
+            :coderay
+              #!ruby
+              {
+                "location" => {
+                  "$within" => { "$center" => [[ 1, 10 ], 0.5 ]}
+                }
+              }
+        %tr
+          %td.doc
+            <code>Queryable#within_polygon</code>
+            %p.doc
+              %i
+                Adds $within/$polygon selection. Matches documents that have geo
+                locations inside the provided polygon.
+          %td
+            :coderay
+              #!ruby
+              queryable.within_polygon(
+                location: [[ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]]
+              )
+          %td
+            :coderay
+              #!ruby
+              {
+                "location" => {
+                  "$within" => {
+                    "$polygon" => [[ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]]
+                  }
+                }
+              }
+        %tr
+          %td.doc
+            <code>Queryable#within_spherical_circle</code>
+            %p.doc
+              %i
+                Adds $within/$centerSphere selection. Matches documents that
+                have geo locations inside the provided sphere with a radius.
+          %td
+            :coderay
+              #!ruby
+              queryable.within_spherical_circle(location: [[ 1, 10 ], 0.5 ])
+          %td
+            :coderay
+              #!ruby
+              {
+                "location" => {
+                  "$within" => { "$centerSphere" => [[ 1, 10 ], 0.5 ]}
+                }
+              }
