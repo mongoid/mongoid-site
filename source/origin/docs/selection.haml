@@ -247,3 +247,100 @@
             :coderay
               #!ruby
               { "location" => { "$nearSphere" => [ 23.1, 12.1 ] }}
+        %tr
+          %td.doc
+            <code>Queryable#nin</code>
+            %p.doc
+              %i
+                Add $nin selection. Matches documents who's field does not match
+                values in the provided array.
+          %td
+            :coderay
+              #!ruby
+              queryable.nin(name: [ "Dave", "Martin" ])
+          %td
+            :coderay
+              #!ruby
+              { "name" => { "$nin" => [ "Dave", "Martin" ] }}
+        %tr
+          %td.doc
+            <code>Queryable#nor</code>
+            %p.doc
+              %i
+                Add $nor selection. Matches documents who do not match at least
+                one of the provided criteria.
+          %td
+            :coderay
+              #!ruby
+              queryable.nor({ name: "Martin" }, { name: "Dave" })
+          %td
+            :coderay
+              #!ruby
+              { "$nor" => [{ "name" => "Martin" }, { "name" => "Dave" }]}
+        %tr
+          %td.doc
+            <code>Queryable#or</code>
+            %p.doc
+              %i
+                Add $or selection. Matches documents who match at least
+                one of the provided criteria.
+          %td
+            :coderay
+              #!ruby
+              queryable.or({ name: "Martin" }, { name: "Dave" })
+          %td
+            :coderay
+              #!ruby
+              { "$or" => [{ "name" => "Martin" }, { "name" => "Dave" }]}
+        %tr
+          %td.doc
+            <code>Queryable#with_size</code>
+            %p.doc
+              %i
+                Add $size selection. Matches documents who's array field has
+                the exact size of the provided value. This is named
+                <code>with_size</code> not to conflict with Ruby's
+                <code>Enumerable#size</code> or <code>Symbol#size</code>.
+          %td
+            :coderay
+              #!ruby
+              queryable.with_size(members: 3)
+          %td
+            :coderay
+              #!ruby
+              { "members" => { "$size" => 3 }}
+        %tr
+          %td.doc
+            <code>Queryable#with_type</code>
+            %p.doc
+              %i
+                Add $type selection. Matches documents who's field is of the
+                provided BSON type. See
+                <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24type">BSON Types</a>
+                for a complete list.
+          %td
+            :coderay
+              #!ruby
+              queryable.with_type(name: 2)
+          %td
+            :coderay
+              #!ruby
+              { "name" => { "$type" => 2 }}
+        %tr
+          %td.doc
+            <code>Queryable#where</code>
+            %p.doc
+              %i
+                Add $where selection or standard document matching. If provided
+                a string, we assume this is javascript and use $where. When
+                a hash is provided this is a standard selection.
+          %td
+            :coderay
+              #!ruby
+              queryable.where(name: "Syd")
+              queryable.where("this.name == 'Syd'")
+          %td
+            :coderay
+              #!ruby
+              { "name" => "Syd" }
+              { "$where" => "this.name == 'Syd'" }
