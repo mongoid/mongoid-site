@@ -1,0 +1,174 @@
+- content_for :head do
+  %title Origin: Selection
+
+%h1 Selection
+
+%p
+  Origin provides a DSL for selection of documents in MongoDB, and supports all
+  operations that MongoDB provides. As you build your queries, you can always
+  access the raw selector by calling <code>Queryable#selector</code>.
+
+%p
+  The following is a table of all selection operations and their corresponding
+  MongoDB selector.
+
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th Operation
+          %th Origin
+          %th Selector
+      %tbody
+        %tr
+          %td.doc
+            <code>Queryable#all</code>
+            %p.doc
+              %i
+                Add $all selection. Documents must match all values
+                provided in the array.
+          %td
+            :coderay
+              #!ruby
+              queryable.all(field: [ 1, 2, 3 ])
+              queryable.all(field: [ /(1|2|3)/ ])
+          %td
+            :coderay
+              #!ruby
+              { "field" => { "$all" => [ 1, 2, 3 ]}}
+              { "field" => { "$all" => [ /(1|2|3)/ ]}}
+        %tr
+          %td.doc
+            <code>Queryable#and</code>
+            %p.doc
+              %i
+                Add $and selection. Documents must match all the
+                criteria provided.
+          %td
+            :coderay
+              #!ruby
+              queryable.and({ name: "Syd" }, { active: true })
+          %td
+            :coderay
+              #!ruby
+              { "$and" => [{ "name" => "Syd" }, { "active" => true }]}
+        %tr
+          %td.doc
+            <code>Queryable#between</code>
+            %p.doc
+              %i
+                Add $gte/$lte selection. Finds documents with values
+                between the lower and upper bound of the range.
+          %td
+            :coderay
+              #!ruby
+              queryable.between(age: 18..30)
+          %td
+            :coderay
+              #!ruby
+              { "age" => { "$gte" => 18, "$lte" => 30 }}
+        %tr
+          %td.doc
+            <code>Queryable#elem_match</code>
+            %p.doc
+              %i
+                Add $elemMatch selection. Finds documents with arrays of values
+                that match the provided expression.
+          %td
+            :coderay
+              #!ruby
+              queryable.elem_match(members: { name: "Syd" })
+          %td
+            :coderay
+              #!ruby
+              { "members" => { "$elemMatch" => { "name" => "Syd" }}}
+        %tr
+          %td.doc
+            <code>Queryable#exists</code>
+            %p.doc
+              %i
+                Add $exists selection. Matches documents based on whether a value
+                for the field exists or not. Will match docs with <code>nil</code>
+                values if set to <code>true</code>.
+          %td
+            :coderay
+              #!ruby
+              queryable.exists(name: true)
+          %td
+            :coderay
+              #!ruby
+              { "name" => { "$exists" => true }}
+        %tr
+          %td.doc
+            <code>Queryable#gt</code>
+            %p.doc
+              %i
+                Add $gt selection. Matches documents who's field is greater
+                than the provided value.
+          %td
+            :coderay
+              #!ruby
+              queryable.gt(age: 18)
+          %td
+            :coderay
+              #!ruby
+              { "age" => { "$gt" => 18 }}
+        %tr
+          %td.doc
+            <code>Queryable#gte</code>
+            %p.doc
+              %i
+                Add $gte selection. Matches documents who's field is greater
+                than or equal to the provided value.
+          %td
+            :coderay
+              #!ruby
+              queryable.gte(age: 18)
+          %td
+            :coderay
+              #!ruby
+              { "age" => { "$gte" => 18 }}
+        %tr
+          %td.doc
+            <code>Queryable#in</code>
+            %p.doc
+              %i
+                Add $in selection. Matches documents who's field contains a
+                value that is in the array, similar to a SQL IN.
+          %td
+            :coderay
+              #!ruby
+              queryable.in(name: [ "Syd", "Nancy" ])
+          %td
+            :coderay
+              #!ruby
+              { "name" => { "$in" => [ "Syd", "Nancy" ]}}
+        %tr
+          %td.doc
+            <code>Queryable#lt</code>
+            %p.doc
+              %i
+                Add $lt selection. Matches documents who's field is less
+                than the provided value.
+          %td
+            :coderay
+              #!ruby
+              queryable.lt(age: 18)
+          %td
+            :coderay
+              #!ruby
+              { "age" => { "$lt" => 18 }}
+        %tr
+          %td.doc
+            <code>Queryable#lte</code>
+            %p.doc
+              %i
+                Add $lte selection. Matches documents who's field is less
+                than or equal to the provided value.
+          %td
+            :coderay
+              #!ruby
+              queryable.lte(age: 18)
+          %td
+            :coderay
+              #!ruby
+              { "age" => { "$lte" => 18 }}
