@@ -13,7 +13,7 @@
     %ul.nav.nav-pills
       %li= link_to "Standard", "#standard"
       %li= link_to "Negation", "#negation"
-      %li= link_to "Symbol Operators", "#special"
+      %li= link_to "Symbol Operators", "#symbol"
 
 %section#standard
   %h2 Standard
@@ -481,3 +481,348 @@
     #!ruby
     queryable.not.where(name: "Dave")
     queryable.selector #=> { "$not" => { "name" => "Dave" }}
+
+
+%section#symbol
+  %h2 Symbol Operators
+
+  %p
+    As a convenience in <code>where</code> queries, Mongoid provides methods
+    on symbol that generate more complex MongoDB operations. All symbol methods
+    are listed in the following table, with their corresponding selectors.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Origin
+        %th Selector
+    %tbody
+      %tr
+        %td.doc
+          <code>Symbol#all</code>
+          %p.doc
+            %i
+              Add $all selection. Documents must match all values
+              provided in the array.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:field.all => [ 1, 2, 3 ])
+        %td
+          :coderay
+            #!ruby
+            { "field" => { "$all" => [ 1, 2, 3 ]}}
+      %tr
+        %td.doc
+          <code>Symbol#elem_match</code>
+          %p.doc
+            %i
+              Add $elemMatch selection. Finds documents with arrays of values
+              that match the provided expression.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(
+              :members.elem_match => { name: "Syd" }
+            )
+        %td
+          :coderay
+            #!ruby
+            {
+              "members" => {
+                "$elemMatch" => { "name" => "Syd" }
+              }
+            }
+      %tr
+        %td.doc
+          <code>Symbol#exists</code>
+          %p.doc
+            %i
+              Add $exists selection. Matches documents based on whether a value
+              for the field exists or not. Will match docs with <code>nil</code>
+              values if set to <code>true</code>.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:name.exists => true)
+        %td
+          :coderay
+            #!ruby
+            { "name" => { "$exists" => true }}
+      %tr
+        %td.doc
+          <code>Symbol#gt</code>
+          %p.doc
+            %i
+              Add $gt selection. Matches documents who's field is greater
+              than the provided value.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:age.gt 18)
+        %td
+          :coderay
+            #!ruby
+            { "age" => { "$gt" => 18 }}
+      %tr
+        %td.doc
+          <code>Symbol#gte</code>
+          %p.doc
+            %i
+              Add $gte selection. Matches documents who's field is greater
+              than or equal to the provided value.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:age.gte => 18)
+        %td
+          :coderay
+            #!ruby
+            { "age" => { "$gte" => 18 }}
+      %tr
+        %td.doc
+          <code>Symbol#in</code>
+          %p.doc
+            %i
+              Add $in selection. Matches documents who's field contains a
+              value that is in the array, similar to a SQL IN.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:name.in => [ "Syd", "Nancy" ])
+        %td
+          :coderay
+            #!ruby
+            { "name" => { "$in" => [ "Syd", "Nancy" ]}}
+      %tr
+        %td.doc
+          <code>Symbol#lt</code>
+          %p.doc
+            %i
+              Add $lt selection. Matches documents who's field is less
+              than the provided value.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:age.lt => 18)
+        %td
+          :coderay
+            #!ruby
+            { "age" => { "$lt" => 18 }}
+      %tr
+        %td.doc
+          <code>Symbol#lte</code>
+          %p.doc
+            %i
+              Add $lte selection. Matches documents who's field is less
+              than or equal to the provided value.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:age.lte => 18)
+        %td
+          :coderay
+            #!ruby
+            { "age" => { "$lte" => 18 }}
+      %tr
+        %td.doc
+          <code>Symbol#mod</code>
+          %p.doc
+            %i
+              Add $mod selection. Matches documents who's field matches the
+              modulo value.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:field.mod => [ 10, 1 ])
+        %td
+          :coderay
+            #!ruby
+            { "field" => { "$mod" => [ 10, 1 ]}}
+      %tr
+        %td.doc
+          <code>Symbol#ne</code>
+          %p.doc
+            %i
+              Add $ne selection. Matches documents who's field is not equal
+              to the provided value.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:name.ne => "Nancy")
+        %td
+          :coderay
+            #!ruby
+            { "name" => { "$ne" => "Nancy" }}
+      %tr
+        %td.doc
+          <code>Symbol#near</code>
+          %p.doc
+            %i
+              Add $near selection. Matches documents who's geo location is
+              near the provided coordinates.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:location.near => [ 23.1, 12.1 ])
+        %td
+          :coderay
+            #!ruby
+            { "location" => { "$near" => [ 23.1, 12.1 ] }}
+      %tr
+        %td.doc
+          <code>Symbol#near_sphere</code>
+          %p.doc
+            %i
+              Add $nearSphere selection. Matches documents who's geo location is
+              near the provided coordinates using spherical algorithms.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(
+              :location.near_sphere => [ 23.1, 12.1 ]
+            )
+        %td
+          :coderay
+            #!ruby
+            { "location" => { "$nearSphere" => [ 23.1, 12.1 ] }}
+      %tr
+        %td.doc
+          <code>Symbol#nin</code>
+          %p.doc
+            %i
+              Add $nin selection. Matches documents who's field does not match
+              values in the provided array.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:name.nin => [ "Dave", "Martin" ])
+        %td
+          :coderay
+            #!ruby
+            { "name" => { "$nin" => [ "Dave", "Martin" ] }}
+      %tr
+        %td.doc
+          <code>Symbol#with_size</code>
+          %p.doc
+            %i
+              Add $size selection. Matches documents who's array field has
+              the exact size of the provided value. This is named
+              <code>with_size</code> not to conflict with Ruby's
+              <code>Enumerable#size</code> or <code>Symbol#size</code>.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:members.with_size => 3)
+        %td
+          :coderay
+            #!ruby
+            { "members" => { "$size" => 3 }}
+      %tr
+        %td.doc
+          <code>Symbol#with_type</code>
+          %p.doc
+            %i
+              Add $type selection. Matches documents who's field is of the
+              provided BSON type. See
+              <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24type">BSON Types</a>
+              for a complete list.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(:name.with_type => 2)
+        %td
+          :coderay
+            #!ruby
+            { "name" => { "$type" => 2 }}
+      %tr
+        %td.doc
+          <code>Symbol#within_box</code>
+          %p.doc
+            %i
+              Adds $within/$box selection. Matches documents that have geo
+              locations inside the provided box.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(
+              :location.within_box => [[ 1, 10 ], [ 10, 1 ]]
+            )
+        %td
+          :coderay
+            #!ruby
+            {
+              "location" => {
+                "$within" => { "$box" => [[ 1, 10 ], [ 10, 1 ]]}
+              }
+            }
+      %tr
+        %td.doc
+          <code>Symbol#within_circle</code>
+          %p.doc
+            %i
+              Adds $within/$center selection. Matches documents that have geo
+              locations inside the provided circle with a radius.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(
+              :location.within_circle => [[ 1, 10 ], 0.5 ]
+            )
+        %td
+          :coderay
+            #!ruby
+            {
+              "location" => {
+                "$within" => { "$center" => [[ 1, 10 ], 0.5 ]}
+              }
+            }
+      %tr
+        %td.doc
+          <code>Symbol#within_polygon</code>
+          %p.doc
+            %i
+              Adds $within/$polygon selection. Matches documents that have geo
+              locations inside the provided polygon.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(
+              :location.within_polygon => [
+                [ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]
+              ]
+            )
+        %td
+          :coderay
+            #!ruby
+            {
+              "location" => {
+                "$within" => {
+                  "$polygon" => [
+                    [ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]
+                  ]
+                }
+              }
+            }
+      %tr
+        %td.doc
+          <code>Symbol#within_spherical_circle</code>
+          %p.doc
+            %i
+              Adds $within/$centerSphere selection. Matches documents that
+              have geo locations inside the provided sphere with a radius.
+        %td
+          :coderay
+            #!ruby
+            queryable.where(
+              :location.within_spherical_circle => [[ 1, 10 ], 0.5 ]
+            )
+        %td
+          :coderay
+            #!ruby
+            {
+              "location" => {
+                "$within" => { "$centerSphere" => [[ 1, 10 ], 0.5 ]}
+              }
+            }
