@@ -56,11 +56,17 @@
         %td
           :coderay
             #!ruby
-            queryable.and({ name: "Syd" }, { active: true })
+            queryable.and(
+              { name: "Syd" }, { active: true }
+            )
         %td
           :coderay
             #!ruby
-            { "$and" => [{ "name" => "Syd" }, { "active" => true }]}
+            {
+              "$and" => [
+                { "name" => "Syd" }, { "active" => true }
+              ]
+            }
       %tr
         %td.doc
           <code>Queryable#between</code>
@@ -192,11 +198,17 @@
         %td
           :coderay
             #!ruby
-            queryable.near(location: [ 20, 20 ]).max_distance(0.5)
+            queryable.
+              near(location: [ 20, 20 ]).
+              max_distance(0.5)
         %td
           :coderay
             #!ruby
-            { "location" => { "$near" => [ 20, 20 ], "$maxDistance" => 0.5 }}
+            {
+              "location" => {
+                "$near" => [ 20, 20 ], "$maxDistance" => 0.5
+              }
+            }
       %tr
         %td.doc
           <code>Queryable#mod</code>
@@ -282,11 +294,17 @@
         %td
           :coderay
             #!ruby
-            queryable.nor({ name: "Martin" }, { name: "Dave" })
+            queryable.nor(
+              { name: "Martin" }, { name: "Dave" }
+            )
         %td
           :coderay
             #!ruby
-            { "$nor" => [{ "name" => "Martin" }, { "name" => "Dave" }]}
+            {
+              "$nor" => [
+                { "name" => "Martin" }, { "name" => "Dave" }
+              ]
+            }
       %tr
         %td.doc
           <code>Queryable#or</code>
@@ -297,11 +315,17 @@
         %td
           :coderay
             #!ruby
-            queryable.or({ name: "Martin" }, { name: "Dave" })
+            queryable.or(
+              { name: "Martin" }, { name: "Dave" }
+            )
         %td
           :coderay
             #!ruby
-            { "$or" => [{ "name" => "Martin" }, { "name" => "Dave" }]}
+            {
+              "$or" => [
+                { "name" => "Martin" }, { "name" => "Dave" }
+              ]
+            }
       %tr
         %td.doc
           <code>Queryable#where</code>
@@ -364,7 +388,9 @@
         %td
           :coderay
             #!ruby
-            queryable.within_box(location: [[ 1, 10 ], [ 10, 1 ]])
+            queryable.within_box(
+              location: [[ 1, 10 ], [ 10, 1 ]]
+            )
         %td
           :coderay
             #!ruby
@@ -383,7 +409,9 @@
         %td
           :coderay
             #!ruby
-            queryable.within_circle(location: [[ 1, 10 ], 0.5 ])
+            queryable.within_circle(
+              location: [[ 1, 10 ], 0.5 ]
+            )
         %td
           :coderay
             #!ruby
@@ -403,7 +431,9 @@
           :coderay
             #!ruby
             queryable.within_polygon(
-              location: [[ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]]
+              location: [
+                [ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]
+              ]
             )
         %td
           :coderay
@@ -411,7 +441,9 @@
             {
               "location" => {
                 "$within" => {
-                  "$polygon" => [[ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]]
+                  "$polygon" => [
+                    [ 10, 20 ], [ 10, 40 ], [ 30, 40 ], [ 30, 20 ]
+                  ]
                 }
               }
             }
@@ -425,7 +457,9 @@
         %td
           :coderay
             #!ruby
-            queryable.within_spherical_circle(location: [[ 1, 10 ], 0.5 ])
+            queryable.within_spherical_circle(
+              location: [[ 1, 10 ], 0.5 ]
+            )
         %td
           :coderay
             #!ruby
