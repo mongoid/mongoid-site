@@ -172,3 +172,78 @@
             :coderay
               #!ruby
               { "age" => { "$lte" => 18 }}
+        %tr
+          %td.doc
+            <code>Queryable#max_distance</code>
+            %p.doc
+              %i
+                Add $maxDistance selection. This can only be used in conjunction
+                with <code>near</code>.
+          %td
+            :coderay
+              #!ruby
+              queryable.near(location: [ 20, 20 ]).max_distance(0.5)
+          %td
+            :coderay
+              #!ruby
+              { "location" => { "$near" => [ 20, 20 ], "$maxDistance" => 0.5 }}
+        %tr
+          %td.doc
+            <code>Queryable#mod</code>
+            %p.doc
+              %i
+                Add $mod selection. Matches documents who's field matches the
+                modulo value.
+          %td
+            :coderay
+              #!ruby
+              queryable.mod(field: [ 10, 1 ])
+          %td
+            :coderay
+              #!ruby
+              { "field" => { "$mod" => [ 10, 1 ]}}
+        %tr
+          %td.doc
+            <code>Queryable#ne</code>
+            %p.doc
+              %i
+                Add $ne selection. Matches documents who's field is not equal
+                to the provided value.
+          %td
+            :coderay
+              #!ruby
+              queryable.ne(name: "Nancy")
+          %td
+            :coderay
+              #!ruby
+              { "name" => { "$ne" => "Nancy" }}
+        %tr
+          %td.doc
+            <code>Queryable#near</code>
+            %p.doc
+              %i
+                Add $near selection. Matches documents who's geo location is
+                near the provided coordinates.
+          %td
+            :coderay
+              #!ruby
+              queryable.near(location: [ 23.1, 12.1 ])
+          %td
+            :coderay
+              #!ruby
+              { "location" => { "$near" => [ 23.1, 12.1 ] }}
+        %tr
+          %td.doc
+            <code>Queryable#near_sphere</code>
+            %p.doc
+              %i
+                Add $nearSphere selection. Matches documents who's geo location is
+                near the provided coordinates using spherical algorithms.
+          %td
+            :coderay
+              #!ruby
+              queryable.near_sphere(location: [ 23.1, 12.1 ])
+          %td
+            :coderay
+              #!ruby
+              { "location" => { "$nearSphere" => [ 23.1, 12.1 ] }}
