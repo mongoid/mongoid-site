@@ -14,6 +14,7 @@
       %li= link_to "Standard", "#standard"
       %li= link_to "Negation", "#negation"
       %li= link_to "Symbol Operators", "#symbol"
+      %li= link_to "Merge Strategies", "#merging"
 
 %section#standard
   %h2 Standard
@@ -827,3 +828,37 @@
                 "$within" => { "$centerSphere" => [[ 1, 10 ], 0.5 ]}
               }
             }
+
+%section#merging
+  %h2 Merge Strategies
+
+  %p
+    The selection API also provides merge strategies for cases you want to
+    override the default behaviour with specific methods that expect array values.
+    The available strategies are *intersect, override, and union* and are used by
+    chaining the name of the strategy before calling any method. For example,
+    to override the default <i>intersection</i> behaviour of <code>#in</code>:
+
+  :coderay
+    #!ruby
+    Band.in(name: [ "Depeche Mode" ]).union.in(name: [ "New Order" ])
+
+  %p This translates to the following selector.
+
+  :coderay
+    #!ruby
+    { "name" => { "$in" => [ "Depeche Mode", "New Order" ] }}
+
+  %p The default behaviour for the array methods are:
+
+    %ul
+      %li <code>Queryable#all</code> - defaults to <code>union</code>.
+      %li <code>Queryable#in</code> - defaults to <code>intersect</code>.
+      %li <code>Queryable#nin</code> - defaults to <code>intersect</code>.
+
+  %p The available strategies are:
+
+    %ul
+      %li <code>Queryable#intersect</code> Performs an intersection of existing and new array.
+      %li <code>Queryable#override</code> Overwrites the old array with the new.
+      %li <code>Queryable#union</code> Performs a union of the existing and new array.
