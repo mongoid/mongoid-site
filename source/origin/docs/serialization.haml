@@ -65,7 +65,11 @@
 
   :coderay
     #!ruby
-    queryable = Queryable.new({}, { "date" => DateSerializer.new })
+    class Query
+      include Origin::Queryable
+    end
+
+    queryable = Query.new({}, { "date" => DateSerializer.new })
 
   %p
     After this, any queries made with the field <code>date</code> in the
