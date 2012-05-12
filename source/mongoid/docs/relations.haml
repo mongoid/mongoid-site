@@ -235,6 +235,38 @@
 
     Band.first.delete # Will delete all associated albums.
 
+  %h3 Autosaving
+
+  %p
+    One core difference between Mongoid and Active Record from a behaviour
+    standpoint is that Mongoid does not automatically save child relations
+    for relational associations. This is for performance reasons.
+
+  %p
+    To enable an autosave on a relational association (embedded associations
+    do not need this since they are actually part of the parent in the
+    database) add the <code>autosave</code> option to the relation.
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          Note that autosave functionality will automatically be added to a
+          relation when using <code>accepts_nested_attributes_for</code> or
+          validating presence of the relation.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      has_many :albums, autosave: true
+    end
+
+    band = Band.first
+    band.albums.build(name: "101")
+    band.save #=> Will save the album as well.
+
   %h3 Recursive Embedding
 
   %p
