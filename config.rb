@@ -7,6 +7,14 @@ page "/moped/*", layout: "moped"
 # We've revamped the entire set URL structure from the previous, so setup
 # the 301 redirects below.
 
+page "/" do
+  redirect "/mongoid/index.html", 301
+end
+
+page "/index.html" do
+  redirect "/mongoid/index.html", 301
+end
+
 page "/docs.html" do
   redirect "/mongoid/docs/installation.html", 301
 end
