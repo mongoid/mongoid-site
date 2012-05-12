@@ -243,6 +243,30 @@
           after all other attributes are set. If you want this to happen before
           the other attributes, set <code>pre_processed: true</code>.
 
+  %h3 Field Aliasing
+
+  %p
+    One of the drawbacks of having a schemaless database is that MongoDB must
+    store all field information along with every document, meaning that it takes
+    up a lot of storage space in RAM and on disk. A common pattern to limit this
+    is to alias fields to a small number of characters, while keeping the
+    domain in the application expressive. Mongoid allows you to do this and
+    reference the fields in the domain via their long names in getters, setters,
+    and criteria while performing the conversion for you.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :n, as: :name, type: String
+    end
+
+    band = Band.new(name: "Placebo")
+    band.attributes #=> { "n" => "Placebo" }
+
+    criteria = Band.where(name: "Placebo")
+    criteria.selector #=> { "n" => "Placebo" }
+
   %h3 Custom field serialization
 
   %p
