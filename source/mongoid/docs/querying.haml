@@ -517,7 +517,9 @@
         %td.doc
           <code>Criteria#delete</code>
           %p.doc
-            %i Delete all matching documents.
+            %i
+              Delete all matching documents. Note that this will ignore
+              any skip and limit arguments that exist on the criteria.
         %td
           :coderay
             #!ruby
@@ -530,7 +532,9 @@
         %td.doc
           <code>Criteria#destroy</code>
           %p.doc
-            %i Destroy all matching documents and run callbacks.
+            %i
+              Destroy all matching documents and run callbacks. This will
+              respect skip and limit criteria.
         %td
           :coderay
             #!ruby
