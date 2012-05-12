@@ -849,14 +849,16 @@
     #!ruby
     { "name" => { "$in" => [ "Depeche Mode", "New Order" ] }}
 
-  %p The default behaviour for the array methods are:
+  %p
+    The default behaviour for the array methods are:
 
     %ul
       %li <code>Queryable#all</code> - defaults to <code>union</code>.
       %li <code>Queryable#in</code> - defaults to <code>intersect</code>.
       %li <code>Queryable#nin</code> - defaults to <code>intersect</code>.
 
-  %p The available strategies are:
+  %p
+    The available strategies are:
 
     %ul
       %li <code>Queryable#intersect</code> Performs an intersection of existing and new array.

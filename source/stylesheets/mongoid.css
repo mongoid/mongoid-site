@@ -10,23 +10,20 @@ a:hover {
 
 body {
   background-color: #fcfcfc;
+  height: 100%;
 }
 
 .clear {
   clear: both;
 }
 
+#content {
+  margin-bottom: 100px;
+}
+
 .dropdown-toggle .caret {
   border-bottom-color: #910b0b !important;
   border-top-color: #910b0b !important;
-}
-
-#footer {
-  background-color: #000000;
-  border-top: 5px solid #e6a486;
-  height: 40px;
-  margin-top: 40px;
-  width: 100%;
 }
 
 h1 {
@@ -40,6 +37,10 @@ h1 {
   height: 500px;
   left: 0px;
   width: 100%;
+}
+
+html {
+  height: 100%;
 }
 
 .mongoid {
