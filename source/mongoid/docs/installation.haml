@@ -151,7 +151,12 @@
         identity_map_enabled: true
         include_root_in_json: true
         include_type_for_serialization: true
-        preload_models: true
+        # Note this can also be true if you want to preload everything, but this is
+        # almost never necessary. Most of the time set this to false.
+        preload_models:
+          - Canvas
+          - Browser
+          - Firefox
         scope_overwrite_exception: true
         raise_not_found_error: false
         skip_version_check: false
@@ -186,10 +191,10 @@
       <code>include_type_for_serialization</code>(false): When set to true this will
       tell Mongoid to include the "_type" field when serializing to JSON and XML.
     %li
-      <code>preload_models</code>(false): Tells Mongoid to preload all application
+      <code>preload_models</code>(false): Tells Mongoid to preload application
       model classes on each request in environments where classes are not
-      being cached. This should only be used by applications that use single
-      collection inheritance due to performance issues with enabling this.
+      being cached. Specify an array of class names when enabling, only to the
+      classes that use inheritance.
     %li
       <code>protect_sensitive_fields</code>(true): Mongoid by default will auto
       protect '_id' and '_type' from mass assignment. Set this to false if you
