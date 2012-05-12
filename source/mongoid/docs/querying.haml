@@ -71,7 +71,9 @@
           %td.doc
             <code>Criteria#count</code>
             %p.doc
-              %i Get a count of persisted documents.
+              %i
+                Get a count of persisted documents. Note this will always hit
+                the database for the count.
           %td
             :coderay
               #!ruby
@@ -244,6 +246,24 @@
               collections[:bands].find(
                 { members: { "$size" => 3 }}
               ).sort(_id: -1).limit(-1)
+        %tr
+          %td.doc
+            <code>Criteria#length</code>
+            %p.doc
+              %i
+                Also <code>size</code>. Get a count of persisted documents. After
+                being called once for the criteria, will cache subsequent calls
+                and not hit the database.
+          %td
+            :coderay
+              #!ruby
+              Band.count
+              Band.where(name: "Photek").count
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.count
+              collections[:bands].find(name: "Photek").count
 
   %h3 Eager Loading
 
