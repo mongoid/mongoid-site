@@ -3,25 +3,33 @@
 
 %h1 Getting Started
 
-%p
-  The preferred method for installing Moped is with bundler. Simply add
-  Moped to your <code>Gemfile</code>.
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Installation", "#installation"
 
-:coderay
-  #!ruby
-  gem "moped", "~> 1.0"
+%section#installation
+  %h2 Installation
 
-%p
-  Alternatively you can get the Moped gem direcly from rubygems.org:
+  %p
+    The preferred method for installing Moped is with bundler. Simply add
+    Moped to your <code>Gemfile</code>.
 
-:coderay
-  #!ruby
-  $ gem install moped
+  :coderay
+    #!ruby
+    gem "moped", "~> 1.0"
 
-%p
-  Moped has no external dependencies and no C or Java extensions, so
-  installation should have no issues on any operating system.
+  %p
+    Alternatively you can get the Moped gem direcly from rubygems.org:
 
-%p
-  Moped provides no API around GridFS or Map/Reduce, but both are possible
-  by implementing your own functionality around it.
+  :coderay
+    #!ruby
+    $ gem install moped
+
+  %p
+    Moped has no external dependencies and no C or Java extensions, so
+    installation should have no issues on any operating system.
+
+  %p
+    Moped provides no API around GridFS or Map/Reduce, but both are possible
+    by implementing your own functionality around it.
