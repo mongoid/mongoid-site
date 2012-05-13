@@ -1,0 +1,31 @@
+!!! Strict
+%html
+  %head
+    %meta{name: "description", content: "A MongoDB driver for Ruby "}
+    %meta{name: "keywords", content: "mongoid, moped, mongodb, ruby, rails, odm, bernerd schaefer" }
+
+    = partial "partials/header"
+
+  %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
+
+    = partial "partials/navigation", locals: { section: "moped" }
+
+    #navigation
+      .subnav
+        .container
+          %ul.nav.nav-pills
+            %li= link_to "HOME", "/moped/index.html"
+            %li.dropdown#docs
+              %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}
+                DOCS
+                %b.caret
+              %ul.dropdown-menu
+                %li= link_to "Installation", "/moped/docs/installation.html"
+                %li= link_to "BSON", "/moped/docs/bson.html"
+                %li= link_to "Driver", "/moped/docs/driver.html"
+                %li= link_to "Replication", "/moped/docs/replication.html"
+            %li= link_to "LINKS", "/moped/links.html"
+
+    #content
+      .container
+        = yield

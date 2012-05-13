@@ -1,0 +1,42 @@
+!!! Strict
+%html
+  %head
+    %meta{name: "description", content: "A Ruby ODM for MongoDB"}
+    %meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
+
+    = partial "partials/header"
+
+  %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
+
+    = partial "partials/navigation", locals: { section: "mongoid" }
+
+    #navigation
+      .subnav
+        .container
+          %ul.nav.nav-pills
+            %li= link_to "HOME", "/mongoid/index.html"
+            %li.dropdown#docs
+              %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}
+                DOCS
+                %b.caret
+              %ul.dropdown-menu
+                %li= link_to "Installation", "/mongoid/docs/installation.html"
+                %li= link_to "Documents", "/mongoid/docs/documents.html"
+                %li= link_to "Persistence", "/mongoid/docs/persistence.html"
+                %li= link_to "Querying", "/mongoid/docs/querying.html"
+                %li= link_to "Relations", "/mongoid/docs/relations.html"
+                %li= link_to "Nested Attributes", "/mongoid/docs/nested_attributes.html"
+                %li= link_to "Identity Map", "/mongoid/docs/identity_map.html"
+                %li= link_to "Callbacks", "/mongoid/docs/callbacks.html"
+                %li= link_to "Validation", "/mongoid/docs/validation.html"
+                %li= link_to "Indexing", "/mongoid/docs/indexing.html"
+                %li= link_to "Rails", "/mongoid/docs/rails.html"
+                %li= link_to "Extras", "/mongoid/docs/extras.html"
+                %li= link_to "Upgrading", "/mongoid/docs/upgrading.html"
+                %li= link_to "Contributing", "/mongoid/docs/contributing.html"
+                %li= link_to "Performance", "/mongoid/docs/performance.html"
+            %li= link_to "LINKS", "/mongoid/links.html"
+
+    #content
+      .container
+        = yield
