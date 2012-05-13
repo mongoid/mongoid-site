@@ -4,11 +4,11 @@
       .container
         %ul.nav
           %li.dropdown.link#project
-            = link_to "/mongoid/index.html" do
+            = link_to "/mongoid/index.html", title: "Mongoid" do
               = image_tag "/images/mongoid-logo-small-#{section == "mongoid" ? "green" : "white"}.png"
           %li.link
-            = link_to "/origin/index.html" do
+            = link_to "/origin/index.html", title: "Origin" do
               = image_tag "/images/origin-logo-small-#{section == "origin" ? "green" : "white"}.png"
           %li.link
-            = link_to "/moped/index.html" do
+            = link_to "/moped/index.html", title: "Moped" do
               = image_tag "/images/moped-logo-small-#{section == "moped" ? "green" : "white"}.png"
