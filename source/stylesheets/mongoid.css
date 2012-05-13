@@ -47,14 +47,6 @@ html {
   background-image: url("/images/header-mongoid.png");
 }
 
-.moped {
-  background-image: url("/images/header-moped.png");
-}
-
-.origin {
-  background-image: url("/images/header-origin.png");
-}
-
 .link-button {
   border: 1px dotted #CCCCCC;
   border-radius: 11px;

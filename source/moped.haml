@@ -1,35 +1,14 @@
 !!! Strict
 %html
   %head
-    %meta{name: "description", content: "A Ruby DSL for building MongoDB queries"}
-    %meta{name: "keywords", content: "mongoid, origin, mongodb, ruby, rails, odm, durran jordan" }
+    %meta{name: "description", content: "A MongoDB driver for Ruby "}
+    %meta{name: "keywords", content: "mongoid, moped, mongodb, ruby, rails, odm, bernerd schaefer" }
 
-    = stylesheet_link_tag "bootstrap.min.css"
-    = stylesheet_link_tag "mongoid.css"
-    = stylesheet_link_tag "mongoid-coderay.css"
-    = stylesheet_link_tag "bootstrap-responsive.min.css"
-    = javascript_include_tag "jquery-1.7.2.js"
-    = javascript_include_tag "bootstrap-dropdown.js"
-    = javascript_include_tag "bootstrap-scrollspy.js"
-    = javascript_include_tag "bootstrap-tooltip.js"
-    = javascript_include_tag "mongoid.js"
-    = yield_content :head
+    = partial "partials/header"
 
   %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
-    #header.mongoid
-      .navbar.navbar-fixed-top
-        .navbar-inner
-          .container
-            %ul.nav
-              %li.dropdown.link#project
-                = link_to "/mongoid/index.html" do
-                  = image_tag "/images/mongoid-logo-small-white.png"
-              %li.link
-                = link_to "/origin/index.html" do
-                  = image_tag "/images/origin-logo-small-white.png"
-              %li.link
-                = link_to "/moped/index.html" do
-                  = image_tag "/images/moped-logo-small-green.png"
+
+    = partial "partials/navigation", locals: { section: "moped" }
 
     #navigation
       .subnav
