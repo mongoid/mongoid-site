@@ -1,0 +1,140 @@
+- content_for :head do
+  %title Moped: Driver
+
+%h1 Driver
+
+%p
+  The driver is the core of Moped that is used to interact with MongoDB. It is
+  based of almost entirely four classes: <code>Session</code>,
+  <code>Collection</code>, <code>Indexes</code>, and <code>Query</code>.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Behaviour", "#behaviour"
+      %li= link_to "Errors", "#errors"
+      %li= link_to "Wire Protocol", "#protocal"
+
+%section#behaviour
+  %h2 Behaviour
+
+  %h3 Session
+
+  %p
+    The session is the main entry point to communicating with the database, similar
+    to a database connection. The session is special though in that it can be a
+    session with a single database server, a multi-node replica set, or a mongos
+    server for sharded scenarios.
+
+  %p
+    Once a new session is created you can interact with it in a similar fashion
+    that you would with the <code>mongo</code> console.
+
+  :coderay
+    #!ruby
+    session = Moped::Session.new([ "127.0.0.1:27017", "127.0.0.1:27018", "127.0.0.1:27019" ])
+    session.use :moped_test
+
+    session[:users].insert({ name: "Syd" })
+
+    session.with(safe: { w: 2, wtimeout: 5 }) do |_session|
+      _session[:users].find.remove_all
+    end
+
+    session.with(database: "important_db", consistency: :strong) do |_session|
+      _session[:users].find.first
+    end
+
+  %p
+    The following is a table of the most common session API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Session">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Session#use</code>
+          %p.doc
+            %i
+              Set the current database to operate on. All subsequent commands
+              will be on this database until switched.
+        %td
+          :coderay
+            #!ruby
+            session.use(:my_app_test)
+      %tr
+        %td.doc
+          <code>Session#with</code>
+          %p.doc
+            %i
+              Return or yield a copy of the session with different options set
+              on it.
+        %td
+          :coderay
+            #!ruby
+            session.with(safe: true) do |_session|
+              ...
+            end
+            session.with(database: "admin").command(...)
+      %tr
+        %td.doc
+          <code>Session#[]</code>
+          %p.doc
+            %i
+              Get a collection in the current database.
+        %td
+          :coderay
+            #!ruby
+            session[:users]
+      %tr
+        %td.doc
+          <code>Session#drop</code>
+          %p.doc
+            %i
+              Drop the current database.
+        %td
+          :coderay
+            #!ruby
+            session.drop
+      %tr
+        %td.doc
+          <code>Session#command</code>
+          %p.doc
+            %i
+              Run a command on the current database.
+        %td
+          :coderay
+            #!ruby
+            session.command(ping: 1)
+            session.command(
+              mapreduce: "users",
+              map: "...",
+              reduce: "...",
+              query: { created_at: { "$gte" => Time.now }},
+              out: { inline: 1 }
+            )
+      %tr
+        %td.doc
+          <code>Session#login</code>
+          %p.doc
+            %i
+              Authenticate with the current database.
+        %td
+          :coderay
+            #!ruby
+            session.login("name", "password")
+      %tr
+        %td.doc
+          <code>Session#logout</code>
+          %p.doc
+            %i
+              Logout of the current database.
+        %td
+          :coderay
+            #!ruby
+            session.logout
