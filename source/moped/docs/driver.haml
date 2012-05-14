@@ -289,3 +289,28 @@
             indexes.each do |index|
               ...
             end
+
+  %h3 Query
+
+  %p
+    The query is an object that is used to either return documents that
+    match a criterion, or perform some other operation on the documents
+    that match a criterion. This includes updates and deletes.
+
+  :coderay
+    #!ruby
+    users = session[:users]
+
+    users.insert(name: "John")
+    users.find.count # => 1
+
+    users.find(name: "Mary").upsert(name: "Mary")
+    users.find.count # => 2
+
+    users.find.skip(1).limit(1).sort(name: -1).one
+    # => {"_id" => <...>, "name" => "John" }
+
+    scope = users.find(name: "Mary").select(_id: 0, name: 1)
+    scope.one # => {"name" => "Mary" }
+    scope.remove
+    scope.one # nil
