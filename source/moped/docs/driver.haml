@@ -138,3 +138,80 @@
           :coderay
             #!ruby
             session.logout
+
+  %h3 Collection
+
+  %p
+    The collection is the main entry point for dealing with
+    collection operations, such as finding and inserting documents.
+
+  :coderay
+    #!ruby
+    users = session[:users]
+    users.drop
+    users.find.count #=> 0.0
+
+    users.indexes.create({name: 1}, {unique: true})
+
+    users.insert(name: "John")
+    users.find.count #=> 1.0
+
+    users.insert(name: "John")
+    users.find.count #=> 1.0
+
+    session.with(safe: true) do |session|
+      session[:users].insert(name: "John")
+    end # raises Moped::Errors::OperationFailure
+
+  %p
+    The following is a table of the most common collection API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Collection">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Collection#drop</code>
+          %p.doc
+            %i
+              Drop the collection
+        %td
+          :coderay
+            #!ruby
+            collection.drop
+      %tr
+        %td.doc
+          <code>Collection#find</code>
+          %p.doc
+            %i
+              Build a query on the collection.
+        %td
+          :coderay
+            #!ruby
+            collection.find(name: "Syd")
+      %tr
+        %td.doc
+          <code>Collection#indexes</code>
+          %p.doc
+            %i
+              Access information about the collection's indexes.
+        %td
+          :coderay
+            #!ruby
+            collection.indexes
+      %tr
+        %td.doc
+          <code>Collection#insert</code>
+          %p.doc
+            %i
+              Insert one or multiple documents into the collection.
+        %td
+          :coderay
+            #!ruby
+            collection.insert(name: "Syd")
+            colleciton.insert([{ name: "Syd" }, { name: "Nancy" }])
