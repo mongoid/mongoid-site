@@ -215,3 +215,77 @@
             #!ruby
             collection.insert(name: "Syd")
             colleciton.insert([{ name: "Syd" }, { name: "Nancy" }])
+
+  %h3 Indexes
+
+  %p
+    The indexes object is the main entry point for dealing with
+    indexes on a single collection.
+
+  :coderay
+    #!ruby
+    session[:users].indexes.create(name: 1)
+    session[:users].indexes.create(
+      { name: 1, location: "2d" },
+      { unique: true }
+    )
+    session[:users].indexes[name: 1]
+    # => {"v"=>1, "key"=>{"name"=>1}, "ns"=>"moped_test.users", "name"=>"name_1" }
+
+    session[:users].indexes.drop(name: 1)
+    session[:users].indexes[name: 1] # => nil
+
+  %p
+    The following is a table of the most common indexes API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Indexes">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Indexes#[]</code>
+          %p.doc
+            %i
+              Get an index by it's spec.
+        %td
+          :coderay
+            #!ruby
+            indexes[_id: 1]
+      %tr
+        %td.doc
+          <code>Indexes#create</code>
+          %p.doc
+            %i
+              Create a new index.
+        %td
+          :coderay
+            #!ruby
+            indexes.create({ name: 1 }, { unique: true })
+      %tr
+        %td.doc
+          <code>Indexes#drop</code>
+          %p.doc
+            %i
+              Drop one or all indexes.
+        %td
+          :coderay
+            #!ruby
+            indexes.drop(name: 1)
+            indexes.drop
+      %tr
+        %td.doc
+          <code>Indexes#each</code>
+          %p.doc
+            %i
+              Iterate over and yield each index.
+        %td
+          :coderay
+            #!ruby
+            indexes.each do |index|
+              ...
+            end
