@@ -314,3 +314,147 @@
     scope.one # => {"name" => "Mary" }
     scope.remove
     scope.one # nil
+
+  %p
+    The following is a table of the most common query API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Query">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Query#limit</code>
+          %p.doc
+            %i
+              Limit the number of returned documents.
+        %td
+          :coderay
+            #!ruby
+            query.limit(20)
+      %tr
+        %td.doc
+          <code>Query#skip</code>
+          %p.doc
+            %i
+              Skip the provided number of documents.
+        %td
+          :coderay
+            #!ruby
+            query.skip(20)
+      %tr
+        %td.doc
+          <code>Query#sort</code>
+          %p.doc
+            %i
+              Sort the returned results.
+        %td
+          :coderay
+            #!ruby
+            query.sort(name: 1, created_at: -1)
+      %tr
+        %td.doc
+          <code>Query#distinct</code>
+          %p.doc
+            %i
+              Get an array of distinct values for a field.
+        %td
+          :coderay
+            #!ruby
+            query.distinct(:name)
+      %tr
+        %td.doc
+          <code>Query#select</code>
+          %p.doc
+            %i
+              Select the fields you want returned.
+        %td
+          :coderay
+            #!ruby
+            query.select(name: 1, dob: 1)
+      %tr
+        %td.doc
+          <code>Query#first</code>
+          %p.doc
+            %i
+              Return a single document for the query. Also <code>one</code>.
+        %td
+          :coderay
+            #!ruby
+            query.first
+      %tr
+        %td.doc
+          <code>Query#each</code>
+          %p.doc
+            %i
+              Iterate through the results of a query.
+        %td
+          :coderay
+            #!ruby
+            query.each do |doc|
+              ...
+            end
+      %tr
+        %td.doc
+          <code>Query#count</code>
+          %p.doc
+            %i
+              Return the number of documents that match the query.
+        %td
+          :coderay
+            #!ruby
+            query.count
+      %tr
+        %td.doc
+          <code>Query#update</code>
+          %p.doc
+            %i
+              Update the first document matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.update(name: "Tool")
+      %tr
+        %td.doc
+          <code>Query#update_all</code>
+          %p.doc
+            %i
+              Update all documents matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.update_all(pending: true)
+      %tr
+        %td.doc
+          <code>Query#upsert</code>
+          %p.doc
+            %i
+              Create or update a document using query's selector.
+        %td
+          :coderay
+            #!ruby
+            query.upsert(name: "Depeche Mode")
+      %tr
+        %td.doc
+          <code>Query#remove</code>
+          %p.doc
+            %i
+              Remove a single document matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.remove
+      %tr
+        %td.doc
+          <code>Query#remove_all</code>
+          %p.doc
+            %i
+              Remove all documents matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.remove_all
