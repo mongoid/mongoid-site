@@ -1,8 +1,10 @@
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
-page "/en/mongoid/*", layout: "en/layouts/mongoid"
-page "/en/origin/*", layout: "en/layouts/origin"
-page "/en/moped/*", layout: "en/layouts/moped"
+enable :caching
+
+page "/en/mongoid/*", layout: "en/layouts/mongoid", cache: true
+page "/en/origin/*", layout: "en/layouts/origin", cache: true
+page "/en/moped/*", layout: "en/layouts/moped", cache: true
 
 # We've revamped the entire set URL structure from the previous, so setup
 # the 301 redirects below.
