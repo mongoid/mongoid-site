@@ -1,0 +1,202 @@
+- content_for :head do
+  %title Mongoid: Contributing
+
+%h1 Contributing
+
+%p
+  Mongoid is open source and embraces the social coding aspect of github.
+  Here are some guidelines on contributing to the project and ensuring
+  fast acceptance of your contributions.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Core", "#core"
+      %li= link_to "Docs", "#documentation"
+
+%section#core
+  %h2 Core Contributions
+
+  %p
+    Fork the <a href="http://github.com/mongoid/mongoid">repo on github</a>
+    and issue a pull request with your changes. No
+    other means of supplying code to the team will be accepted.
+
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          Provide specs with your pull request if the existing specs do not cover
+          the change. Pull requests that provide new functionality without specs
+          will not be pulled in under any circumstance. Also make sure to
+          <code>rebase -i</code> your pull requests into a single commit.
+
+  %h3 Running the Specs
+
+  %p
+    Getting set up should require minimal effort:
+
+    %ul
+      %li Install MongoDB.
+      %li Fork and clone the repository.
+      %li Run <code>gem install bundler</code> to get the latest for the gemset.
+      %li Run <code>bundle install</code> for dependencies.
+      %li Run <code>rake</code> to execute all specs.
+
+  %p
+    Mongoid uses Guard for automated testing. To run it from the project root:
+
+  :coderay
+    #!ruby
+    $ bundle exec guard
+
+  %h3 Spec Guidelines
+
+  %p
+    The following code demostrates the desired way to write a spec in Mongoid.
+
+    %ul
+      %li Use <code>describe</code> blocks for method names.
+      %li Use <code>context</code> blocks for conditions.
+      %li Prefer <code>let</code> over the use of instance variables.
+      %li 1 assertion per example block.
+      %li
+        When describing methods, prefix with <code>#</code> for instance methods,
+        <code>.</code> for class methods.
+      %li
+        Avoid generating Ruby warnings by not using <code>should ==</code> but
+        rather <code>should eq</code>.
+
+  :coderay
+    #!ruby
+    require "spec_helper"
+
+    describe Mongoid::Relations::Embedded::Many do
+
+      describe "#=" do
+
+        context "when the parent is a new record" do
+
+          let(:person) do
+            Person.new
+          end
+
+          let(:address) do
+            Address.new
+          end
+
+          before do
+            person.addresses = [ address ]
+          end
+
+          it "sets the target of the relation" do
+            person.addresses.should eq([ address ])
+          end
+        end
+      end
+
+      describe ".macro" do
+
+        it "returns :embeds_many" do
+          described_class.macro.should eq(:embeds_many)
+        end
+      end
+    end
+
+  %h3 Coding Guidelines
+
+  %p
+    Mongoid has the design philosophy of having many fine grained, single purpose
+    objects in its domain. It makes the design more flexible and much easier to
+    test. If you find yourself refactoring at all,
+    <a href="http://www.refactoring.com/catalog/extractClass.html">extract class</a>
+    is always a good refactoring technique to have in mind.
+
+  %p
+    Here are some other simple rules that will help expidite your patch
+    acceptance.
+
+    %ul
+      %li Keep method line counts small and easy to read.
+      %li Do not fear the use of Ruby's <code>tap</code>.
+      %li Copy and pasted code from another library will never be accepted.
+      %li Provide API documentation in the form of YARD.
+
+  :coderay
+    #!ruby
+    # encoding: utf-8
+    module Mongoid # :nodoc:
+      module Relations #:nodoc:
+
+        # This module contains the core macros for defining relations between
+        # documents. They can be either embedded or referenced (relational).
+        module Macros
+          extend ActiveSupport::Concern
+
+          module ClassMethods #:nodoc:
+
+          # Adds the relation back to the parent document. This macro is
+          # necessary to set the references from the child back to the parent
+          # document. If a child does not define this relation calling
+          # persistence methods on the child object will cause a save to fail.
+          #
+          # @example Define the relation.
+          #
+          #   class Person
+          #     include Mongoid::Document
+          #     embeds_many :addresses
+          #   end
+          #
+          #   class Address
+          #     include Mongoid::Document
+          #     embedded_in :person
+          #   end
+          #
+          # @param [ Symbol ] name The name of the relation.
+          # @param [ Hash ] options The relation options.
+          # @param [ Proc ] block Optional block for defining extensions.
+          #
+          # @since 2.0.0
+          def embedded_in(name, options = {}, &block)
+            characterize(name, Embedded::In, options, &block).tap do |meta|
+              self.embedded = true
+              relate(name, meta)
+            end
+          end
+        end
+      end
+    end
+
+  %h3 Commit Guidelines
+
+  %p
+    Ensure to write good descriptive commit messages, and follow the parameters
+    set forth <a href="http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">
+    here</a> by Tim Pope using the same standards as the linux kernel.
+
+%section#documentation
+  %h2 Documentation Contributions
+
+  %p
+    The Mongoid website is open source as well, and hosted on github. It
+    uses middleman as a static content generator, and additions to the
+    documentation are always welcome. The same rules apply here:
+
+  %p
+    Fork the <a href="http://github.com/mongoid/mongoid-site">repo on github</a>
+    and issue a pull request with your changes. No
+    other means of supplying code to the team will be accepted.
+
+  %p
+    Getting set up here is easy as well:
+
+    %ul
+      %li Fork and clone the repository.
+      %li Run <code>gem install bundler</code> to get the latest for the gemset.
+      %li Run <code>bundle install</code> for dependencies.
+      %li Run <code>bundle exec mm-server</code> to run the site with sinatra.
+
+  %p
+    Pull requests will be merged in and regenerated to the mongoid.github.com
+    repo where you're contributions can be seen in all their glory.

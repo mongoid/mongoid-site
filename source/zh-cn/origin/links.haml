@@ -1,0 +1,16 @@
+- content_for :head do
+  %title Origin: Links
+
+%h1 Links
+
+.link-button
+  = link_to "http://github.com/mongoid/origin", rel: "tooltip", title: "Origin on Github." do
+    = image_tag "/images/dojocat.png"
+
+.link-button
+  = link_to "http://travis-ci.org/#!/mongoid/origin", rel: "tooltip", title: "Origin's continuous integration on TravisCI." do
+    = image_tag "/images/travis.png"
+
+.link-button
+  = link_to "http://rdoc.info/github/mongoid/origin/master/frames", rel: "tooltip", title: "API documentation on rdoc.info" do
+    = image_tag "/images/rdoc.png"
