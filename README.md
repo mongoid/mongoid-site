@@ -1,7 +1,7 @@
 # Documentation
 
 These are the source files that power mongoid.org. It is a
-[middleman](https://github.com/tdreyno/middleman) powered static page.
+[middleman](http://http://middlemanapp.com) powered static page.
 
 # Contributing
 
@@ -11,7 +11,7 @@ extensions to our website docs, and give credit for your help!
 # How to run the site locally
 
 Clone this repo and run `bundle install`. Then run
-`bundle exec mm-server` to start the server at http://localhost:4567
+`bundle exec middleman` to start the server at http://localhost:4567
 
 # Notes
 
