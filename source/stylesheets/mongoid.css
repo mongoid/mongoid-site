@@ -184,3 +184,8 @@ td.header {
   text-transform: capitalize;
   font-style: italic;
 }
+
+ul.incompatible li {
+  padding-bottom: 20px;
+  line-height: 30px;
+}
