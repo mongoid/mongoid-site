@@ -4,27 +4,27 @@
     %meta{name: "description", content: "A MongoDB driver for Ruby "}
     %meta{name: "keywords", content: "mongoid, moped, mongodb, ruby, rails, odm, bernerd schaefer" }
 
-    = partial "partials/header"
+    = partial "en/partials/header"
 
   %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
 
-    = partial "partials/navigation", locals: { section: "moped" }
+    = partial "en/partials/navigation", locals: { section: "moped" }
 
     #navigation
       .subnav
         .container
           %ul.nav.nav-pills
-            %li= link_to "HOME", "/moped/index.html"
+            %li= link_to "HOME", "/en/moped/index.html"
             %li.dropdown#docs
               %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}
                 DOCS
                 %b.caret
               %ul.dropdown-menu
-                %li= link_to "Installation", "/moped/docs/installation.html"
-                %li= link_to "BSON", "/moped/docs/bson.html"
-                %li= link_to "Driver", "/moped/docs/driver.html"
-                %li= link_to "Replication", "/moped/docs/replication.html"
-            %li= link_to "LINKS", "/moped/links.html"
+                %li= link_to "Installation", "/en/moped/docs/installation.html"
+                %li= link_to "BSON", "/en/moped/docs/bson.html"
+                %li= link_to "Driver", "/en/moped/docs/driver.html"
+                %li= link_to "Replication", "/en/moped/docs/replication.html"
+            %li= link_to "LINKS", "/en/moped/links.html"
 
     #content
       .container
