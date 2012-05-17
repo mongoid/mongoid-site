@@ -1,37 +1,40 @@
 - content_for :head do
-  %title Mongoid: Installation
+  %title Mongoid：安装|Mongoid: Installation
 
-%h1 Getting Started
+%h1 从这里开始|Getting Started
 
 .page-nav
   .container
     %ul.nav.nav-pills
-      %li= link_to "Prerequisites", "#prerequisites"
-      %li= link_to "Installation", "#installation"
-      %li= link_to "Configuration", "#configuration"
-      %li= link_to "Logging", "#logging"
-      %li= link_to "Replica Sets", "#replica"
-      %li= link_to "Sharding", "#sharding"
+      %li= link_to "安装前的准备|Prerequisites", "#prerequisites"
+      %li= link_to "安装|Installation", "#installation"
+      %li= link_to "配置|Configuration", "#configuration"
+      %li= link_to "日志|Logging", "#logging"
+      %li= link_to "复制组|Replica Sets", "#replica"
+      %li= link_to "分片|Sharding", "#sharding"
 
 %section#prerequisites
-  %h2 Prerequisites
+  %h2 安装前的准备|Prerequisites
 
   %p
+    在你用 Mongoid 制作一个 Web 应用前，你的“工具箱”里需要有以下的“物品”：|
     There are a few things you need to have in your toolbox before tackling
     a web application using Mongoid.
 
     %ul
-      %li A good to advanced knowledge of Ruby.
-      %li Have good knowledge of your web framework if using one.
-      %li A thorough understanding of MongoDB.
+      %li 对 Ruby 的了解和掌握|A good to advanced knowledge of Ruby.
+      %li 对你的 Web 开发框架的了解和掌握（如果你使用框架的话）|Have good knowledge of your web framework if using one.
+      %li 对 MongoDB 的完整理解|A thorough understanding of MongoDB.
 
   %p
+    这看上去像是废话，但如果你相信在看过一篇讲 Ruby 和 MongoDB 很酷的博客后就能开始使用 Mongoid 的话，你就有点<i>危险</i>了。|
     This may seem like a "thank you Captain Obvious" moment, however if you
     believe that you can just hop over to Mongoid because you read a blog
     post on how cool Ruby and MongoDB were, you are in for a
     <i>world of pain</i>.
 
   %p
+    Mongoid 使用了许多对初学者比较难的 Ruby 编程语言特性，？？？|
     Mongoid leverages many aspects of the Ruby programming
     language that are not for beginner use, and sending the core
     team into a frenzy tracking down a bug for a common Ruby mistake is a
@@ -43,7 +46,8 @@
         %td.samurai= image_tag "/images/samurai.png"
         %td.note
           %p
-            <i>THE DATABASE IS NOT A BLACK BOX</i>.
+            <i>数据库不是黑盒。|THE DATABASE IS NOT A BLACK BOX</i>.
+          Mongoid 是对数据库操作的抽象封装，使得应用开发者的生活更轻松。但是 Mongoid 内部机制最大限度地利用了 MongoDB 的强大特性，了解幕后究竟发生了些什么尤其重要。因此，我们把那些 Mongoid 对数据库的操作所对应的 MongoDB 语句写在了这个文档中。既然我们花时间写了，你就应该仔细看看。：）|
           Mongoid is an abstraction to make application developers'
           lives easier, however the internals leverage the
           power of MongoDB and it is truly important to know what is going on
@@ -52,9 +56,10 @@
           persistence operation. If we took the time to tell you, you should listen. :)
 
 %section#installation
-  %h2 Installation
+  %h2 安装|Installation
 
   %p
+    推荐的安装方法是通过 Bundler 来安装 Mongoid，只需将 Mongoid 加入你的 <code>Gemfile</code> 。|
     The preferred method for installing Mongoid is with bundler. Simply add
     Mongoid to your <code>Gemfile</code>.
 
@@ -63,6 +68,7 @@
     gem "mongoid", "~> 3.0"
 
   %p
+    或者，你也可以直接从 rubygem.org 获取 Mongoid gem 并安装：
     Alternatively you can get the Mongoid gem direcly from rubygems.org:
 
   :coderay
@@ -70,9 +76,10 @@
     $ gem install mongoid
 
 %section#configuration
-  %h2 Configuration
+  %h2 配置|Configuration
 
   %p
+    要完成 Mongoid 的配置，你只需在一个 <code>mongoid.yml</code> 文件中指定你的选项和数据库会话。最简单的配置如下，它将默认的会话设为“localhost:27017“，并在这个会话内提供了一个单独的数据库名为”mongoid“。|
     Mongoid configuration can be done through a <code>mongoid.yml</code> that
     specifies your options and database sessions. The simplest configuration
     is as follows, which sets the default session to "localhost:27017"
@@ -86,9 +93,10 @@
           database: mongoid
           hosts: localhost:27017
 
-  %h3 Rails Applications
+  %h3 Rails 应用|Rails Applications
 
   %p
+    你可以执行 Rails 生成器（Generator）来生成一个配置文件，并按你的愿望编辑 <code>myapp/config/mongoid.yml</code>。Mongoid 会自动处理剩下的一切。|
     You can generate a config file by executing the generator and then editing
     <code>myapp/config/mongoid.yml</code> to your heart's desire. Mongoid will
     then handle everything else from there.
@@ -97,9 +105,10 @@
     #!text
     $ rails g mongoid:config
 
-  %h3 Anatomy of a Mongoid Config
+  %h3 解读 Mongoid 配置文件|Anatomy of a Mongoid Config
 
   %p
+    我们一起来看一个“肥硕”的 <code>mongoid.yml</code> 配置文件，并解释 Mongoid 能实现的强大功能。下面的配置中每个条目上方都有注释。|
     Let's have a look at a full-blown <code>mongoid.yml</code> and explain
     the full power of what Mongoid can do. The following configuration has its
     explanation in the comments above each key.

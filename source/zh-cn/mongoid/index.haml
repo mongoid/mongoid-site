@@ -1,15 +1,17 @@
 - content_for :head do
-  %title Mongoid: Home
+  %title Mongoid：首页|Mongoid: Home
 
 %h1 Mongoid
 
 %p
+  Mongoid（读作 /'mɑŋɡɔıd/）是一个 <a href="http://mongodb.org">MongoDB</a> 在 Ruby 下的对象文档映射（ODM）。Mongoid 在 2009 年 8 月一个醉醺醺的夜晚，在臭名昭著的？？弗罗里达绿洲？？，由 <a href="http://github.com/durran">Durran Jordan</a> 孕育而生。|
   Mongoid (pronounced mann-goyd) is an Object-Document-Mapper (ODM) for
   <a href="http://mongodb.org">MongoDB</a> written in Ruby. It was conceived in August,
   2009 during a whiskey-induced evening at the infamous Oasis in Florida,
   USA by <a href="http://github.com/durran">Durran Jordan</a>.
 
 %p
+  Mongoid 的宗旨是给那些使用 Active Record 或者 Data Mapper 的 Ruby 开发者提供一套熟悉的 API，同时最大限度地利用了 MongoDB 的强大特性，诸如：无模式（Schemaless）及高性能的基于文档的设计，动态查询，以及带有原子性修饰符的操作等。|
   The philosophy of Mongoid is to provide a familiar API to Ruby developers
   who have been using Active Record or Data Mapper, while leveraging the
   power of MongoDB's schemaless and performant document-based design, dynamic
@@ -17,16 +19,18 @@
 
 %p
   %i
+    本站内容为 Mongoid 3 的文档，同时附带 Origin 和 Moped 的文档。如果你想参考 Mongoid 2 的文档，<a href="http://two.mongoid.org">点击此处</a>。|
     This is the site for Mongoid 3 documentation, along with Origin and Moped. If you
     want the Mongoid 2 docs, <a href="http://two.mongoid.org">please go here</a>.
 
-%h2 Sample Syntax
+%h2 语法样例|Sample Syntax
 
 .well
   %table
     %tr
       %td.samurai= image_tag "/images/samurai.png"
       %td.note
+        Mongoid 仅支持 MRI 1.9.2、1.9.3、HEAD，以及 JRuby 1.6.0+ 在 1.9 模式下。所有代码样例都使用 Ruby 1.9 语法。|
         Mongoid only supports MRI 1.9.2, 1.9.3, and HEAD, and JRuby 1.6.0+ in
         1.9 mode. All code samples will use 1.9 syntax.
 
