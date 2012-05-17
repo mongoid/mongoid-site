@@ -118,6 +118,7 @@ end
 
 configure :build do
   activate :minify_css
+  activate :smusher
 end
 
 ignore "/en/layouts/mongoid.haml"
