@@ -15,6 +15,7 @@ GEM
       fssm (>= 0.2.7)
       sass (~> 3.1)
     daemons (1.1.4)
+    dalli (2.0.5)
     em-websocket (0.3.5)
       addressable (>= 2.1.1)
       eventmachine (>= 0.12.9)
@@ -118,6 +119,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dalli
   haml-coderay
   heroku
   middleman

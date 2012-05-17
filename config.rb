@@ -1,6 +1,9 @@
+require "dalli"
+
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
 enable :caching
+set :cache, Dalli::Client.new
 
 page "/en/mongoid/*", layout: "en/layouts/mongoid", cache: true
 page "/en/origin/*", layout: "en/layouts/origin", cache: true
