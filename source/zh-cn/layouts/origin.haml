@@ -4,28 +4,28 @@
     %meta{name: "description", content: "A Ruby DSL for building MongoDB queries"}
     %meta{name: "keywords", content: "mongoid, origin, mongodb, ruby, rails, odm, durran jordan" }
 
-    = partial "en/partials/header"
+    = partial "zh-cn/partials/header"
 
   %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
 
-    = partial "en/partials/navigation", locals: { section: "origin" }
+    = partial "zh-cn/partials/navigation", locals: { section: "origin" }
 
     #navigation
       .subnav
         .container
           %ul.nav.nav-pills
-            %li= link_to "HOME", "/en/origin/index.html"
+            %li= link_to "HOME", "/zh-cn/origin/index.html"
             %li.dropdown#docs
               %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}
                 DOCS
                 %b.caret
               %ul.dropdown-menu
-                %li= link_to "Installation", "/en/origin/docs/installation.html"
-                %li= link_to "Selection", "/en/origin/docs/selection.html"
-                %li= link_to "Options", "/en/origin/docs/options.html"
-                %li= link_to "Serialization", "/en/origin/docs/serialization.html"
-                %li= link_to "Aliases", "/en/origin/docs/aliases.html"
-            %li= link_to "LINKS", "/en/origin/links.html"
+                %li= link_to "Installation", "/zh-cn/origin/docs/installation.html"
+                %li= link_to "Selection", "/zh-cn/origin/docs/selection.html"
+                %li= link_to "Options", "/zh-cn/origin/docs/options.html"
+                %li= link_to "Serialization", "/zh-cn/origin/docs/serialization.html"
+                %li= link_to "Aliases", "/zh-cn/origin/docs/aliases.html"
+            %li= link_to "LINKS", "/zh-cn/origin/links.html"
 
     #content
       .container
