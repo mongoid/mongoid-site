@@ -98,13 +98,3 @@
 :coderay
   #!ruby
   rake db:mongoid:remove_indexes
-
-%p
-  If you want indexes autocreated when the model classes are loaded, add this
-  configuration option to your mongoid.yml. Note this is <i>NOT</i> recommended for any
-  production environment.
-
-:coderay
-  #!ruby
-  defaults: &defaults
-    autocreate_indexes: true
