@@ -50,9 +50,19 @@
     or exposures, for example, the original queries are not modified
     and reusable.
 
-  %p
-    See the <a href="/origin/docs/selection.html">Origin: Selection</a>
-    for a complete list of available commands.
+  .well
+    %table
+      %tr
+        %td.samurai= image_tag "/images/samurai.png"
+        %td.note
+          Most of Mongoid's criteria has been extracted into it's own
+          gem, Origin, which Mongoid now depends on for most of it's API.
+          A complete list of commands can be found in
+          <a href="/origin/docs/selection.html">Selection with Origin</a>
+          and <a href="/origin/docs/options.html">Options with Origin</a>.
+          Note that the API has changed from 2.0 - see the
+          <a href="/mongoid/docs/upgrading.html">Upgrading</a> section for
+          a list of backwards incompatible changes.
 
   %h3 Additional Query Methods
 
