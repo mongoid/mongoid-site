@@ -111,7 +111,7 @@
       %li <code>has_and_belongs_to_many</code>
 
   %p
-    If you do not want this behaviour, you may turn it off when defining
+    If you do not want this behavior, you may turn it off when defining
     the relation.
 
   :coderay
@@ -138,7 +138,7 @@
         %td.samurai= image_tag "/images/samurai.png"
         %td.note
           %p
-            Polymorhic behaviour is allowed on all relations with the
+            Polymorhic behavior is allowed on all relations with the
             exception of <code>has_and_belongs_to_many</code>.
 
   :coderay
@@ -208,7 +208,7 @@
           %p Dependent options are only available on referenced relations.
 
   %p
-    The default behaviour of each association when no dependent option
+    The default behavior of each association when no dependent option
     is provided is to nullify.
 
   :coderay
@@ -238,7 +238,7 @@
   %h3 Autosaving
 
   %p
-    One core difference between Mongoid and Active Record from a behaviour
+    One core difference between Mongoid and Active Record from a behavior
     standpoint is that Mongoid does not automatically save child relations
     for relational associations. This is for performance reasons.
 
@@ -1263,7 +1263,7 @@
     One to many relationships where the children are stored in a
     separate collection from the parent document are defined using
     Mongoid's <code>has_many</code> and <code>belongs_to</code> macros. This
-    exhibits similar behaviour to Active Record.
+    exhibits similar behavior to Active Record.
 
   %h3 Defining
 
@@ -1636,7 +1636,7 @@
     Many to many relationships where the inverse documents are stored in a
     separate collection from the base document are defined using
     Mongoid's <code>has_and_belongs_to_many</code> macro. This
-    exhibits similar behaviour to Active Record with the exception that
+    exhibits similar behavior to Active Record with the exception that
     no join collection is needed, the foreign key ids are stored as
     arrays on either side of the relation.
 
