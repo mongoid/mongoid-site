@@ -583,3 +583,24 @@
     Band.mongo_session.with(safe: false, database: "musik") do |session|
       session[:artists].find(...)
     end
+
+  %h3 Capped Collections
+
+  %p
+    Mongoid does not provide a mechanism for creating capped collections on
+    the fly - you will need to create these yourself one time up front either
+    with Moped or via the Mongo console.
+
+  %p
+    To create a capped collection with Moped:
+
+  :coderay
+    #!ruby
+    session.command(create: "name", capped: true, size: 10000000, max: 1000)
+
+  %p
+    To create a capped collection from the Mongo console:
+
+  :coderay
+    #!javascript
+    db.createCollection("name", { capped: true, size: 10000000, max: 1000 });
