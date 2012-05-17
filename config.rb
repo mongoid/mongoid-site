@@ -1,3 +1,4 @@
+# encoding: utf-8
 Haml::Filters::CodeRay.encoder_options = { :css => :class }
 
 page "/en/mongoid/*", layout: "en/layouts/mongoid"
@@ -117,5 +118,8 @@ end
 
 configure :build do
   activate :minify_css
-  activate :minify_javascript
 end
+
+ignore "/en/layouts/mongoid.haml"
+ignore "/en/layouts/moped.haml"
+ignore "/en/layouts/origin.haml"
