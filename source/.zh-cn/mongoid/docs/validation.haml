@@ -1,0 +1,216 @@
+- content_for :head do
+  %title Mongoid: Validation
+
+%h1 Validations
+
+%p
+  Mongoid includes <code>ActiveModel::Validations</code> to supply the basic
+  validation plus an additional associated and uniqueness validator.
+
+%p
+  See <code>#{link_to "ActiveModel::Validations", "http://github.com/rails/rails/blob/master/activemodel/lib/active_model/validations.rb"}</code> documentation for more information.
+
+.well
+  %table
+    %tr
+      %td.samurai= image_tag "/images/samurai.png"
+      %td.note
+        Mongoid behaves slightly different to Active Record when using <code>#valid?</code>
+        on already persisted data. Active Record's <code>#valid?</code> will run all
+        validations whereas Mongoid's <code>#valid?</code> will only run validations on fields
+        where data has changed as an optimization.
+
+%p Common options that can be passed to all validations:
+
+%ul
+  %li
+    <code>:allow_nil</code> Specify whether to validate on a nil attribute.
+  %li
+    <code>:if</code> Only run if the supplied value evaluates to true.
+  %li
+    <code>:on</code> Only run when specified, supports <code>:create</code>
+    and <code>:update</code>.
+  %li
+    <code>:unless</code> Only run if the supplied value evaluates to false.
+
+%p
+  In addition to those validations, information is provided with each macro
+  about its specific options.
+
+%table.table.table-bordered.table-striped
+  %thead
+    %tr
+      %th Validation
+      %th Macro
+      %th Options
+  %tbody
+    %tr
+      %td.doc
+        %p.doc
+          %i Validate acceptance of terms.
+      %td
+        :coderay
+          #!ruby
+          validates_acceptance_of :terms
+          validates :terms, acceptance: true
+      %td
+        :coderay
+          #!ruby
+          :message
+          :accept # Specify the accepted value. Default: 1.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate associated documents when the parent is validated. This
+            only validates documents in memory.
+      %td
+        :coderay
+          #!ruby
+          validates_associated :albums
+          validates :albums, associated: true
+      %td
+        :coderay
+          #!ruby
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate confirmation of a field, with a "_confirmation" suffix.
+      %td
+        :coderay
+          #!ruby
+          validates_confirmation_of :password
+          validates :password, confirmation: true
+      %td
+        :coderay
+          #!ruby
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate items are not in a list.
+      %td
+        :coderay
+          #!ruby
+          validates_exclusion_of :employers, in: [ "SoundCloud" ]
+          validates :employers, exclusion: { in: [ "SoundCloud" ] }
+      %td
+        :coderay
+          #!ruby
+          :in # Required list of values.
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate the format of a field.
+      %td
+        :coderay
+          #!ruby
+          validates_format_of :title, with: /\A\w+\Z/
+          validates :title, format: { with: /\A\w+\Z/ }
+      %td
+        :coderay
+          #!ruby
+          :allow_blank # Whether the field can be blank.
+          :in # A list or range of values.
+          :message
+          :with # A regular expression to match.
+          :without # A regular expression not to match.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate items are included in a list.
+      %td
+        :coderay
+          #!ruby
+          validates_inclusion_of :employers, in: [ "SoundCloud" ]
+          validates :employers, inclusion: { in: [ "SoundCloud" ] }
+      %td
+        :coderay
+          #!ruby
+          :allow_blank # Whether the field can be blank.
+          :in # Required list of values.
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate the length of a field.
+      %td
+        :coderay
+          #!ruby
+          validates_length_of :password, minimum: 8, maximum: 16
+          validates :password, length: { minimum: 8, maximum: 16 }
+      %td
+        :coderay
+          #!ruby
+          :allow_blank # Whether to validate blank attributes.
+          :in # The range the length can fall within.
+          :maximum # The maximum length of the attribute.
+          :message
+          :minimum # The minimum length of the attribute.
+          :tokenizer # A block tokenizer.
+          :too_long # Custom message if too long.
+          :too_short # Custom message if too short.
+          :within # Range the length can fall within.
+          :wrong_length # Custom message for an incorrect length.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate the numericality of a field.
+      %td
+        :coderay
+          #!ruby
+          validates_numericality_of :age, even: true
+          validates :age, numericality: { even: true }
+      %td
+        :coderay
+          #!ruby
+          :equal_to # A value the field must be exactly.
+          :even # Set that the value must be even.
+          :greater_than
+          :greater_than_or_equal_to
+          :less_than
+          :less_than_or_equal_to
+          :message
+          :odd # Set that the value must be odd.
+          :only_integer # Set whether the value has to be an integer.
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate that an attribute exists.
+      %td
+        :coderay
+          #!ruby
+          validates_presence_of :name
+          validates :name, presence: true
+      %td
+        :coderay
+          #!ruby
+          :message
+    %tr
+      %td.doc
+        %p.doc
+          %i
+            Validate that an attribute is unique.
+            Note that for embedded documents, this will only check that the
+            field is unique within the context of the parent document, not the
+            entire database.
+      %td
+        :coderay
+          #!ruby
+          validates_uniqueness_of :name
+          validates :name, uniqueness: true
+      %td
+        :coderay
+          #!ruby
+          :message
+          :case_sensitive # Whether to use case sensitive matching.
+          :scope # Scope checks to the value of this field.

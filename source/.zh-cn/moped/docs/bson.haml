@@ -1,0 +1,108 @@
+- content_for :head do
+  %title Moped: BSON
+
+%h1 BSON
+
+%p
+  <code>Moped::BSON</code> is the namespace for Moped's BSON implementation.
+  It's implemented in pure (but fast) ruby. The public entry point into the
+  <code>BSON</code> module is <code>BSON::Document</code>, which is just a
+  subclass of Hash, but exposes two class methods: <code>serialize</code>
+  and <code>deserialize</code>. <code>serialize</code> accepts a
+  <code>BSON::Document</code> (or Hash) and returns the serialized BSON
+  representation. <code>deserialize</code> does the opposite: it reads data
+  from an IO-like input and returns a deserialized <code>BSON::Document</code>.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Types", "#types"
+
+%section#types
+  %h2 Types
+
+  %h3 Object Ids
+
+  %p
+    The <code>Moped::BSON::ObjectId</code> class is used for generating and
+    interacting with Mongo's ids.
+
+  :coderay
+    #!ruby
+    id = Moped::BSON::ObjectId.new # => 4f8583b5e5a4e46a64000002
+    id.generation_time # => 2012-04-11 13:14:29 UTC
+    id == Moped::BSON::ObjectId.from_string(id.to_s) # => true
+
+  %p
+    The following is a table of the object id API.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>ObjectId.new</code>
+          %p.doc
+            %i
+              Instantiate a new object id.
+        %td
+          :coderay
+            #!ruby
+            Moped::BSON::ObjectId.new
+      %tr
+        %td.doc
+          <code>ObjectId.from_string</code>
+          %p.doc
+            %i
+              Instantiate a new object id from a string.
+        %td
+          :coderay
+            #!ruby
+            Moped::BSON::ObjectId.from_string("4f8d8c66e5a4e45396000009")
+      %tr
+        %td.doc
+          <code>ObjectId.from_time</code>
+          %p.doc
+            %i
+              Instantiate a new object id from a time.
+        %td
+          :coderay
+            #!ruby
+            Moped::BSON::ObjectId.from_time(Time.new)
+      %tr
+        %td.doc
+          <code>ObjectId.legal?</code>
+          %p.doc
+            %i
+              Checks if a string is a valid object id.
+        %td
+          :coderay
+            #!ruby
+            Moped::BSON::ObjectId.legal?("4f8d8c66e5a4e45396000009")
+
+  %h3 Code
+
+  %p
+    The <code>Moped::BSON::Code</code> class is used for working with
+    javascript on the server.
+
+  :coderay
+    #!ruby
+    Moped::BSON::Code.new("function () { return this.name }")
+    Moped::BSON::Code.new("function (s) { return s.prefix + this.name }", prefix: "_")
+
+  %h3 Binary Data
+
+  %p
+    The <code>Moped::BSON::Binary</code> class allows you to persist binary
+    data to the server, and supports the following types: <code>:generic</code>,
+    <code>:function</code>, <code>:old</code>, <code>:uuid</code>,
+    <code>:md5</code>, and <code>:user</code>. Note that <code>:old</code>
+    is deprecated, but still present to support legacy data.
+
+  :coderay
+    #!ruby
+    Moped::BSON::Binary.new(:md5, Digest::MD5.digest(__FILE__))

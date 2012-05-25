@@ -1,0 +1,36 @@
+- content_for :head do
+  %title Moped: Home
+
+%h1 Moped
+
+%p
+  Moped is a MongoDB driver for Ruby, which exposes a simple, elegant, and fast
+  API. Moped is the supported driver for Mongoid from version 3 and higher.
+
+%p
+  Moped is composed of three parts: an implementation of the
+  <a href="http://bsonspec.org">BSON specification</a>, an implementation of the
+  <a href="http://www.mongodb.org/display/DOCS/Mongo+Wire+Protocol">
+  Mongo Wire Protocol</a>, and the driver itself.
+
+%h2 Sample Syntax
+
+.well
+  %table
+    %tr
+      %td.samurai= image_tag "/images/samurai.png"
+      %td.note
+        Moped only supports MRI 1.9.2, 1.9.3, and HEAD, and JRuby 1.6.0+ in 1.9 mode.
+        All code samples will use 1.9 syntax.
+
+:coderay
+  #!ruby
+
+  session = Moped::Session.new([ "127.0.0.1:27017" ])
+  session.use "echo_test"
+
+  session.with(safe: true) do |safe|
+    safe[:artists].insert(name: "Syd Vicious")
+  end
+
+  session[:artists].find(name: "Syd Vicious").update(:$push => { instruments: { name: "Bass" }})

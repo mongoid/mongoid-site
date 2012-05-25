@@ -1,0 +1,80 @@
+- content_for :head do
+  %title Origin: Serialization
+
+%h1 Serialization
+
+%p
+  Not all of our beloved Ruby objects can be serialized and set to the
+  database in our queries. For these cases, Origin provides the means
+  to define custom serializers for Ruby types that need translation
+  to Mongo compatible forms. To get custom serialization for your
+  objects, you need to do 1 of 2 things to "evolve" your objects into
+  Mongo friendly values.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Class Method Evolution", "#class_methods"
+      %li= link_to "Key Based Evolution", "#serializer"
+
+%section#class_methods
+  %h2 Class Method Evolution
+
+  %p
+    Your first option is to provide a class method named
+    <code>evolve</code> that takes a object on your object's class. A
+    good example of this is Ruby's <code>Date</code>, which MongoDB
+    cannot handle - it only accepts times.
+
+  :coderay
+    #!ruby
+    class Date
+      def self.evolve(date)
+        Time.utc(date.year, date.month, date.day, 0, 0, 0, 0)
+      end
+    end
+
+  %p
+    In the above case, everytime you create a query that has a <code>Date</code>
+    object in it, Origin would convert the date to a UTC time for you. Note
+    that Origin already handles this for you, this is just an example of how it
+    was done.
+
+%section#serializer
+  %h2 Key Based Evolution
+
+  %p
+    There may be cases that you want custom serialization based on the name of
+    the field that you are querying on, not the type you passed in. An example
+    of this are named fields in Mongoid - they use a class named
+    <code>Field</code> to handle all of Mongoid's behaviour, but they need to
+    also serialize to the appropriate type when queries are made. Custom named
+    serializers need just to respond to an instance method <code>evolve</code>.
+
+  :coderay
+    #!ruby
+    class DateSerializer
+      def evolve(date)
+        Time.utc(date.year, date.month, date.day, 0, 0, 0, 0)
+      end
+    end
+
+  %p
+    Then when instantiating your queryable, you need to provide it a hash of
+    field name/serializer pairs as it's second argument.
+
+  :coderay
+    #!ruby
+    class Query
+      include Origin::Queryable
+    end
+
+    queryable = Query.new({}, { "date" => DateSerializer.new })
+
+  %p
+    After this, any queries made with the field <code>date</code> in the
+    criteria will use the serializer to convert the value.
+
+  :coderay
+    #!ruby
+    queryable.where(date: Date.new) #=> Will convert the date to a time.

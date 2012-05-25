@@ -1,0 +1,24 @@
+- content_for :head do
+  %title Moped: Links
+
+%h1 Links
+
+.link-button
+  = link_to "http://github.com/mongoid/moped", rel: "tooltip", title: "Moped on Github." do
+    = image_tag "/images/dojocat.png"
+
+.link-button
+  = link_to "http://twitter.com/bjschaefer", rel: "tooltip", title: "Bernerd (@bjschaefer) on Twitter." do
+    = image_tag "/images/twitter.png"
+
+.link-button
+  = link_to "http://mongohq.com", rel: "tooltip", title: "MongoHQ provides Moped with databases for testing." do
+    = image_tag "/images/mongohq.png"
+
+.link-button
+  = link_to "http://travis-ci.org/#!/mongoid/moped", rel: "tooltip", title: "Moped's continuous integration on TravisCI." do
+    = image_tag "/images/travis.png"
+
+.link-button
+  = link_to "http://rdoc.info/github/mongoid/moped/master/frames", rel: "tooltip", title: "API documentation on rdoc.info" do
+    = image_tag "/images/rdoc.png"

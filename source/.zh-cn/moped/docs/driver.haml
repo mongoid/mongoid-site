@@ -1,0 +1,551 @@
+- content_for :head do
+  %title Moped: Driver
+
+%h1 Driver
+
+%p
+  The driver is the core of Moped that is used to interact with MongoDB. It is
+  based of almost entirely four classes: <code>Session</code>,
+  <code>Collection</code>, <code>Indexes</code>, and <code>Query</code>.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Behaviour", "#behaviour"
+      %li= link_to "Wire Protocol", "#protocol"
+      %li= link_to "Errors", "#errors"
+
+%section#behaviour
+  %h2 Behaviour
+
+  %h3 Session
+
+  %p
+    The session is the main entry point to communicating with the database, similar
+    to a database connection. The session is special though in that it can be a
+    session with a single database server, a multi-node replica set, or a mongos
+    server for sharded scenarios.
+
+  %p
+    Once a new session is created you can interact with it in a similar fashion
+    that you would with the <code>mongo</code> console.
+
+  :coderay
+    #!ruby
+    session = Moped::Session.new([ "127.0.0.1:27017", "127.0.0.1:27018", "127.0.0.1:27019" ])
+    session.use :moped_test
+
+    session[:users].insert({ name: "Syd" })
+
+    session.with(safe: { w: 2, wtimeout: 5 }) do |_session|
+      _session[:users].find.remove_all
+    end
+
+    session.with(database: "important_db", consistency: :strong) do |_session|
+      _session[:users].find.first
+    end
+
+  %p
+    The following is a table of the most common session API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Session">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Session#use</code>
+          %p.doc
+            %i
+              Set the current database to operate on. All subsequent commands
+              will be on this database until switched.
+        %td
+          :coderay
+            #!ruby
+            session.use(:my_app_test)
+      %tr
+        %td.doc
+          <code>Session#with</code>
+          %p.doc
+            %i
+              Return or yield a copy of the session with different options set
+              on it.
+        %td
+          :coderay
+            #!ruby
+            session.with(safe: true) do |_session|
+              ...
+            end
+            session.with(database: "admin").command(...)
+      %tr
+        %td.doc
+          <code>Session#[]</code>
+          %p.doc
+            %i
+              Get a collection in the current database.
+        %td
+          :coderay
+            #!ruby
+            session[:users]
+      %tr
+        %td.doc
+          <code>Session#drop</code>
+          %p.doc
+            %i
+              Drop the current database.
+        %td
+          :coderay
+            #!ruby
+            session.drop
+      %tr
+        %td.doc
+          <code>Session#command</code>
+          %p.doc
+            %i
+              Run a command on the current database.
+        %td
+          :coderay
+            #!ruby
+            session.command(ping: 1)
+            session.command(
+              mapreduce: "users",
+              map: "...",
+              reduce: "...",
+              query: { created_at: { "$gte" => Time.now }},
+              out: { inline: 1 }
+            )
+      %tr
+        %td.doc
+          <code>Session#login</code>
+          %p.doc
+            %i
+              Authenticate with the current database.
+        %td
+          :coderay
+            #!ruby
+            session.login("name", "password")
+      %tr
+        %td.doc
+          <code>Session#logout</code>
+          %p.doc
+            %i
+              Logout of the current database.
+        %td
+          :coderay
+            #!ruby
+            session.logout
+
+  %h3 Collection
+
+  %p
+    The collection is the main entry point for dealing with
+    collection operations, such as finding and inserting documents.
+
+  :coderay
+    #!ruby
+    users = session[:users]
+    users.drop
+    users.find.count #=> 0.0
+
+    users.indexes.create({name: 1}, {unique: true})
+
+    users.insert(name: "John")
+    users.find.count #=> 1.0
+
+    users.insert(name: "John")
+    users.find.count #=> 1.0
+
+    session.with(safe: true) do |session|
+      session[:users].insert(name: "John")
+    end # raises Moped::Errors::OperationFailure
+
+  %p
+    The following is a table of the most common collection API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Collection">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Collection#drop</code>
+          %p.doc
+            %i
+              Drop the collection
+        %td
+          :coderay
+            #!ruby
+            collection.drop
+      %tr
+        %td.doc
+          <code>Collection#find</code>
+          %p.doc
+            %i
+              Build a query on the collection.
+        %td
+          :coderay
+            #!ruby
+            collection.find(name: "Syd")
+      %tr
+        %td.doc
+          <code>Collection#indexes</code>
+          %p.doc
+            %i
+              Access information about the collection's indexes.
+        %td
+          :coderay
+            #!ruby
+            collection.indexes
+      %tr
+        %td.doc
+          <code>Collection#insert</code>
+          %p.doc
+            %i
+              Insert one or multiple documents into the collection.
+        %td
+          :coderay
+            #!ruby
+            collection.insert(name: "Syd")
+            colleciton.insert([{ name: "Syd" }, { name: "Nancy" }])
+
+  %h3 Indexes
+
+  %p
+    The indexes object is the main entry point for dealing with
+    indexes on a single collection.
+
+  :coderay
+    #!ruby
+    session[:users].indexes.create(name: 1)
+    session[:users].indexes.create(
+      { name: 1, location: "2d" },
+      { unique: true }
+    )
+    session[:users].indexes[name: 1]
+    # => {"v"=>1, "key"=>{"name"=>1}, "ns"=>"moped_test.users", "name"=>"name_1" }
+
+    session[:users].indexes.drop(name: 1)
+    session[:users].indexes[name: 1] # => nil
+
+  %p
+    The following is a table of the most common indexes API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Indexes">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Indexes#[]</code>
+          %p.doc
+            %i
+              Get an index by it's spec.
+        %td
+          :coderay
+            #!ruby
+            indexes[_id: 1]
+      %tr
+        %td.doc
+          <code>Indexes#create</code>
+          %p.doc
+            %i
+              Create a new index.
+        %td
+          :coderay
+            #!ruby
+            indexes.create({ name: 1 }, { unique: true })
+      %tr
+        %td.doc
+          <code>Indexes#drop</code>
+          %p.doc
+            %i
+              Drop one or all indexes.
+        %td
+          :coderay
+            #!ruby
+            indexes.drop(name: 1)
+            indexes.drop
+      %tr
+        %td.doc
+          <code>Indexes#each</code>
+          %p.doc
+            %i
+              Iterate over and yield each index.
+        %td
+          :coderay
+            #!ruby
+            indexes.each do |index|
+              ...
+            end
+
+  %h3 Query
+
+  %p
+    The query is an object that is used to either return documents that
+    match a criterion, or perform some other operation on the documents
+    that match a criterion. This includes updates and deletes.
+
+  :coderay
+    #!ruby
+    users = session[:users]
+
+    users.insert(name: "John")
+    users.find.count # => 1
+
+    users.find(name: "Mary").upsert(name: "Mary")
+    users.find.count # => 2
+
+    users.find.skip(1).limit(1).sort(name: -1).one
+    # => {"_id" => <...>, "name" => "John" }
+
+    scope = users.find(name: "Mary").select(_id: 0, name: 1)
+    scope.one # => {"name" => "Mary" }
+    scope.remove
+    scope.one # nil
+
+  %p
+    The following is a table of the most common query API usage. For a
+    complete reference please see the
+    <a href="http://rdoc.info/github/mongoid/moped/Moped/Query">API docs</a>.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Syntax
+    %tbody
+      %tr
+        %td.doc
+          <code>Query#limit</code>
+          %p.doc
+            %i
+              Limit the number of returned documents.
+        %td
+          :coderay
+            #!ruby
+            query.limit(20)
+      %tr
+        %td.doc
+          <code>Query#skip</code>
+          %p.doc
+            %i
+              Skip the provided number of documents.
+        %td
+          :coderay
+            #!ruby
+            query.skip(20)
+      %tr
+        %td.doc
+          <code>Query#sort</code>
+          %p.doc
+            %i
+              Sort the returned results.
+        %td
+          :coderay
+            #!ruby
+            query.sort(name: 1, created_at: -1)
+      %tr
+        %td.doc
+          <code>Query#distinct</code>
+          %p.doc
+            %i
+              Get an array of distinct values for a field.
+        %td
+          :coderay
+            #!ruby
+            query.distinct(:name)
+      %tr
+        %td.doc
+          <code>Query#select</code>
+          %p.doc
+            %i
+              Select the fields you want returned.
+        %td
+          :coderay
+            #!ruby
+            query.select(name: 1, dob: 1)
+      %tr
+        %td.doc
+          <code>Query#first</code>
+          %p.doc
+            %i
+              Return a single document for the query. Also <code>one</code>.
+        %td
+          :coderay
+            #!ruby
+            query.first
+      %tr
+        %td.doc
+          <code>Query#each</code>
+          %p.doc
+            %i
+              Iterate through the results of a query.
+        %td
+          :coderay
+            #!ruby
+            query.each do |doc|
+              ...
+            end
+      %tr
+        %td.doc
+          <code>Query#count</code>
+          %p.doc
+            %i
+              Return the number of documents that match the query.
+        %td
+          :coderay
+            #!ruby
+            query.count
+      %tr
+        %td.doc
+          <code>Query#update</code>
+          %p.doc
+            %i
+              Update the first document matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.update(name: "Tool")
+      %tr
+        %td.doc
+          <code>Query#update_all</code>
+          %p.doc
+            %i
+              Update all documents matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.update_all(pending: true)
+      %tr
+        %td.doc
+          <code>Query#upsert</code>
+          %p.doc
+            %i
+              Create or update a document using query's selector.
+        %td
+          :coderay
+            #!ruby
+            query.upsert(name: "Depeche Mode")
+      %tr
+        %td.doc
+          <code>Query#remove</code>
+          %p.doc
+            %i
+              Remove a single document matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.remove
+      %tr
+        %td.doc
+          <code>Query#remove_all</code>
+          %p.doc
+            %i
+              Remove all documents matching the query.
+        %td
+          :coderay
+            #!ruby
+            query.remove_all
+
+%section#protocol
+  %h2 Wire Protocol
+
+  %p
+    <code>Moped::Protocol</code> is the namespace for Moped's implementation
+    of the <a href="http://www.mongodb.org/display/DOCS/Mongo+Wire+Protocol">
+    Mongo Wire Protocol</a>. Its public API consists of classes representing
+    each type of message in the protocol: <code>Delete</code>, <code>GetMore</code>,
+    <code>Insert</code>, <code>KillCursors</code>, <code>Query</code>,
+    <code>Reply</code>, <code>Update</code>, and a convenience class
+    <code>Command</code>.
+
+  %p
+    You should never have to worry about protocol objects, but more details can
+    be found in the <a href="http://rdoc.info/github/mongoid/moped/Moped/Protocol">
+    API docs</a> if you're interested.
+
+%section#errors
+  %h2 Errors
+
+  %p Here's a list of the exceptions generated by Moped.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Error
+        %th Description
+    %tbody
+      %tr
+        %td <code>Moped::Errors::ConnectionFailure</code>
+        %td
+          Raised when a node cannot be reached or a connection is lost.
+          <i>Note</i>: this exception is only raised if Moped could not
+          reconnect, so you shouldn't attempt to rescue this.
+      %tr
+        %td <code>Moped::Errors::OperationFailure</code>
+        %td
+          Raised when a command fails or is invalid, such as when an insert
+          fails in safe mode.
+      %tr
+        %td <code>Moped::Errors::QueryFailure</code>
+        %td
+          Raised when an invalid query was sent to the database.
+      %tr
+        %td <code>Moped::Errors::AuthenticationFailure</code>
+        %td
+          Raised when invalid credentials were passed to
+          <code>session.login</code>.
+      %tr
+        %td <code>Moped::Errors::SocketError</code>
+        %td
+          Not a real exception, but a module used to tag unhandled
+          exceptions inside of a node's networking code. Allows you to
+          <code>rescue Moped::SocketError</code> while preserving the
+          real exception.
+
+  %p
+    Other exceptions are possible while running commands, such as IO Errors around
+    failed connections. Moped tries to be smart about managing its connections,
+    such as checking if they're dead before executing a command; but those checks
+    aren't foolproof, and Moped is conservative about handling unexpected errors on
+    its connections. Namely, Moped will *not* retry a command if an unexpected
+    exception is raised. Why? Because it's impossible to know whether the command
+    was actually received by the remote Mongo instance, and without domain
+    knowledge it cannot be safely retried.
+
+  %p Take for example this case:
+
+  :coderay
+    #!ruby
+    session.with(safe: true)["users"].insert(name: "John")
+
+  %p
+    It's entirely possible that the insert command will be sent to Mongo, but the
+    connection gets closed before we read the result for <code>getLastError</code>.
+    In this case, there's no way to know whether the insert was actually successful!
+
+  %p
+    If, however, you want to gracefully handle this in your own application, you
+    could do something like:
+
+  :coderay
+    #!ruby
+    document = { _id: Moped::BSON::ObjectId.new, name: "John" }
+
+    begin
+      session["users"].insert(document)
+    rescue Moped::Errors::SocketError
+      session["users"].find(_id: document[:_id]).upsert(document)
+    end

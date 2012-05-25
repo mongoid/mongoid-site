@@ -119,6 +119,7 @@
 
     %ul
       %li Keep method line counts small and easy to read.
+      %li Do not fear the use of Ruby's <code>tap</code>.
       %li Copy and pasted code from another library will never be accepted.
       %li Provide API documentation in the form of YARD.
 
@@ -172,7 +173,7 @@
   %p
     Ensure to write good descriptive commit messages, and follow the parameters
     set forth <a href="http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">
-    here</a> by Tim Pope using which are the same standards as the linux kernel.
+    here</a> by Tim Pope using the same standards as the linux kernel.
 
 %section#documentation
   %h2 Documentation Contributions
@@ -194,7 +195,7 @@
       %li Fork and clone the repository.
       %li Run <code>gem install bundler</code> to get the latest for the gemset.
       %li Run <code>bundle install</code> for dependencies.
-      %li Run <code>bundle exec middleman</code> to run the site with sinatra.
+      %li Run <code>bundle exec mm-server</code> to run the site with sinatra.
 
   %p
     Pull requests will be merged in and regenerated to the mongoid.github.com

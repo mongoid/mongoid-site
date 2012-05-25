@@ -1,0 +1,250 @@
+- content_for :head do
+  %title Origin: Options
+
+%h1 Options
+
+%p
+  Origin provides a DSL on the queryable for building options to go along
+  with the standard queries. The options hash can always be accessed from
+  a queryable by calling <code>Queryable#options</code>.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Standard", "#standard"
+      %li= link_to "Sorting", "#sorting"
+
+%section#standard
+  %h2 Standard
+
+  %p
+    The following is a table of all options operations and their corresponding
+    MongoDB options hash.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Origin
+        %th Options
+    %tbody
+      %tr
+        %td.doc
+          <code>Queryable#batch_size</code>
+          %p.doc
+            %i
+              Changes the number of documents that are returned by the
+              cursor at a time.
+        %td
+          :coderay
+            #!ruby
+            queryable.batch_size(1000)
+        %td
+          :coderay
+            #!ruby
+            { batch_size: 1000 }
+      %tr
+        %td.doc
+          <code>Queryable#hint</code>
+          %p.doc
+            %i
+              Adds a hint for which index (or not) to use in the query.
+        %td
+          :coderay
+            #!ruby
+            queryable.hint("$natural" => 1)
+        %td
+          :coderay
+            #!ruby
+            { hint: { "$natural" => 1 }}
+      %tr
+        %td.doc
+          <code>Queryable#limit</code>
+          %p.doc
+            %i
+              Limit the number of returned documents.
+        %td
+          :coderay
+            #!ruby
+            queryable.limit(100)
+        %td
+          :coderay
+            #!ruby
+            { limit: 100 }
+      %tr
+        %td.doc
+          <code>Queryable#max_scan</code>
+          %p.doc
+            %i
+              Limit the number of scanned documents in the query.
+        %td
+          :coderay
+            #!ruby
+            queryable.max_scan(100)
+        %td
+          :coderay
+            #!ruby
+            { max_scan: 100 }
+      %tr
+        %td.doc
+          <code>Queryable#no_timeout</code>
+          %p.doc
+            %i
+              Tell the query not to timeout.
+        %td
+          :coderay
+            #!ruby
+            queryable.no_timeout
+        %td
+          :coderay
+            #!ruby
+            { timeout: false }
+      %tr
+        %td.doc
+          <code>Queryable#only</code>
+          %p.doc
+            %i
+              Limit the fields that are returned to the provided fields.
+              Note that you can only include fields (with <code>only</code>)
+              or exclude fields (with <code>without</code>) but not a
+              combination of both.
+        %td
+          :coderay
+            #!ruby
+            queryable.only(:name, :age)
+        %td
+          :coderay
+            #!ruby
+            { fields: { "name" => 1, "age" => 1 }}
+      %tr
+        %td.doc
+          <code>Queryable#skip</code>
+          %p.doc
+            %i
+              Skip the provided number of documents.
+        %td
+          :coderay
+            #!ruby
+            queryable.skip(100)
+        %td
+          :coderay
+            #!ruby
+            { skip: 100 }
+      %tr
+        %td.doc
+          <code>Queryable#slice</code>
+          %p.doc
+            %i
+              Limit the number of elements in embedded arrays that are
+              returned.
+        %td
+          :coderay
+            #!ruby
+            queryable.slice(aliases: [ 0, 5 ])
+        %td
+          :coderay
+            #!ruby
+            { aliases: { "$slice" => [ 0, 5 ] }}
+      %tr
+        %td.doc
+          <code>Queryable#snapshot</code>
+          %p.doc
+            %i
+              Set the option to execute the query in snapshot mode.
+        %td
+          :coderay
+            #!ruby
+            queryable.snapshot
+        %td
+          :coderay
+            #!ruby
+            { snapshot: true }
+      %tr
+        %td.doc
+          <code>Queryable#without</code>
+          %p.doc
+            %i
+              Limit the fields that are returned everything except the
+              provided fields.  Note that you can only include fields
+              (with <code>only</code>) or exclude fields
+              (with <code>without</code>) but not a combination of both.
+        %td
+          :coderay
+            #!ruby
+            queryable.without(:name, :age)
+        %td
+          :coderay
+            #!ruby
+            { fields: { "name" => -1, "age" => -1 }}
+
+%section#sorting
+  %h2 Sorting
+
+  %p
+    Origin's sorting syntax is special in that there are many different
+    ways to add sorting criteria, and the underlying options can be
+    configured to change depending on which driver you are using. You
+    can mix and match ascending and descending in different styles if
+    your heart desires.
+
+  %h3 Sort Ascending
+
+  %p
+    There are a few different ways to sort fields in ascending order.
+    Choose the syntax you like the best.
+
+  :coderay
+    #!ruby
+    queryable.asc(:first_name, :last_name)
+    queryable.order_by(:first_name.asc, :last_name.asc)
+    queryable.order_by("first_name ASC, last_name ASC")
+    queryable.order_by(first_name: 1, last_name: 1)
+    queryable.order_by(first_name: "asc", last_name: "asc")
+    queryable.order_by(first_name: :asc, last_name: :asc)
+    queryable.order_by([[ :first_name, 1 ], [ :last_name, 1 ]])
+    queryable.order_by([[ :first_name, :asc ], [ :last_name, :asc ]])
+
+  %p
+    All of the previous calls translate to the following options:
+
+  :coderay
+    #!ruby
+    { sort: { "first_name" => 1, "last_name" => 1 }}
+
+  %h3 Sort Descending
+
+  %p
+    There are a few different ways to sort fields in descending order.
+    Choose the syntax you like the best.
+
+  :coderay
+    #!ruby
+    queryable.desc(:first_name, :last_name)
+    queryable.order_by(:first_name.desc, :last_name.desc)
+    queryable.order_by("first_name DESC, last_name DESC")
+    queryable.order_by(first_name: 1, last_name: 1)
+    queryable.order_by(first_name: "desc", last_name: "desc")
+    queryable.order_by(first_name: :desc, last_name: :desc)
+    queryable.order_by([[ :first_name, 1 ], [ :last_name, 1 ]])
+    queryable.order_by([[ :first_name, :desc ], [ :last_name, :desc ]])
+
+  %p
+    All of the previous calls translate to the following options:
+
+  :coderay
+    #!ruby
+    { sort: { "first_name" => -1, "last_name" => -1 }}
+
+  %h3 Changing Driver Syntax
+
+  %p
+    By default the sorting syntax is for Moped. If you are using the
+    10gen driver by itself, then when creating the queryable tell it
+    to use 10gen's syntax by passing <code>:mongo</code> as the third
+    argument to the queryable constructor.
+
+  :coderay
+    #!ruby
+    queryable = Query.new({}, {}, :mongo)
+    queryable.order_by([[ :first_name, :desc ], [ :last_name, :desc ]])
+    queryable.options #=> { sort: [[ "first_name", -1 ], [ "last_name", -1 ]]}
