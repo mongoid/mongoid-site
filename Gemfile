@@ -1,4 +1,4 @@
-source :rubygems
+source "http://ruby.taobao.org"
 gem "haml-coderay"
 gem "heroku"
 gem "middleman", "3.0.0.beta.2"

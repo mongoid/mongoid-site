@@ -12,6 +12,10 @@ page "/zh-cn/mongoid/*", layout: "zh-cn/layouts/mongoid"
 page "/zh-cn/origin/*", layout: "zh-cn/layouts/origin"
 page "/zh-cn/moped/*", layout: "zh-cn/layouts/moped"
 
+page "/zh-cn~/mongoid/*", layout: "zh-cn~/layouts/mongoid"
+page "/zh-cn~/origin/*", layout: "zh-cn~/layouts/origin"
+page "/zh-cn~/moped/*", layout: "zh-cn~/layouts/moped"
+
 # We've revamped the entire set URL structure from the previous, so setup
 # the 301 redirects below.
 
@@ -134,3 +138,6 @@ ignore "/en/layouts/origin.haml"
 ignore "/zh-cn/layouts/mongoid.haml"
 ignore "/zh-cn/layouts/moped.haml"
 ignore "/zh-cn/layouts/origin.haml"
+ignore "/zh-cn~/layouts/mongoid.haml"
+ignore "/zh-cn~/layouts/moped.haml"
+ignore "/zh-cn~/layouts/origin.haml"
