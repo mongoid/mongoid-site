@@ -1,10 +1,11 @@
 - content_for :head do
-  %title Mongoid: Persistence
+  %title Mongoid: 持久化|Persistence
 
-%h1 Persistence
+%h1 持久化|Persistence
 
 %p
-  Mongoid supports all expected <tt>CRUD</tt> operations for those familiar
+  Mongoid 像其他 Ruby ORM/ODM 框架如 <a href="http://rubyonrails.org/">Active Record</a> 或 <a href="https://datamapper.org">Data Mapper</a> 一样，支持所有常见的 <tt>CRUD</tt> 操作。Mongoid 与众不同之处在于只对有修改的属性进行原子性地更新，而不是像其他框架那样把整个文档重新写入数据库一遍。
+  |Mongoid supports all expected <tt>CRUD</tt> operations for those familiar
   with other Ruby mappers like
   <a href="http://rubyonrails.org/">Active Record</a> or
   <a href="https://datamapper.org">Data Mapper</a>.
@@ -14,21 +15,23 @@
   document to the database each time.
 
 %p
-  The persistence sections will provide examples on what database operation
+  本节将提供一些例子展示调用 Mongoid 语句时对数据库的实际操作。
+  |The persistence sections will provide examples on what database operation
   is performed when executing the documented command.
 
 .page-nav
   .container
     %ul.nav.nav-pills
-      %li= link_to "Standard", "#standard"
-      %li= link_to "Atomic", "#atomic"
-      %li= link_to "Custom", "#custom"
+      %li= link_to "标准持久化|Standard", "#standard"
+      %li= link_to "原子性持久化|Atomic", "#atomic"
+      %li= link_to "自定义持久化|Custom", "#custom"
 
 %section#standard
-  %h2 Standard
+  %h2 标准持久化|Standard
 
   %p
-    Mongoid's standard persistence methods come in the form of common methods
+    Mongoid 标准的持久化方法和其他框架在形式上非常相近。下表中左边是调用的 Mongoid 的方法，右边是 Moped 驱动的实际操作。
+    |Mongoid's standard persistence methods come in the form of common methods
     you would find in other mapping frameworks. The following table is a cheat
     sheet with the method in Mongoid on the right, and the Moped driver operation
     on the left.
@@ -38,14 +41,15 @@
       %tr
         %td.samurai= image_tag "/images/samurai.png"
         %td.note
-          Mongoid never persists the entire document at once unless it is new.
+          除非新建文档，Mongoid 从不把整个文档向数据库写入一遍。Mongoid 会找到哪些属性被修改，然后原子性地只更新这些修改的属性。
+          |Mongoid never persists the entire document at once unless it is new.
           It figures out what has changed, and only ever updates the changed
           items atomically.
 
   %table.table.table-bordered.table-striped
     %thead
       %tr
-        %th Operation
+        %th 操作|Operation
         %th Mongoid
         %th Moped
     %tbody
@@ -53,7 +57,7 @@
         %td.doc
           <code>Model.create</code>
           %p.doc
-            %i Insert a document into the dataabase
+            %i 将一个文档插入数据库集合|Insert a document into the dataabase
         %td
           :coderay
             #!ruby
@@ -77,7 +81,8 @@
           <code>Model.create!</code>
           %p.doc
             %i
-              Insert a document into the dataabase,
+              将一个文档插入数据库集合，如果验证失败则报错。
+              |Insert a document into the dataabase,
               raising an error if a validation error occurs.
         %td
           :coderay
@@ -102,7 +107,8 @@
           <code>Model#save</code>
           %p.doc
             %i
-              Saves the changed attributes to the database
+              原子性地将修改的属性存入数据库，如果是新的文档则插入数据库。如需要可以绕过验证。
+              |Saves the changed attributes to the database
               atomically, or insert the document if new. Can
               bypass validations if wanted.
         %td
@@ -132,7 +138,8 @@
           <code>Model#save!</code>
           %p.doc
             %i
-              Saves the changed attributes to the database
+              原子性地将修改的属性存入数据库，如果是新的文档则插入数据库。如果验证失败则报错。
+              |Saves the changed attributes to the database
               atomically, or insert the document if new. Will
               raise an error of validations fail.
         %td
@@ -161,7 +168,8 @@
           <code>Model#update_attributes</code>
           %p.doc
             %i
-              Update the provided attributes atomically.
+              原子性地更新所提供的属性。
+              |Update the provided attributes atomically.
         %td
           :coderay
             #!ruby
@@ -182,7 +190,8 @@
           <code>Model#update_attributes!</code>
           %p.doc
             %i
-              Update the attributes and raise an error if validation fails.
+              原子性地更新所提供的属性。如果验证失败则报错。
+              |Update the attributes and raise an error if validation fails.
         %td
           :coderay
             #!ruby
@@ -203,7 +212,8 @@
           <code>Model#update_attribute</code>
           %p.doc
             %i
-              Update a single attribute, bypassing validations.
+              更新单个属性，绕过所有验证。
+              |Update a single attribute, bypassing validations.
         %td
           :coderay
             #!ruby
@@ -218,7 +228,8 @@
           <code>Model#touch</code>
           %p.doc
             %i
-              Update the document's updated_at timestamp, optionally
+              更新文档的 updated_at 时间戳，也可以同时提供一个额外的时间字段用于更新。如果特别设置，本操作将会同时 touch 本文档的所有 <code>belongs_to</code> 关系。本操作跳过所有验证和回调。
+              |Update the document's updated_at timestamp, optionally
               with one extra provided time field. This will cascade the
               touch to all <code>belongs_to</code> relations of the
               document with the option set. This operation skips validations
@@ -246,7 +257,8 @@
           <code>Model#delete</code>
           %p.doc
             %i
-              Deletes the document from the database without
+              从数据库中删除文档，并不执行回调。
+              |Deletes the document from the database without
               running callbacks.
         %td
           :coderay
@@ -261,7 +273,8 @@
           <code>Model#destroy</code>
           %p.doc
             %i
-              Deletes the document from the database while running
+              从数据库中删除文档，并执行回调。
+              |Deletes the document from the database while running
               destroy callbacks.
         %td
           :coderay
@@ -276,7 +289,8 @@
           <code>Model.delete_all</code>
           %p.doc
             %i
-              Deletes all documents from the database that match the
+              从数据库中删除所有符合条件的文档，并不执行回调。
+              |Deletes all documents from the database that match the
               provided attributes. Does not run any callbacks.
         %td
           :coderay
@@ -296,7 +310,8 @@
           <code>Model.destroy_all</code>
           %p.doc
             %i
-              Deletes all documents from the database that match the
+              从数据库中删除所有符合条件的文档，并执行每个文档的回调。
+              |Deletes all documents from the database that match the
               provided attributes. Runs each document's destroy
               callbacks
         %td
@@ -314,10 +329,11 @@
               remove_all
 
 %section#atomic
-  %h2 Atomic Persistence
+  %h2 原子性持久化|Atomic Persistence
 
   %p
-    Although Mongoid performs atomic operations under the covers by default,
+    尽管 Mongoid 在幕后执行的都是原子性的操作，但有些情况下你可能想显式地执行这些操作，以防触及其他属性。Mongoid 也支持所有的这些原子性操作。
+    |Although Mongoid performs atomic operations under the covers by default,
     there may be cases where you want to do this explicitly without
     persisting other fields. Mongoid provides support for all of
     these operations as well.
@@ -327,13 +343,14 @@
         %tr
           %td.samurai= image_tag "/images/samurai.png"
           %td.note
-            When executing atomic operations via these methods, no callbacks
+            在执行这些原子性操作时，不会执行任何回调或者任何验证。
+            |When executing atomic operations via these methods, no callbacks
             will ever get run, nor will any validations.
 
     %table.table.table-bordered.table-striped
       %thead
         %tr
-          %th Operation
+          %th 操作|Operation
           %th Mongoid
           %th Moped
       %tbody
@@ -341,7 +358,7 @@
           %td.doc
             <code>Model#add_to_set</code><br/>
             %p.doc
-              %i Performs an atomic $addToSet on the field.
+              %i 在某字段上执行原子性的 $addToSet 操作。|Performs an atomic $addToSet on the field.
           %td
             :coderay
               #!ruby
@@ -355,7 +372,7 @@
           %td
             <code>Model#bit</code><br/>
             %p.doc
-              %i Performs an atomic $bit on the field.
+              %i 在某字段上执行原子性的 $bit 操作。|Performs an atomic $bit on the field.
           %td
             :coderay
               #!ruby
@@ -369,7 +386,7 @@
           %td
             <code>Model#inc</code><br/>
             %p.doc
-              %i Performs an atomic $inc on the field.
+              %i 在某字段上执行原子性的 $inc 操作。|Performs an atomic $inc on the field.
           %td
             :coderay
               #!ruby
@@ -383,7 +400,7 @@
           %td
             <code>Model#pop</code><br/>
             %p.doc
-              %i Performs an atomic $pop on the field.
+              %i 在某字段上执行原子性的 $pop 操作。|Performs an atomic $pop on the field.
           %td
             :coderay
               #!ruby
@@ -397,7 +414,7 @@
           %td
             <code>Model#pull</code><br/>
             %p.doc
-              %i Performs an atomic $pull on the field.
+              %i 在某字段上执行原子性的 $pull 操作。|Performs an atomic $pull on the field.
           %td
             :coderay
               #!ruby
@@ -411,7 +428,7 @@
           %td
             <code>Model#pull_all</code><br/>
             %p.doc
-              %i Performs an atomic $pullAll on the field.
+              %i 在某字段上执行原子性的 $pullAll 操作。|Performs an atomic $pullAll on the field.
           %td
             :coderay
               #!ruby
@@ -425,7 +442,7 @@
           %td
             <code>Model#push</code><br/>
             %p.doc
-              %i Performs an atomic $push on the field.
+              %i 在某字段上执行原子性的 $push 操作。|Performs an atomic $push on the field.
           %td
             :coderay
               #!ruby
@@ -439,7 +456,7 @@
           %td
             <code>Model#push_all</code><br/>
             %p.doc
-              %i Performs an atomic $pushAll on the field.
+              %i 在某字段上执行原子性的 $pushAll 操作。|Performs an atomic $pushAll on the field.
           %td
             :coderay
               #!ruby
@@ -453,7 +470,7 @@
           %td
             <code>Model#rename</code><br/>
             %p.doc
-              %i Performs an atomic $rename on the field.
+              %i 在某字段上执行原子性的 $rename 操作。|Performs an atomic $rename on the field.
           %td
             :coderay
               #!ruby
@@ -467,7 +484,7 @@
           %td
             <code>Model#set</code><br/>
             %p.doc
-              %i Performs an atomic $set on the field.
+              %i 在某字段上执行原子性的 $set 操作。|Performs an atomic $set on the field.
           %td
             :coderay
               #!ruby
@@ -481,7 +498,7 @@
           %td
             <code>Model#unset</code><br/>
             %p.doc
-              %i Performs an atomic $unset on the field.
+              %i 在某字段上执行原子性的 $unset 操作。|Performs an atomic $unset on the field.
           %td
             :coderay
               #!ruby
@@ -493,19 +510,21 @@
                 update("$unset" => { name: 1 })
 
 %section#custom
-  %h2 Custom
+  %h2 自定义持久化|Custom
 
   %p
-    There may be cases where you want to persist documents to different
+    有些情况下你可能希望在默认以外的其他地方储存文档，或者指定默认值以外的其他持久化选项。Mongoid 既支持运行时自定义这些选项，也支持按 Model 自定义这些选项。
+    |There may be cases where you want to persist documents to different
     sources from their defaults, or with different options from the default.
     Mongoid provides run-time support for this as well as support on a per-model
     basis.
 
   %h3
-    Model Level Persistence Options
+    按 Model 自定义持久化选项|Model Level Persistence Options
 
   %p
-    On a per-model basis, you can tell it to store in a custom collection name,
+    你可以指定将某个 Model 下的所有文档储存于一个特定的集合、数据库或会话。下面的例子将 Band 类的文档储存于“Secondary”会话的“music”数据库的“artists”集合内。
+    |On a per-model basis, you can tell it to store in a custom collection name,
     a different database, or a different session. The following example would
     store the Band class by default into a collection named "artists" in the
     database named "music", with the session "secondary".
@@ -515,7 +534,8 @@
         %tr
           %td.samurai= image_tag "/images/samurai.png"
           %td.note
-            Note that the value supplied to the <code>session</code> option must be
+            注意 <code>session</code> 的值必须在 <code>mongoid.yml</code> 中已经配置。
+            |Note that the value supplied to the <code>session</code> option must be
             configured under <code>sessions</code> in your mongoid.yml.
 
   :coderay
@@ -525,14 +545,16 @@
       store_in collection: "artists", database: "music", session: "secondary"
 
   %p
-    If no `store_in` macro would have been provided, Mongoid would store the model
+    如果没有指定 <code>store_in</code> 宏，Mongoid 会把 Band 类的文档存在默认会话的默认数据库的名为“bands”的集合中。
+    |If no `store_in` macro would have been provided, Mongoid would store the model
     in a collection named "bands" in the default database in the default session.
 
   %h3
-    Runtime Persistence Options
+    运行时持久化选项|Runtime Persistence Options
 
   %p
-    You can change at runtime where to store, query, update, or remove documents
+    只需给操作添加前缀 <code>#with</code>，即可在运行时决定在哪里执行 <tt>CRUD</tt> 操作。
+    |You can change at runtime where to store, query, update, or remove documents
     by prefixing any operation with <code>#with</code>.
 
   :coderay
@@ -542,7 +564,8 @@
     band.with(session: :tertiary).save!
 
   %p
-    <code>#with</code>is also used for changing safe mode options temporarily
+    <code>#with</code> 也可以用来在运行时临时改变安全模式选项。
+    |<code>#with</code>is also used for changing safe mode options temporarily
     at runtime.
 
   :coderay
@@ -551,19 +574,21 @@
     Band.with(safe: { w: 3 }).create!
 
   %p
-    The values that can be passed with <code>:safe</code> are:
+    下列值可以传给 <code>:safe</code>：
+    |The values that can be passed with <code>:safe</code> are:
 
   %ul
-    %li <code>true</code>: Persist in safe mode, no extra options.
-    %li <code>false</code>: Don't persist in safe mode.
-    %li <code>fsync: true|false</code>: Whether to perform an fsync.
-    %li <code>w: n</code>: The number of nodes to write to before returning.
-    %li <code>wtimeout: n</code>: The timeout value for writing to multiple nodes.
+    %li <code>true</code>: 以安全模式持久化，无附加选项。|Persist in safe mode, no extra options.
+    %li <code>false</code>: 不要以安全模式持久化。|Don't persist in safe mode.
+    %li <code>fsync: true|false</code>: 是否执行 fsync。|Whether to perform an fsync.
+    %li <code>w: n</code>: 返回前写入的节点的个数。|The number of nodes to write to before returning.
+    %li <code>wtimeout: n</code>: 写入多个节点的超时值。|The timeout value for writing to multiple nodes.
 
-  %h3 Session and Collection Access
+  %h3 对会话和集合的操作|Session and Collection Access
 
   %p
-    If you want to drop down to the driver level to perform operations, you
+    如果你想深入驱动的层面执行一些操作，你可以从 Model 或者文档实例获取 Moped 会话或集合。
+    |If you want to drop down to the driver level to perform operations, you
     can grab the Moped session or collection from the model or document instance.
 
   :coderay
@@ -574,7 +599,8 @@
     band.collection
 
   %p
-    From here you also have the same runtime persistence options using Moped's
+    你也可以从这里使用 Moped 的 <code>#with</code> 来设置运行时持久化选项。这些将会在 Moped 的文档中作深入介绍。
+    |From here you also have the same runtime persistence options using Moped's
     <code>#with</code>. The Moped documentation will go into more detail
     about this.
 
@@ -584,22 +610,23 @@
       session[:artists].find(...)
     end
 
-  %h3 Capped Collections
+  %h3 有限集合（Capped Collections）|Capped Collections
 
   %p
-    Mongoid does not provide a mechanism for creating capped collections on
+    Mongoid 并未提供创建有限集合的机制，你需要自己通过 Moped 或 mongo 控制台手动创建。
+    |Mongoid does not provide a mechanism for creating capped collections on
     the fly - you will need to create these yourself one time up front either
     with Moped or via the Mongo console.
 
   %p
-    To create a capped collection with Moped:
+    使用 Moped 创建有限集合：|To create a capped collection with Moped:
 
   :coderay
     #!ruby
     session.command(create: "name", capped: true, size: 10000000, max: 1000)
 
   %p
-    To create a capped collection from the Mongo console:
+    使用 mongo 控制台创建有限集合：|To create a capped collection from the Mongo console:
 
   :coderay
     #!javascript

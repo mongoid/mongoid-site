@@ -341,7 +341,7 @@
   %h2 动态字段|Dynamic fields
 
   %p
-    Mongoid 默认支持动态字段。动态字段允许没有被定义为字段的属性读写于数据库中。？？？？？？
+    Mongoid 默认支持动态字段。动态字段允许没有被定义为字段的属性存取于数据库中。？？？？？？
     |By default Mongoid supports dynamic fields - that is it will allow
     attributes to get set and persisted on the document even if a field was not
     defined for them. There is a slight 'gotcha' however when dealing with
@@ -414,7 +414,7 @@
     end
 
   %p
-    通过在定义字段时指定 <code>localize</code>，Mongoid 会在幕后将字段存储为一个“语言环境:值”的哈希，但还是表现得像一般的字符串，不改变正常的读写方法。
+    通过在定义字段时指定 <code>localize</code>，Mongoid 会在幕后将字段存储为一个“语言环境:值”的哈希，但还是表现得像一般的字符串，不改变正常的存取方法。
     |By telling the field to <code>localize</code>, Mongoid will under the covers
     store the field as a hash of locale/value pairs, but normal access to it will
     behave like a string.
