@@ -1,10 +1,11 @@
 - content_for :head do
-  %title Mongoid: Documents
+  %title Mongoid: 文档|Documents
 
-%h1 Documents
+%h1 文档|Documents
 
 %p
-  Documents are the core objects in Mongoid and any object that is to be
+  文档（Document）是 Mongoid 的核心对象，任何想要存储至数据库的对象必须包含 <code>Mongoid::Document</code>。MongoDB 文档以 BSON 对象的形式存储，其表示法非常接近 Ruby 哈希（Hash）或 JSON 对象。文档可以被直接存在数据库的集合（Collection）中，也可以嵌入其他文档。
+  |Documents are the core objects in Mongoid and any object that is to be
   persisted to the database must include <code>Mongoid::Document</code>. The
   representation of a Document in MongoDB is a BSON object that is very similar
   to a Ruby hash or JSON object. Documents can be stored in their own
@@ -14,20 +15,21 @@
 .page-nav
   .container
     %ul.nav.nav-pills
-      %li= link_to "Storage", "#storage"
-      %li= link_to "Fields", "#fields"
-      %li= link_to "Dynamic Fields", "#dynamic_fields"
-      %li= link_to "Localized Fields", "#localized_fields"
-      %li= link_to "Dirty Tracking", "#dirty"
-      %li= link_to "Security", "#security"
-      %li= link_to "Readonly Attributes", "#readonly"
-      %li= link_to "Inheritance", "#inheritance"
+      %li= link_to "存储|Storage", "#storage"
+      %li= link_to "字段|Fields", "#fields"
+      %li= link_to "动态字段|Dynamic Fields", "#dynamic_fields"
+      %li= link_to "本地化字段|Localized Fields", "#localized_fields"
+      %li= link_to "跟踪修改|Dirty Tracking", "#dirty"
+      %li= link_to "安全|Security", "#security"
+      %li= link_to "只读属性}Readonly Attributes", "#readonly"
+      %li= link_to "继承|Inheritance", "#inheritance"
 
 %section#storage
-  %h2 Storage
+  %h2 存储|Storage
 
   %p
-    Mongoid by default stores documents in a collection that is the pluralized
+    Mongoid 默认将文档存在以类名复数形式为名的集合中。下面的 <code>Person</code> 类的文档将会储存在名为 <code>people</code> 的集合中。
+    |Mongoid by default stores documents in a collection that is the pluralized
     form of the class name. For the following <code>Person</code> class, the
     collection the document would get stored in would be named <code>people</code>.
 
@@ -38,12 +40,14 @@
     end
 
   %p
-    Model class name cannot end with "s", because it will be considered as
+    Model 类名不能以“s”结尾，因为这样会被认为是复数形式。比如类名 <code>Status</code> 会被认为是 <code>Statu</code> 的复数形式，造成一些问题。
+    |Model class name cannot end with "s", because it will be considered as
     the pluralized form of the word. For example <code>Status</code> would be considered
     as the plural form of <code>Statu</code>, which will cause a few known problems.
 
   %p
-    This is a limitation of the <code>ActiveSupport::Inflector#classify</code> which
+    这受限于 Mongoid 用来转换名称所使用的 <code>ActiveSupport::Inflector#classify</code>。你可以通过给你的 Model 类指定一个自己的词形变化规则来解决这个问题。比如，下面的代码可以处理 <code>Status</code> Model 的情况。
+    |This is a limitation of the <code>ActiveSupport::Inflector#classify</code> which
     Mongoid uses to convert from filenames and collection names to class names.
     You can overcome this by specifying a custom inflection rule for your model class.
     For example, the following code will take care of the model named <code>Status</code>
@@ -55,7 +59,8 @@
     end
 
   %p
-    The collection for the model's documents can be changed at the class level
+    如果你希望 Model 的文档存储在别的集合，你可以在类中指定。你还可以指定特定的数据库甚至会话。
+    |The collection for the model's documents can be changed at the class level
     if you would like them persisted elsewhere. You can also change the database
     and session the model gets persisted in from the defaults.
 
@@ -67,7 +72,8 @@
     end
 
   %p
-    When a document is stored in the database the ruby object will get
+    当文档被存入数据库时，Ruby 对象会被序列化为具有如下结构的 BSON 对象：
+    |When a document is stored in the database the ruby object will get
     serialized into BSON and have a structure like so:
 
   :coderay
@@ -89,17 +95,19 @@
     }
 
 %section#fields
-  %h2 Fields
+  %h2 字段|Fields
 
   %p
-    Even though MongoDB is a schemaless database, most uses will be with
+    尽管 MongoDB 是一个无模式的数据库，大多数情况是表单参数以字符串的形式传至服务器的 Web 应用上。Mongoid提供了一个简单的机制，把这些字符串转化为在 <code>Mongoid::Document</code> 中给各个字段所定义的类型。
+    |Even though MongoDB is a schemaless database, most uses will be with
     web applications where form parameters always come to the server as strings.
     Mongoid provides an easy mechanism for transforming these strings into
     their appropriate types through the definition of fields in a
     <code>Mongoid::Document</code>.
 
   %p
-    Consider a simple class for modeling a person in an application. A person may
+    试想一个应用中为“人”建模所使用的一个简单的类。一个人会有姓、名。我们可以用 field 宏来定义这些人身上的属性。
+    |Consider a simple class for modeling a person in an application. A person may
     have a first name, last name, and middle name. We can define these
     attributes on a person by using the fields macro.
 
@@ -108,12 +116,11 @@
     class Person
       include Mongoid::Document
       field :first_name, type: String
-      field :middle_name, type: String
       field :last_name, type: String
     end
 
   %p
-    Below is a list of valid types for fields.
+    下面是合法的字段类型列表|Below is a list of valid types for fields.
 
     %ul
       %li <code>Array</code>
@@ -133,7 +140,8 @@
       %li <code>TimeWithZone</code>
 
   %p
-    If you decide not to specify the type of field with the definition, Mongoid
+    如果你不像在定义字段时指定类型，Mongoid 会把它当成一个对象直接把值存入数据库，不做任何类型转换。这样做在两种情况下具有优势，因为不尝试类型转换会造成微小的性能提升。这两种情况是：
+    |If you decide not to specify the type of field with the definition, Mongoid
     will treat it as an object and not try to typecast it when sending the
     values to the database. This can be advantageous in 2 places, since
     the lack of attempted conversion will yield a slight performance gain. However
@@ -141,8 +149,8 @@
     what fields you can use are:
 
     %ul
-      %li You're not using a web front end and values are already properly cast.
-      %li All of your fields are strings.
+      %li 你不使用网页前端，传来的数据已经做好了类型转换。|You're not using a web front end and values are already properly cast.
+      %li 你的所有字段都是字符串类型。|All of your fields are strings.
 
   :coderay
     #!ruby
@@ -154,7 +162,7 @@
     end
 
   %p
-    Types that are not supported as dynamic attributes since they cannot be cast
+    下面这些类型不支持作为动态字段，因为它们不能做类型转换：Types that are not supported as dynamic attributes since they cannot be cast
     are:
 
     %ul
@@ -163,36 +171,38 @@
       %li <code>DateTime</code>
       %li <code>Range</code>
 
-  %h3 Getting and setting field values
+  %h3 读、写字段值|Getting and setting field values
 
   %p
-    When a field is defined, Mongoid provides several different ways of
+    定义字段后，Mongoid 为操作这些字段提供了许多不同的方法。
+    |When a field is defined, Mongoid provides several different ways of
     accessing the field.
 
   :coderay
     #!ruby
 
-    # Get the value of the first name field.
+    # 读取“名字”字段的值|Get the value of the first name field.
     person.first_name
     person[:first_name]
     person.read_attribute(:first_name)
 
-    # Set the value for the first name field.
+    # 设定“名字”字段的值|Set the value for the first name field.
     person.first_name = "Jean"
     person[:first_name] = "Jean"
     person.write_attribute(:first_name, "Jean")
 
   %p
-    In cases where you want to set multiple field values at once, there are a
+    一些情况下，你可能希望同一时间设定多个字段的值，Mongoid 也提供了一些办法。
+    |In cases where you want to set multiple field values at once, there are a
     few different ways of handling this as well.
 
   :coderay
     #!ruby
 
-    # Get the field values as a hash.
+    # 以哈希形式读取字段的值。|Get the field values as a hash.
     person.attributes
 
-    # Set the field values in the document.
+    # 设定文档各个字段的值。|Set the field values in the document.
     Person.new(first_name: "Jean-Baptiste", middle_name: "Emmanuel")
     person.attributes = { first_name: "Jean-Baptiste", middle_name: "Emmanuel" }
     person.write_attributes(
@@ -200,10 +210,11 @@
       middle_name: "Emmanuel"
     )
 
-  %h3 Defaults
+  %h3 默认值|Defaults
 
   %p
-    You can tell a field in Mongoid to always have a default value if nothing
+    你可以指定某个字段的默认值，在没有其他值提供的时候使用。默认值可以是静态的值，也可以是 Lambda 表达式。
+    |You can tell a field in Mongoid to always have a default value if nothing
     has been provided. Defaults are either static values or lambdas.
 
   :coderay
@@ -216,7 +227,8 @@
     end
 
   %p
-    Be wary that default values that are not defined as lambdas or procs are
+    注意：没有被定义为 Lambda 表达式或 Proc 对象的默认值会在载入类的时候被运算，所以下面两种定义并不相同。（你可能需要第二种，因为它在文档建立时被运算）
+    |Be wary that default values that are not defined as lambdas or procs are
     evaluated at class load time, so the following 2 definitions are not
     equivalent. (You probably would prefer the second, which is at document
     creation time.)
@@ -227,6 +239,7 @@
     field :dob, type: Time, default: ->{ Time.now }
 
   %p
+    如果你想根据文档目前的状态来设定默认值，可以在 Lambda 表达式或 Proc 对象中使用 <code>self</code> 指代这个文档实例本身。
     If you want to set a default with a dependency on the document's state,
     <code>self</code> inside a lambda or proc evaluates to the document instance.
 
@@ -239,14 +252,16 @@
       %tr
         %td.samurai= image_tag "/images/samurai.png"
         %td.note
-          When defining a default value as a proc, Mongoid will apply the default
+          当使用 Proc 定义默认值时，Mongoid 会在所有其他属性设定后再应用这一默认值。如果你希望其先于其他属性，设 <code>pre_processed: true</code>。
+          |When defining a default value as a proc, Mongoid will apply the default
           after all other attributes are set. If you want this to happen before
           the other attributes, set <code>pre_processed: true</code>.
 
-  %h3 Field Aliasing
+  %h3 字段别名|Field Aliasing
 
   %p
-    One of the drawbacks of having a schemaless database is that MongoDB must
+    作为一个无模式的数据库，MongoDB 的一个缺点是它必修把所有字段的信息存在每一个文档中，这占据了大量内存和硬盘的空间。一种常见的解决方案是用很短的几个字符作为字段的别名存入数据库，同时保持应用中的本名足够明白易懂。Mongoid 允许你这么做并替你完成其中名称的转换。
+    |One of the drawbacks of having a schemaless database is that MongoDB must
     store all field information along with every document, meaning that it takes
     up a lot of storage space in RAM and on disk. A common pattern to limit this
     is to alias fields to a small number of characters, while keeping the
@@ -267,10 +282,11 @@
     criteria = Band.where(name: "Placebo")
     criteria.selector #=> { "n" => "Placebo" }
 
-  %h3 Custom field serialization
+  %h3 自定义字段序列化|Custom field serialization
 
   %p
-    You can define custom types in Mongoid and determine how they are
+    你可以在 Mongoid 中定义自己的字段类型，并决定他们如何序列化和反序列化。你只需定义一个类，<code>include Mongoid::Fields::Serializable</code>，并重写 <code>serialize</code> （序列化）和 <code>deserialize</code> （反序列化）方法（如果需要的话）。反序列化用于将数据库中所存的值转化为应用中所需的值、对象；序列化用于将应用中的值、对象转化为对 MongoDB 友好的值来存储。
+    |You can define custom types in Mongoid and determine how they are
     serialized and deserialized. You simply need to define the class, include
     <code>Mongoid::Fields::Serializable</code>, and override the
     <code>serialize</code> and <code>deserialize</code> methods as needed.
@@ -297,17 +313,19 @@
       end
     end
 
-  %h3 Reserved names
+  %h3 预留的名称|Reserved names
 
   %p
-    If you define a field on your document that conflicts with a reserved method
+    如果你定义了一个字段，其名称和 Mongoid 中预留的方法名冲突，这样会报错。在 <code>Mongoid.destructive_fields</code> 了解这些预留的名称。
+    |If you define a field on your document that conflicts with a reserved method
     name in Mongoid, the configuration will raise an error. For a list of these
     you may look at <code>Mongoid.destructive_fields</code>.
 
-  %h3 Creating Custom Ids
+  %h3 自定义 ID|Creating Custom Ids
 
   %p
-    For cases when you do not want to have <code>BSON::ObjectId</code> ids, you
+    某些情况下你不想使用 <code>BSON::ObjectId</code> 这种 ID，你可以重写 Mongoid 的 <code>_id</code> 字段并设为任何值。
+    |For cases when you do not want to have <code>BSON::ObjectId</code> ids, you
     can override Mongoid's <code>_id</code> field and set them to whatever you
     like.
 
@@ -320,10 +338,11 @@
     end
 
 %section#dynamic_fields
-  %h2 Dynamic fields
+  %h2 动态字段|Dynamic fields
 
   %p
-    By default Mongoid supports dynamic fields - that is it will allow
+    Mongoid 默认支持动态字段。动态字段允许没有被定义为字段的属性读写于数据库中。？？？？？？
+    |By default Mongoid supports dynamic fields - that is it will allow
     attributes to get set and persisted on the document even if a field was not
     defined for them. There is a slight 'gotcha' however when dealing with
     dynamic attributes in that Mongoid is not completely lenient about the use of
@@ -331,25 +350,29 @@
     class.
 
   %p
-    When dealing with dynamic attributes the following rules apply:
+    当处理动态字段时，注意下列规则：
+    |When dealing with dynamic attributes the following rules apply:
 
   %p
-    If the attribute exists in the document, Mongoid will provide you with your
+    如果属性已经存在于文档中，Mongoid 会提供标准的 getter、setter 方法。例如，一个人有一个“gender”（性别）属性在属于他的文档上。
+    |If the attribute exists in the document, Mongoid will provide you with your
     standard getter and setter methods. For example, consider a person who has an
     attribute of "gender" set on the document:
 
   :coderay
     #!ruby
 
-    # Set the person's gender to male.
+    # 将此人的性别设为男。|Set the person's gender to male.
     person[:gender] = "Male"
     person.gender = "Male"
 
-    # Get the person's gender.
+    # 获取此人性别。|Get the person's gender.
     person.gender
 
   %p
-    If the attribute does not already exist on the document, Mongoid will not
+    如果这个属性并不存在于该文档中，Mongoid 不会提供 getter、setter 方法，并且会按正常的 <code>method_missing</code> 处理。此时你必须使用其他的方法：(<code>[]</code> 和 <code>[]=</code>) 或者
+    (<code>read_attribute</code> 和 <code>write_attribute</code>)。
+    |If the attribute does not already exist on the document, Mongoid will not
     provide you with the getters and setters and will enforce normal
     <code>method_missing</code> behavior. In this case you must use the other
     provided accessor methods: (<code>[]</code> and <code>[]=</code>) or
@@ -358,27 +381,29 @@
   :coderay
     #!ruby
 
-    # Raise a NoMethodError if value isn't set.
+    # 如果值未被设定，报`NoMethodError`错。|Raise a NoMethodError if value isn't set.
     person.gender
     person.gender = "Male"
 
-    # Retrieve a dynamic field safely.
+    # 安全地获取动态字段的值。|Retrieve a dynamic field safely.
     person[:gender]
     person.read_attribute(:gender)
 
-    # Write a dynamic field safely.
+    # 安全地给动态字段赋值。|Write a dynamic field safely.
     person[:gender] = "Male"
     person.write_attribute(:gender, "Male")
 
   %p
-    Dynamic attributes can be completely turned off by setting the Mongoid
+    “动态字段”功能可以在配置文件中被完全关闭，只需将 <code>allow_dynamic_fields</code> 设为 <code>false</code>。
+    |Dynamic attributes can be completely turned off by setting the Mongoid
     configuration option <code>allow_dynamic_fields</code> to <code>false</code>.
 
 %section#localized_fields
-  %h2 Localized fields
+  %h2 本地化字段|Localized fields
 
   %p
-    From 2.4.0 Mongoid now supports localized fields without the need of any
+    从 2.4.0 起，Mongoid 支持本地化字段，无需任何外部 gem。
+    |From 2.4.0 Mongoid now supports localized fields without the need of any
     external gem.
 
   :coderay
@@ -389,40 +414,44 @@
     end
 
   %p
-    By telling the field to <code>localize</code>, Mongoid will under the covers
+    通过在定义字段时指定 <code>localize</code>，Mongoid 会在幕后将字段存储为一个“语言环境:值”的哈希，但还是表现得像一般的字符串，不改变正常的读写方法。
+    |By telling the field to <code>localize</code>, Mongoid will under the covers
     store the field as a hash of locale/value pairs, but normal access to it will
     behave like a string.
 
   :coderay
     #!ruby
-    # Using a default locale of en.
+    # 默认使用 en 语言环境。|Using a default locale of en.
     product = Product.new
     product.description = "Marvelous!"
     I18n.locale = :de
     product.description = "Fantastisch!"
 
     product.attributes
-    #=> { "description" => { "en" => "Marvelous!", "de" => "Fantastisch!" }
+    # => { "description" => { "en" => "Marvelous!", "de" => "Fantastisch!" }
 
   %p
-    You can get and set all the translations at once by using the
+    你可以使用 <code>_translations</code> 方法一次性读、写所有的翻译。
+    |You can get and set all the translations at once by using the
     corresponding <code>_translations</code> method.
 
   :coderay
     #!ruby
     product.description_translations
-    #=> { "description" => { "en" => "Marvelous!", "de" => "Fantastisch!" }
+    # => { "description" => { "en" => "Marvelous!", "de" => "Fantastisch!" }
     product.description_translations =
       { "description" => { "en" => "Marvelous!", "de" => "Wunderbar!" }
 
-  %h3 Fallbacks
+  %h3 备选语言|Fallbacks
 
   %p
-    When using fallbacks, Mongoid will automatically use them when a translation
+    选用备选语言后，没有翻译时 Mongoid 会自动使用这些备选方案。
+    |When using fallbacks, Mongoid will automatically use them when a translation
     is not available.
 
   %p
-    For Rails applications, set the fallbacks configuration setting to true in
+    如果是 Rails 应用，在你的环境配置文件中将备选语言配置设为 true。
+    |For Rails applications, set the fallbacks configuration setting to true in
     your environment.
 
   :coderay
@@ -430,7 +459,8 @@
     config.i18n.fallbacks = true
 
   %p
-    For non-rails applications, you must include the fallbacks module straight
+    如果不是 Rails 应用，你必须直接在 I18n gem 中引入“备选”模块。
+    |For non-rails applications, you must include the fallbacks module straight
     to the I18n gem.
 
   :coderay
@@ -439,39 +469,42 @@
     I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
 
   %p
-    Then when the fallbacks are defined, if a translation is not present Mongoid
+    定义备选语言后，如果翻译不存在，Mongoid 会按照定义的备选语言环境的顺序依次尝试。Then when the fallbacks are defined, if a translation is not present Mongoid
     will fallback in order of the defined locales.
 
   :coderay
     #!ruby
-    # Using a default locale of en.
+    # 默认使用 en 语言环境。|Using a default locale of en.
     ::I18n.fallbacks[:de] = [ :de, :en, :es ]
     product = Product.new
     product.description = "Marvelous!"
     I18n.locale = :de
     product.description #=> "Marvelous!"
 
-  %h3 Querying
+  %h3 查询|Querying
 
   %p
-    When querying for localized fields using Mongoid's criteria API, Mongoid
+    根据本地化字段查询数据库时，Mongoid 会自动根据当前语言环境改变查询规则，得到当前语言环境的查询结果。
+    |When querying for localized fields using Mongoid's criteria API, Mongoid
     will automatically alter the criteria to match the current locale.
 
-  %mongoid mongoid
+  %mongoid Mongoid|mongoid
   :coderay
     #!ruby
-    # Match all prodcucts with Marvelous as the description. Locale is en.
+    # 匹配所有以“Marvelous!”为描述的产品，语言环境为英文。
+    |# Match all prodcucts with Marvelous as the description. Locale is en.
     Product.where(description: "Marvelous!")
 
-  %mongodb mongodb query selector
+  %mongodb MongoDB 查询选择器|mongodb query selector
   :coderay
     #!ruby
     { "description.en" : "Marvelous!" }
 
-  %h3 Indexing
+  %h3 索引|Indexing
 
   %p
-    If you plan to be querying extensively on localized fields, you should index
+    如果你计划在本地化字段上做大量查询，你应该给每个语言环境做索引。
+    |If you plan to be querying extensively on localized fields, you should index
     each of the locales that you plan on searching on.
 
   :coderay
@@ -484,25 +517,28 @@
       index "description.en"
     end
 
-  %h3 Validation
+  %h3 验证|Validation
 
   %p
-    Mongoid's presence validator will make sure that translations are present
+    Mongoid 的存在性验证器会保证所有在？？中的语言环境的翻译都存在。
+    |Mongoid's presence validator will make sure that translations are present
     for all locales that are in the underlying hash.
 
 %section#dirty
-  %h2 Dirty Tracking
+  %h2 跟踪修改|Dirty Tracking
 
   %p
-    Mongoid supports tracking of changed or "dirty" fields with an API that
+    Mongoid 支持跟踪被修改的字段，使用一套和 Active Model 相同的 API。如果一个已定义的字段被修改，这个 Model？？ 会被标记为“被修改”，？？？。
+    |Mongoid supports tracking of changed or "dirty" fields with an API that
     mirrors that of Active Model. If a defined field has been modified in
     a model the model will be marked as dirty and some additional behavior
     comes into play.
 
-  %h3 Viewing changes
+  %h3 查看修改|Viewing changes
 
   %p
-    There are various ways to view what has been altered on a model. Changes
+    有许多方法可以查看 Model？上哪些东西被修改了。当一个文档被实例化后，修改就开始被记录，无论是一个新的文档还是从数据库中读取的文档。所有持久化操作都会使跟踪停止，修改记录被清除。
+    |There are various ways to view what has been altered on a model. Changes
     are recorded from the time a document is instantiated, either as a
     new document or via loading from the database up to the time it is
     saved. Any persistence operation clears the changes.
@@ -517,28 +553,29 @@
     person = Person.first
     person.name = "Alan Garner"
 
-    # Check to see if the document has changed.
+    # 检查文档是否被修改。|Check to see if the document has changed.
     person.changed? #=> true
 
-    # Get an array of the names of the changed fields.
+    # 获得被修改的字段名（一个序列）。|Get an array of the names of the changed fields.
     person.changed #=> [ :name ]
 
-    # Get a hash of the old and changed values for each field.
+    # 获得所有字段的原值和现值（一个哈希）。|Get a hash of the old and changed values for each field.
     person.changes #=> { "name" => [ "Alan Parsons", "Alan Garner" ] }
 
-    # Check if a specific field has changed.
+    # 检查一个特定字段是否被修改。|Check if a specific field has changed.
     person.name_changed? #=> true
 
-    # Get the changes for a specific field.
+    # 获得一个特定字段的原值和现值。|Get the changes for a specific field.
     person.name_change #=> [ "Alan Parsons", "Alan Garner" ]
 
-    # Get the previous value for a field.
+    # 获得一个特定字段的原值。|Get the previous value for a field.
     person.name_was #=> "Alan Parsons"
 
-  %h3 Resetting changes
+  %h3 重置修改|Resetting changes
 
   %p
-    You can reset changes of a field to it's previous value by calling the
+    你可以调用 reset 方法来重置某个字段上的修改。
+    |You can reset changes of a field to it's previous value by calling the
     reset method.
 
   :coderay
@@ -546,23 +583,25 @@
     person = Person.first
     person.name = "Alan Garner"
 
-    # Reset the changed name back to the original
+    # 将 name 重置为原值。|Reset the changed name back to the original
     person.reset_name!
     person.name #=> "Alan Parsons"
 
-  %h3 Notes on persistence
+  %h3 有关持久化的提醒|Notes on persistence
 
   %p
-    Mongoid uses dirty tracking as the core of its persistence operations.
+    Mongoid 把修改跟踪作为 Mongoid 持久化操作的核心。它检查一个文档上的修改并且原子性地只更新那些被修改的部分，不像其他的一些框架，更新整个文档的所有字段。如果没有跟踪到任何修改，即使调用 <code>Model#save</code> Mongoid 也不会真正触及数据库。
+    |Mongoid uses dirty tracking as the core of its persistence operations.
     It looks at the changes on a document and atomically updates only what
     has changed unlike other frameworks that write the entire document on
     each save. If no changes have been made, Mongoid will not hit the database
     on a call to <code>Model#save</code>.
 
-  %h3 Viewing previous changes
+  %h3 查看上一次的修改|Viewing previous changes
 
   %p
-    After a document has been persisted, you can see what the changes were
+    在一个文档被存入数据库后，你可以通过调用 <code>Model#previous_changes</code> 来查看上一次的修改。
+    |After a document has been persisted, you can see what the changes were
     previously by calling <code>Model#previous_changes</code>
 
   :coderay
@@ -571,14 +610,15 @@
     person.name = "Alan Garner"
     person.save #=> Clears out current changes.
 
-    # View the previous changes.
+    # 查看上一次的修改。|View the previous changes.
     person.previous_changes #=> { "name" => [ "Alan Parsons", "Alan Garner" ] }
 
 %section#security
-  %h2 Security
+  %h2 安全|Security
 
   %p
-    There are cases where you don't want Mongoid to allow attributes to be
+    有些情况下你不希望允许一些字段通过 Mass Assignment 的方式被设置，比如密码。这在提交表单时经常发生。感谢 Active Model，可以使用 Mongoid 的 <code>attr_protected</code> 或者 <code>attr_accessible</code> 来保护一些字段。
+    |There are cases where you don't want Mongoid to allow attributes to be
     set through mass assignment, like passwords. This is a common event when
     submitting forms, and fields can be protected by using Mongoid's
     <code>attr_protected</code> or <code>attr_accessible</code> thanks to the
@@ -589,13 +629,15 @@
       %tr
         %td.samurai= image_tag "/images/samurai.png"
         %td.note
-          Mongoid auto-protects the <code>_id</code> and <code>_type</code>
+          Mongoid 默认自动保护 <code>_id</code> 和 <code>_type</code> 字段。
+          |Mongoid auto-protects the <code>_id</code> and <code>_type</code>
           attributes by default.
 
   %h3 Protected
 
   %p
-    When defining a list of fields as protected, all other fields in the
+    当把一些字段定义为 protected 时，文档中其他的所有字段将<strong>不能</strong>通过 Mass Assignment 来设置。
+    |When defining a list of fields as protected, all other fields in the
     document will NOT be able to be set through mass assignment.
 
   :coderay
@@ -607,12 +649,12 @@
       attr_protected :password
     end
 
-    # Set attributes on a person properly.
+    # 正确地给一个人设定属性。|Set attributes on a person properly.
     Person.new(first_name: "Corbin")
     person.attributes = { first_name: "Corbin" }
     person.write_attributes(first_name: "Corbin")
 
-    # Attempt to set attributes a person, logging an error.
+    # 试图设定一个人的属性，报错。|Attempt to set attributes a person, logging an error.
     Person.new(first_name: "Corbin", password: "password")
     person.attributes = { first_name: "Corbin", password: "password" }
     person.write_attributes(first_name: "Corbin", password: "password")
@@ -620,7 +662,8 @@
   %h3 Accessible
 
   %p
-    Providing a list of fields as accessible is simply the inverse of
+    把一系列字段定义为 accessible 相当于 protect 的反面。针对任何没有被定义为 accessible 的字段的 Mass Assignment 将报错。
+    |Providing a list of fields as accessible is simply the inverse of
     protecting them. Anything not defined as accessible will cause the
     error.
 
@@ -633,18 +676,19 @@
       attr_accessible :first_name
     end
 
-    # Set attributes on a user properly.
+    # 正确地给一个用户设定属性。|Set attributes on a user properly.
     User.new(first_name: "Corbin")
     user.attributes = { first_name: "Corbin" }
     user.write_attributes(first_name: "Corbin")
 
-    # Attempt to set attributes on a user, will silently ignore protected ones.
+    # 试图设定一个用户的属性，将直接忽略被保护的字段。|Attempt to set attributes on a user, will silently ignore protected ones.
     User.new(first_name: "Corbin", password: "password")
     user.attributes = { first_name: "Corbin", password: "password" }
     user.write_attributes(first_name: "Corbin", password: "password")
 
   %p
-    You can scope the mass assignment by role by providing the role as an
+    你可以给不同的角色不同的 Mass Assignment 权限，并在调用 new 或 create 方法时把角色作为一个选项。
+    |You can scope the mass assignment by role by providing the role as an
     option to the constructor or create methods.
 
   :coderay
@@ -656,15 +700,16 @@
       attr_accessible :first_name, as: [ :default, :admin ]
     end
 
-    # Set attributes on a person for the admin role
+    # 以 admin 的角色给一个人设定属性。|Set attributes on a person for the admin role
     Person.new({ first_name: "Corbin" }, as: :admin)
     Person.create({ first_name: "Corbin" }, as: :default)
     Person.create!({ first_name: "Corbin" }, as: :admin)
 
-  %h3 Overriding
+  %h3 重写|Overriding
 
   %p
-    In the case you want to override the security in a single call,
+    如果你希望在某个单独的时候绕过安全机制，你可以给文档的构造方法（new）传递一个代码块以手动设定字段的值。
+    |In the case you want to override the security in a single call,
     you can pass a block to the document constructor to set fields manually.
 
   :coderay
@@ -674,11 +719,11 @@
     end
 
 %section#readonly
-  %h2 Readonly Attributes
+  %h2 只读属性|Readonly Attributes
 
   %p
-    You can tell Mongoid that certain attributes are readonly. This will
-    allow documents to be created with theses attributes, but changes to
+    你可以向 Mongoid 指定一些只读属性。这样就只能在创建文档时赋值，后续的修改将被过滤。|You can tell Mongoid that certain attributes are readonly. This will
+    allow documents to be created with these attributes, but changes to
     them will be filtered out.
 
   :coderay
@@ -692,22 +737,24 @@
     end
 
     band = Band.create(name: "Placebo")
-    band.update_attributes(name: "Tool") # Filters out the name change.
+    band.update_attributes(name: "Tool") # 过滤了 name 的修改|Filters out the name change.
 
   %p
-    If you explicitly try to update or remove the attribute by itself, then
+    如果你显式地更新或移除某个属性，会引发 <code>ReadonlyAttribute</code> 错误。
+    |If you explicitly try to update or remove the attribute by itself, then
     a <code>ReadonlyAttribute</code> error will be raised.
 
   :coderay
     #!ruby
-    band.update_attribute(:name, "Tool") # Raises the error.
-    band.remove_attribute(:name) # Raises the error.
+    band.update_attribute(:name, "Tool") # 报错。|Raises the error.
+    band.remove_attribute(:name) # 报错。|Raises the error.
 
 %section#inheritance
-  %h2 Inheritance
+  %h2 继承|Inheritance
 
   %p
-    Mongoid supports inheritance in both root and embedded documents. In
+    Mongoid 的继承支持一般的文档和嵌入的文档。文档的字段、关系、验证、？？将被子文档继承。
+    |Mongoid supports inheritance in both root and embedded documents. In
     scenarios where documents are inherited from their fields, relations,
     validations and scopes get copied down into their child documents, but
     not vise-versa.
@@ -745,32 +792,35 @@
     end
 
   %p
-    In the above example, <code>Canvas</code>, <code>Browser</code> and
+    上面的例子中，<code>Canvas</code>、<code>Browser</code>、<code>Firefox</code> 将保存在 <code>canvases</code> 集合中。另保存了一个附加的属性 <code>_type</code> 来保证正确的文档能从数据库中返回。<code>Circle</code>、<code>Rectangle</code>、<code>Shape</code> 同样如此。
+    |In the above example, <code>Canvas</code>, <code>Browser</code> and
     <code>Firefox</code> will all save in the <code>canvases</code> collection.
     An additional attribute <code>_type</code> is stored in order
     to make sure when loaded from the database the correct document is
     returned. This also holds true for the embedded documents <code>Circle</code>,
     <code>Rectangle</code>, and <code>Shape</code>.
 
-  %h3 Querying for Subclasses
+  %h3 子类中的查询|Querying for Subclasses
 
   %p
-    Querying for subclasses is handled in the normal manner, and although
+    子类中的查询和一般的查询相同。尽管文档都存在同一个集合中，查询的结果只会返回这个子类的文档。这同 ActiveRecord 的单表继承类似。
+    |Querying for subclasses is handled in the normal manner, and although
     the documents are all in the same collection, queries will only return
     documents of the correct type, similar to Single Table Inheritance in
     ActiveRecord.
 
   :coderay
     #!ruby
-    # Returns Canvas documents and subclasses
+    # 返回 Canvas 文档及子类文档|Returns Canvas documents and subclasses
     Canvas.where(name: "Paper")
-    # Returns only Firefox documents
+    # 只返回 Firefox 文档|Returns only Firefox documents
     Firefox.where(name: "Window 1")
 
-  %h3 Associations
+  %h3 关系|Associations
 
   %p
-    You can add any type of subclass to a has one or has many association,
+    你可以给？？？
+    |You can add any type of subclass to a has one or has many association,
     through either normal setting or through the build and create methods
     on the association:
 

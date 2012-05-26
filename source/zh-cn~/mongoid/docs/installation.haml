@@ -10,7 +10,7 @@
       %li= link_to "安装|Installation", "#installation"
       %li= link_to "配置|Configuration", "#configuration"
       %li= link_to "日志|Logging", "#logging"
-      %li= link_to "复制组|Replica Sets", "#replica"
+      %li= link_to "副本集|Replica Sets", "#replica"
       %li= link_to "分片|Sharding", "#sharding"
 
 %section#prerequisites
@@ -115,53 +115,67 @@
 
   :coderay
     #!yaml
-    # Tell Mongoid which environment this configuration is for.
+    # 告诉 Mongoid 本配置文件适用的环境。
+    |# Tell Mongoid which environment this configuration is for.
     production:
-      # This starts the session configuration settings. You may have as
-      # many sessions as you like, but you must have at least 1 named
-      # 'default'.
+      # 从这里开始配置“会话”相关设置。你可以有任意多的会话，但必须至少有一个名为“default”。
+      |# This starts the session configuration settings. You may have as
+      |# many sessions as you like, but you must have at least 1 named
+      |# 'default'.
       sessions:
-        # Define the default session.
+        # 定义 default 会话。
+        |# Define the default session.
         default:
-          # A session can have any number of hosts. Usually 1 for a single
-          # server setup, and at least 3 for a replica set. Hosts must be
-          # an array of host:port pairs. This session is single server.
+          # 一个会话可以连接任意多个主机。单服务器通常设置为一个主机，副本集通常为至少 3 个主机。
+          # 主机必须设为一系列“主机:端口“。这个会话为单服务器设置。
+          |# A session can have any number of hosts. Usually 1 for a single
+          |# server setup, and at least 3 for a replica set. Hosts must be
+          |# an array of host:port pairs. This session is single server.
           hosts:
             - flame.mongohq.com:27017
-          # Define the default database name.
+          # 定义 default 的数据库名。
+          |# Define the default database name.
           database: mongoid
-          # Since this database points at a session connected to MongoHQ, we must
-          # provide the authentication details.
+          # 因为这个数据库指向 MongoHQ，我们必须提供一些验证相关的细节。
+          |# Since this database points at a session connected to MongoHQ, we must
+          |# provide the authentication details.
           username: user
           password: password
-        # This defines a secondary session at a replica set.
+        # 这里定义了第二个会话（副本集）。
+        |# This defines a secondary session at a replica set.
         replica_set:
-          # This configuration is a 3 node replica set.
+          # 这里的配置为一个 3 节点的副本集。
+          |# This configuration is a 3 node replica set.
           hosts:
             - dedicated1.myapp.com:27017
             - dedicated2.myapp.com:27017
             - dedicated3.myapp.com:27017
           database: mongoid
-          # We can set session specific options, like reads executing
-          # on secondary nodes, and defaulting the session to safe mode.
+          # 我们可以设置一些会话的选项，比如？？？，以及将会话设为安全模式。
+          |# We can set session specific options, like reads executing
+          |# on secondary nodes, and defaulting the session to safe mode.
           options:
             consistency: :eventual
             safe: true
-        # This defines a tertiary session at a Mongos fronted shard.
+        # 这里定义了第三个会话（分片前端）。
+        |# This defines a tertiary session at a Mongos fronted shard.
         shard:
-          # This configuration is a Mongos shard server.
+          # 这里配置为一个分片的前端 mongos 服务器。
+          |# This configuration is a Mongos shard server.
           hosts:
             - mongos.myapp.com:27017
           database: mongoid
-      # Here we put the Mongoid specific configuration options. These are explained
-      # in more detail next.
+      # 这里我们做一些针对 Mongoid 的选项的配置。这些选项后面会有详细解释。
+      |# Here we put the Mongoid specific configuration options. These are explained
+      |# in more detail next.
       options:
         allow_dynamic_fields: false
         identity_map_enabled: true
         include_root_in_json: true
         include_type_for_serialization: true
-        # Note this can also be true if you want to preload everything, but this is
-        # almost never necessary. Most of the time set this to false.
+        # 注意，如果你想预加载所有东西的话，这里也可以设为 true，但这样做通常没有必要。
+        |# Note this can also be true if you want to preload everything, but this is
+        |# almost never necessary. Most of the time set this to false.
         preload_models:
           - Canvas
           - Browser
@@ -172,75 +186,91 @@
         use_activesupport_time_zone: false
         use_utc: true
 
-  %h3 Configuration options
+  %h3 配置选项|Configuration options
 
   %p
-    Mongoid currently supports the following configuration options, either
+    Mongoid 目前支持下列可配置的选项，你可以在 mongoid.yml 中显式定义它们，也可以使用括号中的默认值。
+    |Mongoid currently supports the following configuration options, either
     provided in the mongoid.yml or programatically (defaults in
     parenthesis).
 
 
   %ul.config
     %li
-      <code>allow_dynamic_fields</code>(true): When attributes are not defined
+      <code>allow_dynamic_fields</code>(true): 当一些属性不是作为字段定义而是被加到对象上时，这些属性会被动态地当作字段并保存至数据库。如果这个属性设为 false，当一个属性没有作为字段定义却被赋值时，Mongoid 会报错。
+      |When attributes are not defined
       as fields but added to an object, they will get fields added for them
       dynamically and will get persisted. If set to false an error will get
       raised when attempting to set a value that has no field defined.
     %li
-      <code>identity_map_enabled</code>(false): When set to true Mongoid will store
+      <code>identity_map_enabled</code>(false): 当设为 true 时，Mongoid 会将从数据库中读取的文档存入 Identity Map 中（依照其 ID），这样后续在同一工作中对同一文档的查询将不会触及数据库。这一功能目前只适用于对关系的查询。详见文档 Identity Map 章节。
+      |When set to true Mongoid will store
       documents loaded from the database in the identity map by their ids, so
       subsequent database queries for the same document in the same unit of
       work do not hit the database. This is only for relation queries at the
       moment. See the identity map documentation for more info.
     %li
-      <code>include_root_in_json</code>(false): When set to true mongoid will
+      <code>include_root_in_json</code>(false): 当设为 true 时，Mongoid 会把根文档和相关文档的名称加入对 Model 调用 <code>#to_json</code> 的结果中。
+      |When set to true mongoid will
       include the name of the root document and the name of each association
       as the root element when calling <code>#to_json</code> on a model.
     %li
-      <code>include_type_for_serialization</code>(false): When set to true this will
+      <code>include_type_for_serialization</code>(false): 当设为 true 时，Mongoid 会在将文档序列化为 JSON 和 XML 的时候把 <code>_type</code> 字段归入。
+      |When set to true this will
       tell Mongoid to include the "_type" field when serializing to JSON and XML.
     %li
-      <code>preload_models</code>(false): Tells Mongoid to preload application
+      <code>preload_models</code>(false): 在 Model 类没有被缓存的环境中，让 Mongoid 在每次请求时预加载一些 Model 类。如果启用这个功能，请指定一个类名称的序列（只对使用了继承的类）。
+      |Tells Mongoid to preload application
       model classes on each request in environments where classes are not
       being cached. Specify an array of class names when enabling, only to the
       classes that use inheritance.
     %li
-      <code>protect_sensitive_fields</code>(true): Mongoid by default will auto
+      <code>protect_sensitive_fields</code>(true): Mongoid 默认自动保护 <code>_id</code> 和 <code>_type</code> 字段免受 Mass Assignment 攻击。如果你不担心应用安全性的话，可以设为 false。
+      |Mongoid by default will auto
       protect '_id' and '_type' from mass assignment. Set this to false if you
       are daring with your application's security.
     %li
-      <code>raise_not_found_error</code>(true): Will raise a
+      <code>raise_not_found_error</code>(true): 如果根据 ID 查找文档时找不到结果，Mongoid 会引发一个 <code>Mongoid::Errors::DocumentNotFound</code> 错误。如果设为 false，则不引发错误，查询语句返回 <code>nil</code>。
+      |Will raise a
       <code>Mongoid::Errors::DocumentNotFound</code> when attempting to find a
       document by an id that doesnt exist. When set to false will only return
       nil for the same query.
     %li
-      <code>skip_version_check</code>(false): If you are having issues
+      <code>skip_version_check</code>(false): 如果你在连接 MongoHQ 或 MongoMachine 时遇到验证问题，尝试将此设为 true。
+      |If you are having issues
       authenticating against MongoHQ or MongoMachine because of access to the
       system collection being not allowed, set this to true.
     %li
-      <code>scope_overwrite_exception</code>(false): This will instruct Mongoid
+      <code>scope_overwrite_exception</code>(false): 如果你定义的 scope 和已有的方法名相同，Mongoid 会报错。
+      |This will instruct Mongoid
       to raise an error if you define a scope with the same name as an existing
       method.
     %li
-      <code>use_activesupport_time_zone</code>(true): When in a Rails app will
+      <code>use_activesupport_time_zone</code>(true): 让 Mongoid 根据 Rails 应用中本地 Active Support 中定义的时区转换所有时间。
+      |When in a Rails app will
       tell Mongoid to convert all times in the application to the local defined
       time zone in Active Support.
     %li
-      <code>use_utc</code>(false): Instructs Mongoid to convert all times to
+      <code>use_utc</code>(false): 让 Mongoid 把所有时间转为 UTC 时间。
+      |Instructs Mongoid to convert all times to
       UTC times in all cases.
 
   %p
-    If you would like to see samples, there is one in the
+    如果你想看更多配置文件样例，在 <a href="https://github.com/mongoid/mongoid/blob/master/spec/config/mongoid.yml">
+    Mongoid 代码仓库</a> 里有一份，在 <a href="https://github.com/mongoid/echo/blob/master/config/mongoid.yml">
+    Echo 样例应用</a> 中也有一份。
+    |If you would like to see samples, there is one in the
     <a href="https://github.com/mongoid/mongoid/blob/master/spec/config/mongoid.yml">
     Mongoid repository</a> and one in the
     <a href="https://github.com/mongoid/echo/blob/master/config/mongoid.yml">
     Echo sample application</a>.
 
 
-  %h3 Getting Rid of Active Record
+  %h3 摆脱 Active Record|Getting Rid of Active Record
 
   %p
-    Now that you have a <code>mongoid.yml</code> you can't wait to delete that
+    现在你已经有了一个 <code>mongoid.yml</code> 配置文件，一定迫不及待地想删除那个烦人的 <code>database.yml</code> 吧？删了你就会发现 <code>ActiveRecord</code> 四处报错。除非你想在使用 MongoDB 的同时使用一个 SQL 数据库，否则你就不再需要 ActiveRecord。下面告诉你如果从最新版 Rails 3 中移除 ActiveRecord……
+    |Now that you have a <code>mongoid.yml</code> you can't wait to delete that
     pesky <code>database.yml</code>, right? Do it and you'll start gecodeing
     <code>ActiveRecord</code> errors all over the place.
     You don't need ActiveRecord unless you're trying to use Mongo in concert
@@ -248,7 +278,8 @@
     recent version of Rails 3...
 
   %p
-    Open <code>myapp/config/application.rb</code> and near the top, remove
+    打开 <code>myapp/config/application.rb</code> 并在最上方找到 <code>require "rails/all"</code>，删除这一行并添加下面这几行：
+    |Open <code>myapp/config/application.rb</code> and near the top, remove
     the line <code>require "rails/all"</code> and add the following lines
     so you end up with this:
 
@@ -258,10 +289,11 @@
     require "action_mailer/railtie"
     require "active_resource/railtie"
     require "rails/test_unit/railtie"
-    # require "sprockets/railtie" # Uncomment this line for Rails 3.1+
+    # require "sprockets/railtie" # Rails 3.1 及以上请不要注释本行|Uncomment this line for Rails 3.1+
 
   %p
-    For Rails 3.2+ you'll also need to remove configuration options for
+    Rails 3.2 以上，你还需要删除环境配置中的一些选项，比如 <code>myapp/config/environments/development.rb</code> 中。保证下面这几行被注释掉。
+    |For Rails 3.2+ you'll also need to remove configuration options for
     Active Record that reside in your environments, ie
     <code>myapp/config/environments/development.rb</code>. Make sure the
     lines are commented out like as follows.
@@ -272,16 +304,17 @@
     # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   %p
-    You can also generate your new rails app sans Active Record like so.
+    你也可以在新建 Rails 应用时干掉 Active Record。|You can also generate your new rails app sans Active Record like so.
 
   :coderay
     #!text
     rails new app_name --skip-active-record
 
-  %h3 Sinatra, Padrino, and others
+  %h3 Sinatra、Padrino 及其他|Sinatra, Padrino, and others
 
   %p
-    You can create your <code>mongoid.yml</code> and place it anywhere you like.
+    你可以在任何地方创建你的 <code>mongoid.yml</code>，只需在应用的初始化文件中加上下面语句：
+    |You can create your <code>mongoid.yml</code> and place it anywhere you like.
     Just be sure that on application initialization you do the following:
 
   :coderay
@@ -289,10 +322,11 @@
     Mongoid.load!("path/to/your/mongoid.yml")
 
 %section#logging
-  %h2 Logging
+  %h2 日志|Logging
 
   %p
-    Changing logging options is done simply by telling Mongoid or Moped's
+    修改日志选项只需给 Mongoid 或 Moped 指定一个特定的日志等级。
+    |Changing logging options is done simply by telling Mongoid or Moped's
     logger to have a different level.
 
   :coderay
@@ -305,10 +339,11 @@
     end
 
 %section#replica
-  %h2 Replica Sets
+  %h2 副本集|Replica Sets
 
   %p
-    For replica sets, you only need to put each member of the replica set
+    如果使用副本集，只需在你的 <code>mongoid.yml</code> 文件中，给某个会话的主机设置提供副本集中的所有节点。Mongoid 和 Moped 会处理好一切。默认的一致性选项为 <code>:eventual</code>，意味着读操作可能会尝试使用副节点；如果设为 <code>:strong</code>，则所有操作都会指向主节点。
+    |For replica sets, you only need to put each member of the replica set
     under the <code>hosts</code> section in your <code>mongoid.yml</code> -
     Mongoid and Moped will take care of the rest. The default consistency is
     <code>:eventual</code>, which means that reads will attempt to go to
@@ -328,10 +363,11 @@
           consistency: :strong
 
 %section#sharding
-  %h2 Sharding
+  %h2 分片|Sharding
 
   %p
-    If you are using Mongoid in a sharded MongoDB environment and want to tell
+    如果你在一个分片的 MongoDB 环境下使用 Mongoid，并希望 Mongoid 引入分片键，你需要在 Model 类中指定。
+    |If you are using Mongoid in a sharded MongoDB environment and want to tell
     Mongoid to include the shard keys in it's updates, specify this at the
     model class level.
 
@@ -347,7 +383,8 @@
     end
 
   %p
-    In your <code>mongoid.yml</code>, just ensure that you are pointed at the
+    保证在你的 <code>mongoid.yml</code> 中把主机设置指向分片的前端 mongos 服务器。
+    |In your <code>mongoid.yml</code>, just ensure that you are pointed at the
     <code>mongos</code> server in your hosts.
 
   :coderay
