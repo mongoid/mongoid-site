@@ -144,6 +144,9 @@
           hosts:
             - mongos.myapp.com:27017
           database: mongoid
+        # This configuration shows an authenticated replica set via a uri.
+        another:
+          uri: mongodb://user:pass@59.1.22.1:27017,59.1.22.2:27017/mongoid
       # Here we put the Mongoid specific configuration options. These are explained
       # in more detail next.
       options:
