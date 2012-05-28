@@ -18,3 +18,10 @@ ignore "/en/layouts/origin.haml"
 ignore "/zh-cn/layouts/mongoid.haml"
 ignore "/zh-cn/layouts/moped.haml"
 ignore "/zh-cn/layouts/origin.haml"
+
+helpers do
+
+  def header_class(section)
+    request.path =~ /(docs|links)/i ? "basic" : section
+  end
+end

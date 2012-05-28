@@ -39,6 +39,10 @@ h1 {
   width: 100%;
 }
 
+#header.basic {
+  height: 60px;
+}
+
 html {
   height: 100%;
 }
