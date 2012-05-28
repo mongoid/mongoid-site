@@ -1,7 +1,7 @@
 # Documentation
 
 These are the source files that power mongoid.org. It is a
-[middleman](http://http://middlemanapp.com) powered static page.
+[middleman](http://middlemanapp.com) powered static page.
 
 # Contributing
 
