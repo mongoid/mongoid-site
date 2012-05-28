@@ -832,6 +832,8 @@
 %section#merging
   %h2 Merge Strategies
 
+  %h3 Explicit Merging
+
   %p
     The selection API also provides merge strategies for cases you want to
     override the default behaviour with specific methods that expect array values.
@@ -864,3 +866,24 @@
       %li <code>Queryable#intersect</code> Performs an intersection of existing and new array.
       %li <code>Queryable#override</code> Overwrites the old array with the new.
       %li <code>Queryable#union</code> Performs a union of the existing and new array.
+
+  %h3 Automatic Merging
+
+  %p
+    When using the normal Origin DSL, criterion on the same field with different
+    operators will automatically be merged into a complex selector on the common
+    field. For example:
+
+  :coderay
+    #!ruby
+    likeable = Band.gt(likes: 100).lt(likes: 1000).ne(likes: 500)
+    likeable.selector #=> { "likes" => { "$gt" => 100, "$lt" => 1000, "$ne" => 500 }}
+
+  %p
+    Note that this works <i>only</i> when using the DSL methods, but not currently
+    when using the symbol operators in a <code>where</code> clause.
+
+  :coderay
+    #!ruby
+    likeable = Band.where(:likes.gt => 100, :likes.lt => 1000, :likes.ne => 500)
+    likeable.selector #=> { "likes" => { "$ne" => 500 }}
