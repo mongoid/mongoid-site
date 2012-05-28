@@ -34,25 +34,18 @@ h1 {
   background-repeat: no-repeat;
   background-color: #000000;
   border-bottom: 5px solid #e6a486;
-  height: 500px;
   left: 0px;
   width: 100%;
 }
 
+#header h1 {
+  color: #ACF000;
+  line-height: 0px;
+  text-transform: capitalize;
+}
+
 html {
   height: 100%;
-}
-
-.mongoid {
-  background-image: url("/images/header-mongoid.png");
-}
-
-.origin {
-  background-image: url("/images/header-origin.png");
-}
-
-.moped {
-  background-image: url("/images/header-mongoid.png");
 }
 
 .link-button {
