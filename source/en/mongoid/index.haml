@@ -30,21 +30,22 @@
         Mongoid only supports MRI 1.9.2, 1.9.3, and HEAD, and JRuby 1.6.0+ in
         1.9 mode. All code samples will use 1.9 syntax.
 
-:coderay
-  #!ruby
+.showcase
+  :coderay
+    #!ruby
 
-  class Artist
-    include Mongoid::Document
-    field :name, type: String
-    embeds_many :instruments
-  end
+    class Artist
+      include Mongoid::Document
+      field :name, type: String
+      embeds_many :instruments
+    end
 
-  class Instrument
-    include Mongoid::Document
-    field :name, type: String
-    embedded_in :artist
-  end
+    class Instrument
+      include Mongoid::Document
+      field :name, type: String
+      embedded_in :artist
+    end
 
-  syd = Artist.where(name: "Syd Vicious").between(age: 18..25).first
-  syd.instruments.create(name: "Bass")
-  syd.with(database: "bands", session: "backup").save!
+    syd = Artist.where(name: "Syd Vicious").between(age: 18..25).first
+    syd.instruments.create(name: "Bass")
+    syd.with(database: "bands", session: "backup").save!

@@ -201,3 +201,10 @@ ul.incompatible li {
   padding-bottom: 20px;
   line-height: 30px;
 }
+
+.showcase{
+  position: absolute;
+  top: 100px;
+  opacity: 0.9;
+}
+
