@@ -223,8 +223,9 @@
     %i.icon-warning-sign
     <a href="http://github.com/mongoid/mongoid/issues/1342">#1342</a>
     <code>Model.find</code> and <code>model.relation.find</code> now only
-    take a single or multiple ids. The first/last/all with a conditions hash
-    has been removed.
+    take a single or multiple ids. <code>Model.first</code>, <code>Model.last</code>
+    also no longer take arguments. For these use <code>Model.find_by</code>
+    instead.
 
   %li
     %i.icon-warning-sign
