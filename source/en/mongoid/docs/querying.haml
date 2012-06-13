@@ -795,7 +795,7 @@
       }
     }
 
-    Band.where(:likeg.gt => 100).map_reduce(map, reduce).out(inline: true)
+    Band.where(:likes.gt => 100).map_reduce(map, reduce).out(inline: true)
 
   %p
     Just like criteria, map/reduce calls are lazily evaluated. So nothing will
