@@ -22,17 +22,7 @@
     to be memory efficient for large queries and data sets. However if you
     want the query to load all matching documents in memory and return
     them on <i>n</i> iterations without hitting the database again you
-    may cache a class or criteria:
-
-  %p
-    To have all queries for a model "cache":
-
-  :coderay
-    #!ruby
-    class Person
-      include Mongoid::Document
-      cache
-    end
+    may cache a criteria:
 
   %p
     To cache on a per-query basis:
