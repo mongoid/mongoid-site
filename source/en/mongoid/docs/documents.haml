@@ -271,12 +271,9 @@
 
   %p
     You can define custom types in Mongoid and determine how they are
-    serialized and deserialized. You simply need to define the class, include
-    <code>Mongoid::Fields::Serializable</code>, and override the
-    <code>serialize</code> and <code>deserialize</code> methods as needed.
-    Deserialization is used to convert from the value that is stored in the
-    database to a value that is used when accessed. Serialization is used to
-    convert the object to a MongoDB friendly value.
+    serialized and deserialized. You simply need to provide 3 methods on it
+    for Mongoid to call to convert your object to and from MongoDB friendly
+    values.
 
   :coderay
     #!ruby
@@ -286,16 +283,60 @@
     end
 
     class Point
-      include Mongoid::Fields::Serializable
 
-      def deserialize(object)
-        [ object["x"], object["y"] ]
+      attr_reader :x, :y
+
+      def initialize(x, y)
+        @x, @y = x, y
       end
 
-      def serialize(object)
-        { "x" => object[0], "y" => object[1] }
+      def mongoize
+        [ x, y ]
+      end
+
+      class << self
+
+        def demongoize(object)
+          Point.new(object[0], object[1])
+        end
+
+        def evolve(object)
+          if object.is_a?(Point)
+            [ object.x, object.y ]
+          else
+            object
+          end
+        end
       end
     end
+
+  %p
+    The instance method <code>mongoize</code> take an instance of your object,
+    and converts it into how it will be stored in the database. In our example
+    above, we want to store our point object as an array in the form
+    <code>[ x, y ]</code>.
+
+  %p
+    The class method <code>demongoize</code> takes an object as how it was
+    stored in the database, and is responsible for instantiating an object of
+    your custom type. In this case, we take an array and instantiate a
+    <code>Point</code> from it.
+
+  %p
+    The class method <code>evolve</code> takes an object, and determines how it
+    is to be transformed for use in criteria. For example we may want to write
+    a query like so:
+
+  :coderay
+    #!ruby
+    point = Point.new(12, 24)
+    Venue.where(location: point)
+
+  %p
+    We need the point object in the criteria to be transformed to a Mongo
+    friendly value when it is not as well, and <code>evolve</code> is the method
+    that takes care of this. We check if the passed in object is a <code>Point</code>
+    first, in case we also want to be able to pass in ordinary arrays instead.
 
   %h3 Reserved names
 
