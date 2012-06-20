@@ -27,8 +27,12 @@
 %ul.incompatible
   %li
     %i.icon-warning-sign
-    bson and bson_ext gems are no longer compatible. Please remove both from
-    your Gemfile and any other dependencies. They have been replaced by Moped.
+    bson and bson_ext gems are no longer necessary, and `BSON::ObjectId` objects
+    are no longer compatible with Mongoid documents. Use
+    <code>Moped::BSON::ObjectId</code> instead. It is safe to remove both gems
+    from your Gemfile and any other dependencies. They have been replaced by
+    Moped (see <a href="/en/moped/docs/bson.html"><code>Moped::BSON</code></a>).
+
   %li
     %i.icon-warning-sign
     GridFS support no longer exists. If you are using GridFS, you cannot
