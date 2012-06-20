@@ -6,12 +6,13 @@
 %p
   <code>Moped::BSON</code> is the namespace for Moped's BSON implementation.
   It's implemented in pure (but fast) ruby. The public entry point into the
-  <code>BSON</code> module is <code>BSON::Document</code>, which is just a
-  subclass of Hash, but exposes two class methods: <code>serialize</code>
-  and <code>deserialize</code>. <code>serialize</code> accepts a
-  <code>BSON::Document</code> (or Hash) and returns the serialized BSON
-  representation. <code>deserialize</code> does the opposite: it reads data
-  from an IO-like input and returns a deserialized <code>BSON::Document</code>.
+  <code>Moped::BSON</code> module is <code>Moped::BSON::Document</code>, which
+  is just a subclass of Hash, but exposes two class methods:
+  <code>serialize</code> and <code>deserialize</code>. <code>serialize</code>
+  accepts a <code>Moped::BSON::Document</code> (or Hash) and returns the
+  serialized BSON representation. <code>deserialize</code> does the opposite: it
+  reads data from an IO-like input and returns a deserialized
+  <code>Moped::BSON::Document</code>.
 
 .page-nav
   .container

@@ -27,7 +27,7 @@
 %ul.incompatible
   %li
     %i.icon-warning-sign
-    bson and bson_ext gems are no longer compatible. Please remove both from 
+    bson and bson_ext gems are no longer compatible. Please remove both from
     your Gemfile and any other dependencies. They have been replaced by Moped.
   %li
     %i.icon-warning-sign
@@ -178,7 +178,7 @@
         field :_id,
           type: String,
           pre_processed: true,
-          default: ->{ BSON::ObjectId.new.to_s }
+          default: ->{ Moped::BSON::ObjectId.new.to_s }
       end
 
   %li
