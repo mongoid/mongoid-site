@@ -894,9 +894,10 @@
           <code>Model\#{name}.concat</code>
           %p.doc
             %i
-              Push multiplpe document onto the relation. If the parent is
+              Push multiple documents onto the relation. If the parent is
               persisted, then the child documents will be automatically
-              saved.
+              saved. <b>This is a batch operation that runs validations, but
+              no other callbacks.</b>
         %td
           :coderay
             #!ruby
@@ -1425,9 +1426,10 @@
           <code>Model\#{name}.concat</code>
           %p.doc
             %i
-              Push multiplpe document onto the relation. If the parent is
+              Push multiple documents onto the relation. If the parent is
               persisted, then the child documents will be automatically
-              saved in a single batch.
+              saved in a single batch. <b>This is a batch operation that runs
+              validations, but no other callbacks.</b>
         %td
           :coderay
             #!ruby
@@ -1788,9 +1790,10 @@
           <code>Model\#{name}.concat</code>
           %p.doc
             %i
-              Push multiplpe document onto the relation. If the parent is
+              Push multiple documents onto the relation. If the parent is
               persisted, then the child documents will be automatically
-              saved in a single batch.
+              saved in a single batch. <b>This is a batch operation that
+              runs validations, but no other callbacks.</b>
         %td
           :coderay
             #!ruby
