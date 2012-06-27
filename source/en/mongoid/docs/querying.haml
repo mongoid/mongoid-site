@@ -274,6 +274,20 @@
               #!ruby
               collections[:bands].find.count
               collections[:bands].find(name: "Photek").count
+        %tr
+          %td.doc
+            <code>Criteria#order_by</code>
+            %p.doc
+              %i
+                order the results by a given attribute
+          %td
+            :coderay
+              #!ruby
+              Band.order_by(:name => :asc, :id => :desc)
+              Band.asc(:name, :id)
+              Band.desc(:name, :id)
+          %td
+
 
   %h3 Eager Loading
 
