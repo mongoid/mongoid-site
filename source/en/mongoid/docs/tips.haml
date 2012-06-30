@@ -10,6 +10,7 @@
       %li= link_to "Count Performance", "#count_performance"
       %li= link_to "Reordering Embedded Docs", "#reorder_embedded"
       %li= link_to "GridFS", "#gridfs"
+      %li= link_to "Relational Associations", "#relational_associations"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -124,3 +125,27 @@
   %p
     Instead of providing support for this, we simply recommend you use a service
     for storing files that is designed for this, such as Amazon S3.
+
+%section#relational_associations
+  %h2 Relational Associations
+
+  %p
+    Mongoid provides relational-style associations as a convenience for
+    application developers who are used to dealing with relational databases,
+    but we do not recommend you use these extensively.
+
+  %p
+    MongoDB provides no transactions, and no join support, so it is
+    impossible to ensure that the database is kept in a consistent state with
+    regards to referencing documents from one collection to another. Also,
+    without support for joins, you will find that the number of database
+    queries executed grows in order to retrieve documents with their
+    associations, and can have a huge affect on performance since this is
+    not where MongoDB's power lies.
+
+  %p
+    If you find that you have more relational associations in your application
+    than embedded ones, it is recommended that you not use MongoDB and move
+    to a relational database. Also, you will probably find this feature removed
+    in future versions of Mongoid, in order to not allow developers to use
+    the database in an incorrect fashion.
