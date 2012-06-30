@@ -9,6 +9,7 @@
       %li= link_to "Ruby 1.9.3", "#ruby"
       %li= link_to "Count Performance", "#count_performance"
       %li= link_to "Reordering Embedded Docs", "#reorder_embedded"
+      %li= link_to "GridFS", "#gridfs"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -100,3 +101,26 @@
     you sort your documents in memory and leave the underlying order untouched.
     See <a href="http://jira.mongodb.org/browse/SERVER-831">SERVER-831</a> for
     more information.
+
+%section#gridfs
+  %h2 No GridFS Support
+
+  %p
+    GridFS is marketed as a core database feature, when in fact it is not. It is
+    simply a <i>pattern</i> for stored chunked file data as documents in a
+    collection, just like any other document. The implementation of this
+    behaviour is handled in the client drivers, not in the core database itself,
+    which can lead to discrepencies in how this is handled across platforms.
+
+  %p
+    Even if having this behaviour in the client is acceptable, the effects of this
+    on application performance where you are not just storing file data is quite
+    large. Since files are stored as documents, they consume RAM just as any other
+    document in the database would, and can easily cause memory consumption on
+    your server to max out. There are also limitations in chunking the data, such
+    as you do not have the ability to update a file - you must delete the file
+    and replace it with a new one.
+
+  %p
+    Instead of providing support for this, we simply recommend you use a service
+    for storing files that is designed for this, such as Amazon S3.
