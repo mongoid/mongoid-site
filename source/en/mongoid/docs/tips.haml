@@ -7,7 +7,8 @@
   .container
     %ul.nav.nav-pills
       %li= link_to "Ruby 1.9.3", "#ruby"
-      %li= link_to "Count Performance", "#count"
+      %li= link_to "Count Performance", "#count_performance"
+      %li= link_to "Reordering Embedded Docs", "#reorder_embedded"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -37,7 +38,7 @@
     See <a href="http://blog.heroku.com/archives/2012/5/9/multiple_ruby_version_support_on_heroku/">
     Multiple Rubies on Heroku</a> for instructions on making this migration.
 
-%section#ruby
+%section#count_performance
   %h2 Count Performance
 
   %p
@@ -57,3 +58,45 @@
     %ul
       %li See: <a href="http://jira.mongodb.org/browse/SERVER-1752">SERVER-1752</a>
       %li See: <a href="http://jira.mongodb.org/browse/SERVER-2274">SERVER-2274</a>
+
+%section#reorder_embedded
+  %h2 Reodering Embedded Documents
+
+  %p
+    Due to only a partially implemented feature in MongoDB, the <code>$</code>
+    positional operator, it is not possible to accurately update embedded
+    documents that are nested more than one level deep based on a query
+    selector. For example:
+
+  :coderay
+    #!ruby
+    session[:bands].find(
+      "_id" => 1,
+      "albums._id" => 2,
+      "albums.tracks._id" => 3,
+    ).update(
+      "$set" => { "albums.$.tracks.$.name" => "Sober" }
+    )
+
+  %p
+    The above query does not work, and is not possible in MongoDB. To get around
+    this, Mongoid stores the index of the embedded documents in memory, and
+    would execute the same query like so:
+
+  :coderay
+    #!ruby
+    session[:bands].find(
+      "_id" => 1,
+      "albums._id" => 2,
+      "albums.tracks._id" => 3,
+    ).update(
+      "$set" => { "albums.0.tracks.2.name" => "Sober" }
+    )
+
+  %p
+    This works, however it comes with a caveat in that you cannot reorder your
+    embedded documents in another process. If you were to do so, Mongoid would
+    be updating the incorrect field. It is recommended until this is fixed that
+    you sort your documents in memory and leave the underlying order untouched.
+    See <a href="http://jira.mongodb.org/browse/SERVER-831">SERVER-831</a> for
+    more information.
