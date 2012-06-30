@@ -7,6 +7,7 @@
   .container
     %ul.nav.nav-pills
       %li= link_to "Ruby 1.9.3", "#ruby"
+      %li= link_to "Count Performance", "#count"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -35,3 +36,24 @@
     application's <code>Gemfile</code>.
     See <a href="http://blog.heroku.com/archives/2012/5/9/multiple_ruby_version_support_on_heroku/">
     Multiple Rubies on Heroku</a> for instructions on making this migration.
+
+%section#ruby
+  %h2 Count Performance
+
+  %p
+    MongoDB uses non counting B-Tree indexes which causes issuing count commands
+    extremely slow when providing a selector with the command. For example:
+
+  :coderay
+    #!ruby
+    Band.where(name: "Depeche Mode").count
+    session[:bands].find(name: "Depeche Mode").count
+
+  %p
+    This doesn't affect queries on small data sets, but large data sets (millions
+    od documents) can experience count queries in the neighborhood of seconds,
+    which can easily cripple application performance.
+
+    %ul
+      %li See: <a href="http://jira.mongodb.org/browse/SERVER-1752">SERVER-1752</a>
+      %li See: <a href="http://jira.mongodb.org/browse/SERVER-2274">SERVER-2274</a>
