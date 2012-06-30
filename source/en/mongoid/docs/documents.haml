@@ -300,6 +300,10 @@
           Point.new(object[0], object[1])
         end
 
+        def mongoize(object)
+          object
+        end
+
         def evolve(object)
           if object.is_a?(Point)
             [ object.x, object.y ]
@@ -321,6 +325,18 @@
     stored in the database, and is responsible for instantiating an object of
     your custom type. In this case, we take an array and instantiate a
     <code>Point</code> from it.
+
+  %p
+    The class method <code>mongoize</code> takes an object that you would use
+    to set on your model from your application code, and create the object as
+    it would be stored in the database. This is for cases where you are not
+    passing your model instances of your custom type in the setter:
+
+  :coderay
+    #!ruby
+    point = Point.new(12, 24)
+    venue = Venue.new(location: point) #=> This uses the mongoize instance method.
+    venue = Venue.new(location: [ 12, 24 ]) #=> This uses the mongoize class method.
 
   %p
     The class method <code>evolve</code> takes an object, and determines how it
