@@ -11,6 +11,7 @@
       %li= link_to "Reordering Embedded Docs", "#reorder_embedded"
       %li= link_to "GridFS", "#gridfs"
       %li= link_to "Relational Associations", "#relational_associations"
+      %li= link_to "Safe Mode", "#safe_mode"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -149,3 +150,46 @@
     to a relational database. Also, you will probably find this feature removed
     in future versions of Mongoid, in order to not allow developers to use
     the database in an incorrect fashion.
+
+%section#safe_mode
+  %h2 Safe Mode
+
+  %p
+    By default, safe mode is turned off by default due to that being MongoDB's
+    recommendation. However for users, especially first timers, we recommend
+    that you always have this setting on at least in development and test mode.
+    This will help you understand what is going on with more clarity, instead
+    of jsut making the assumption that your data was actually persisted.
+
+  %p
+    To ensure safe mode is on in development and test, you should simply
+    configure this in your <code>mongoid.yml</code>:
+
+  :coderay
+    #!yaml
+    development:
+      sessions:
+        default:
+          database: my_app_dev
+          hosts:
+            - localhost:27017
+          options:
+            safe: true
+    test:
+      sessions:
+        default:
+          database: my_app_test
+          hosts:
+            - localhost:27017
+          options:
+            safe: true
+
+  %p
+    Also we recommend keeping an eye on the MongoDB logs if you are also getting
+    started, as safe mode itself won't even catch all errors - sometimes MongoDB
+    will simply log an error on the server but send a message back to the client
+    that the operation succeeded.
+
+    %ul
+      %li On OSX (with Homebrew): <code>/usr/local/var/log/mongodb/output.log</code>
+      %li On Ubuntu (with apt-get): <code>/var/log/mongodb/mongodb.log</code>
