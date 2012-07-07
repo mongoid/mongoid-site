@@ -3,6 +3,10 @@
 
 %h1 Identity Map
 
+%p
+  Mongoid's identity map is an implementation of the
+  <a href="http://martinfowler.com/eaaCatalog/identityMap.html">Identity Map Pattern</a>.
+
 .page-nav
   .container
     %ul.nav.nav-pills
@@ -12,6 +16,7 @@
 
 %section#usage
   %h2 Usage
+
   %p
     The identity map in Mongoid is a current aid to assist with excessive
     database queries in relations, and is necessary for eager loading to
@@ -26,25 +31,38 @@
     identity_map_enabled: true
 
   %p
-    When a document is now loaded from the database, is is automatically
-    added to the identity map by it's class and id. Subsequent request for
-    that document by it's id will not hit the database, but rather pull
-    the document back from the identity map itself. It's primary function
-    in this capacity is to aid in cutting down queries for belongs_to
-    relations when iterating over the parents.
-
-  %p
-    You can access documents in the map directly via the <tt>get</tt> method.
-    It requires the class of the document you want and an id.
+    You can enable the identity map programatically as well.
 
   :coderay
     #!ruby
-    Mongoid::IdentityMap.get(Person, id)
+    Mongoid.identity_map_enabled = true
+
+  %p
+    When a document is now loaded from the database, is is automatically
+    added to the identity map by it's class and id. Subsequent request for
+    that document by it's id will not hit the database, but rather pull
+    the document back from the identity map itself.
 
   %p
     When performing <code>Model.find</code> queries with the identity map
     enabled, Mongoid will automatically look for the document in the
     identity map first and return it if it exists before hitting the database.
+
+  :coderay
+    #!ruby
+    Band.find(id) #=> Fetch the document from the database.
+    Band.find(id) #=> Gets the document from the identity map.
+
+    Band.find([ id_one, id_two ]) #=> Fetch the documents from the database.
+    Band.find([ id_one, id_two ]) #=> Gets the documents from the identity map.
+    Band.find([ id_one, id_three ])
+      #=> Gets the first document from the identity map, the second from the db.
+
+  %p
+    Note the identity map does not store <code>nil</code> values if the
+    query to the database did not return any results. So subsequent
+    finds for the same id will hit the database again. This also includes
+    eager loading.
 
 %section#unit_of_work
   %h2 The Unit of Work
@@ -146,4 +164,3 @@
     RSpec.configure do |config|
       config.before(:each) { Mongoid::IdentityMap.clear }
     end
-
