@@ -896,8 +896,13 @@
             %i
               Push multiple documents onto the relation. If the parent is
               persisted, then the child documents will be automatically
-              saved. <b>This is a batch operation that runs validations, but
-              no other callbacks.</b>
+              saved.
+              <b>Note that while batch operations limit the number
+              of database calls to a single one for the new documents, it
+              is in fact at least 2x slower from the Ruby side. This is due
+              to the fact that 2 iterations over all documents must occur
+              to ensure that all the before callbacks run before the db hit,
+              and that all after callbacks have to wait until after.</b>
         %td
           :coderay
             #!ruby
@@ -1428,8 +1433,13 @@
             %i
               Push multiple documents onto the relation. If the parent is
               persisted, then the child documents will be automatically
-              saved in a single batch. <b>This is a batch operation that runs
-              validations, but no other callbacks.</b>
+              saved in a single batch.
+              <b>Note that while batch operations limit the number
+              of database calls to a single one for the new documents, it
+              is in fact at least 2x slower from the Ruby side. This is due
+              to the fact that 2 iterations over all documents must occur
+              to ensure that all the before callbacks run before the db hit,
+              and that all after callbacks have to wait until after.</b>
         %td
           :coderay
             #!ruby
@@ -1792,8 +1802,14 @@
             %i
               Push multiple documents onto the relation. If the parent is
               persisted, then the child documents will be automatically
-              saved in a single batch. <b>This is a batch operation that
-              runs validations, but no other callbacks.</b>
+              saved in a single batch.
+              <b>Note that while batch operations limit the number
+              of database calls to a single one for the new documents, it
+              is in fact at least 2x slower from the Ruby side. This is due
+              to the fact that 2 iterations over all documents must occur
+              to ensure that all the before callbacks run before the db hit,
+              and that all after callbacks have to wait until after.</b>
+
         %td
           :coderay
             #!ruby
