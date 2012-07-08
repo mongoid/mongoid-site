@@ -1,4 +1,4 @@
-#header.basic
+#header{ class: section }
   .navbar.navbar-fixed-top
     .navbar-inner
       .container
@@ -12,3 +12,5 @@
           %li.link
             = link_to "/en/moped/index.html", title: "Moped" do
               = image_tag "/images/moped-logo-small-#{section == "moped" ? "green" : "white"}.png"
+        .logo-text
+          #{section}

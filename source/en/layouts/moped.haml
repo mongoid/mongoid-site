@@ -4,7 +4,7 @@
     %meta{name: "description", content: "A MongoDB driver for Ruby "}
     %meta{name: "keywords", content: "mongoid, moped, mongodb, ruby, rails, odm, bernerd schaefer" }
 
-    = partial "en/partials/header"
+    = partial "en/partials/header", locals: { section: "moped" }
 
   %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
 
@@ -13,7 +13,7 @@
     #navigation
       .subnav
         .container
-          %ul.nav.nav-pills
+          %ul.nav.nav-pills.moped
             %li= link_to "HOME", "/en/moped/index.html"
             %li.dropdown#docs
               %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}

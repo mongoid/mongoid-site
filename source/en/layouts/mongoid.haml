@@ -4,7 +4,7 @@
     %meta{name: "description", content: "A Ruby ODM for MongoDB"}
     %meta{name: "keywords", content: "mongoid, mongodb, ruby, rails, odm, durran jordan" }
 
-    = partial "en/partials/header"
+    = partial "en/partials/header", locals: { section: "mongoid" }
 
   %body{ "data-offset" => 100, "data-target" => ".page-nav", "data-spy" => "scroll" }
 
@@ -13,7 +13,7 @@
     #navigation
       .subnav
         .container
-          %ul.nav.nav-pills
+          %ul.nav.nav-pills.mongoid
             %li= link_to "HOME", "/en/mongoid/index.html"
             %li.dropdown#docs
               %a.dropdown-toggle{:"data-toggle" => "dropdown", href: "#docs"}

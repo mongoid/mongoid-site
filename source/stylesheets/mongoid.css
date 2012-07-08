@@ -8,6 +8,10 @@ a:hover {
   color: #;
 }
 
+.achtung {
+  width: 80px;
+}
+
 body {
   background-color: #fcfcfc;
   height: 100%;
@@ -33,30 +37,25 @@ h1 {
 #header {
   background-repeat: no-repeat;
   background-color: #000000;
-  border-bottom: 5px solid #e6a486;
-  height: 500px;
+  height: 60px;
   left: 0px;
   width: 100%;
 }
 
-#header.basic {
-  height: 60px;
+#header.mongoid {
+  border-bottom: 5px solid #e6a486;
+}
+
+#header.origin {
+  border-bottom: 5px solid #eeda52;
+}
+
+#header.moped {
+  border-bottom: 5px solid #82d8b8;
 }
 
 html {
   height: 100%;
-}
-
-.mongoid {
-  background-image: url("/images/header-mongoid.png");
-}
-
-.origin {
-  background-image: url("/images/header-origin.png");
-}
-
-.moped {
-  background-image: url("/images/header-mongoid.png");
 }
 
 .link-button {
@@ -73,6 +72,17 @@ html {
 .link-pad-left {
   padding-left: 10px;
   padding-right: 0px;
+}
+
+.logo-text {
+  border-left: 1px solid #333333;
+  border-right: 1px solid #333333;
+  color: #ffffff;
+  float: right;
+  font-size: 18px;
+  height: 20px;
+  padding: 20px;
+  text-transform: uppercase;
 }
 
 .navbar-inner {
@@ -156,10 +166,6 @@ p.doc {
   border-bottom: 1px solid #E5E5E5;
   border-top: 1px solid #E5E5E5;
   height: 40px;
-}
-
-.achtung {
-  width: 80px;
 }
 
 section {
