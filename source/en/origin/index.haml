@@ -20,14 +20,15 @@
         Origin only supports MRI 1.9.2, 1.9.3, and HEAD, Rubinius 2 in 1.9 mode,
         and JRuby 1.6.0+ in 1.9 mode. All code samples will use 1.9 syntax.
 
-:coderay
-  #!ruby
-  class Criteria
-    include Origin::Queryable
-  end
+.showcase
+  :coderay
+    #!ruby
+    class Criteria
+      include Origin::Queryable
+    end
 
-  criteria = Criteria.new
-  criteria.where(name: "Syd").gt(age: 10).desc(:created_at)
+    criteria = Criteria.new
+    criteria.where(name: "Syd").gt(age: 10).desc(:created_at)
 
-  criteria.selector #=> { name: "Syd", age: { "$gt" => 10 }}
-  criteria.option #=> { sort: { created_at: -1 }}
+    criteria.selector #=> { name: "Syd", age: { "$gt" => 10 }}
+    criteria.option #=> { sort: { created_at: -1 }}
