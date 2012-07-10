@@ -19,7 +19,7 @@
   %p
     Until 1.9.3, Ruby did not have a way to decode binary string data accurately
     for both big endian and little endian systems across all the data types used
-    in the MongoDB wire protocol. All data sent via the wire protocal, as well
+    in the MongoDB wire protocol. All data sent via the wire protocol, as well
     as the BSON specification itself use little endian and the ability to decode
     32 bit and 64 bit signed longs and ints did not arrive in Ruby until this
     version. See <a href="http://ruby-doc.org/core-1.9.3/String.html#method-i-unpack">
@@ -46,7 +46,7 @@
 
   %p
     MongoDB uses non counting B-Tree indexes which causes issuing count commands
-    extremely slow when providing a selector with the command. For example:
+    to be extremely slow when providing a selector with the command. For example:
 
   :coderay
     #!ruby
@@ -55,7 +55,7 @@
 
   %p
     This doesn't affect queries on small data sets, but large data sets (millions
-    od documents) can experience count queries in the neighborhood of seconds,
+    of documents) can experience count queries in the neighborhood of seconds,
     which can easily cripple application performance.
 
     %ul
@@ -63,7 +63,7 @@
       %li See: <a href="http://jira.mongodb.org/browse/SERVER-2274">SERVER-2274</a>
 
 %section#reorder_embedded
-  %h2 Reodering Embedded Documents
+  %h2 Reordering Embedded Documents
 
   %p
     Due to only a partially implemented feature in MongoDB, the <code>$</code>
@@ -109,7 +109,7 @@
 
   %p
     GridFS is marketed as a core database feature, when in fact it is not. It is
-    simply a <i>pattern</i> for stored chunked file data as documents in a
+    simply a <i>pattern</i> for storing chunked file data as documents in a
     collection, just like any other document. The implementation of this
     behaviour is handled in the client drivers, not in the core database itself,
     which can lead to discrepencies in how this is handled across platforms.
