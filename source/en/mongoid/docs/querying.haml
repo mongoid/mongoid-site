@@ -79,6 +79,22 @@
       %tbody
         %tr
           %td.doc
+            <code>Criteria#asc and Criteria#desc</code>
+            %p.doc
+              %i
+                Sort documents based on a field
+          %td
+            :coderay
+              #!ruby
+              Band.asc(:name).first
+              Band.desc(:name).limit(10)
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.sort({:name => 1}).first
+              collections[:bands].find.sort({:name => -1}).limit(10)
+        %tr
+          %td.doc
             <code>Criteria#count</code>
             %p.doc
               %i
