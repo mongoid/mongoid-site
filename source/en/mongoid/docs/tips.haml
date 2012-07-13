@@ -124,8 +124,18 @@
     and replace it with a new one.
 
   %p
-    Instead of providing support for this, we simply recommend you use a service
-    for storing files that is designed for this, such as Amazon S3.
+    Given this, we did not prioritize any work with GridFS at the front, but
+    there is a gem in the pipeline for those who can wait a bit to upgrade.
+    In the meantime you have a few options.
+
+    %li
+      %ul
+        Use the 10gen driver in conjunction with Mongoid 3 and Moped - the
+        namespaces will not collide.
+      %ul
+        Take advantage of Ara Howard's gist as a starting point to have basic
+        GridFS functionality:
+        <a href="https://gist.github.com/2407396">GridFS in Mongoid 3</a>
 
 %section#relational_associations
   %h2 Relational Associations
