@@ -199,6 +199,36 @@
       first_name: "Jean-Baptiste",
       middle_name: "Emmanuel"
     )
+  
+  %h3 Hash Field Keys
+  
+  %p
+    When using a field of type <code>Hash</code>, be wary of adhering to the
+    = link_to 'legal key names for mongoDB', 'http://www.mongodb.org/display/DOCS/Legal+Key+Names'
+    , or else the values will not store properly.
+  
+  :coderay
+    #!ruby
+    
+    class Person
+      include Mongoid::Document
+      field :first_name
+      field :url, type: Hash
+      
+      # will update the fields properly and save the values
+      def set_vals
+        self.first_name = 'Daniel'
+        self.url = {'home_page' => 'http://www.homepage.com'}
+        save
+      end
+      
+      # all data will fail to save due to the illegal hashkey
+      def set_vals_fail
+        self.first_name = 'Daniel'
+        self.url = {'home.page' => 'http://www.homepage.com'}
+        save
+      end
+    end
 
   %h3 Defaults
 
