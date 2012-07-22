@@ -103,8 +103,8 @@
           %p.doc
             %i
               Saves the changed attributes to the database
-              atomically, or insert the document if new. Can
-              bypass validations if wanted.
+              atomically, or insert the document if flagged as a new_record via
+              <code>Model#rew_record?</code>. Can bypass validations if wanted.
         %td
           :coderay
             #!ruby
@@ -213,6 +213,32 @@
             #!ruby
             collections[:people].find(...).
               update("$set" => { first_name: "Jean" })
+      %tr
+        %td
+          <code>Model#upsert</code>
+          %p.doc
+            %i
+              Performs a MongoDB <code>upsert</code> on the document. If the
+              document exists in the database, it will get overwritten with
+              the current attributes of the document in memory. If the document
+              does not exist in the database, it will be inserted. Note that
+              this only runs the <code>{before|after|around}_upsert</code>
+              callbacks.
+        %td
+          :coderay
+            #!ruby
+            person = Person.new(
+              first_name: "Heinrich",
+              last_name: "Heine"
+            )
+            person.upsert
+        %td
+          :coderay
+            #!ruby
+            collections[:people].upsert({
+              first_name: "Heinrich",
+              last_name: "Heine"
+            })
       %tr
         %td
           <code>Model#touch</code>
