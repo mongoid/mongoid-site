@@ -307,6 +307,15 @@
       end
     end
 
+  %p
+    If you want to change the logger instance, you can simply just set a
+    new one.
+
+  :coderay
+    #!ruby
+    Mongoid.logger = Logger.new($stdout)
+    Moped.logger = Logger.new($stdout)
+
 %section#replica
   %h2 Replica Sets
 
