@@ -542,6 +542,53 @@
     band.with(session: :tertiary).save!
 
   %p
+    Persisting using <code>with</code> is a <i>one time</i> switch in the persistence
+    context - it changes back to it's defaults immediately after. Mongoid
+    will not remember anything specific on the document level regarding how it was
+    saved when using this method. A potential gotcha with is is persisting a document
+    via <code>with</code> and then immediately updating it after.
+
+  :coderay
+    #!ruby
+    band = Band.new(name: "Scuba")
+    band.with(collection: "artists").save!
+    band.update_attribute(likes: 1000) # This will not save - tries the collection "bands"
+    band.with(collection: "artists").update_attribute(likes: 1000) # This will update the document.
+
+  %p
+    If you want to switch the persistence context for all operations at runtime,
+    but don't want to be using <code>with</code> all over your code, Mongoid provides
+    the ability to do this as the session and database level globally. The methods
+    for this are <code>Mongoid.override_session</code> and
+    <code>Mongoid.override_database</code>. A useful case for this are internationalized
+    applications that store information for different locales in different databases
+    or sessions, but the schema in each remains the same.
+
+  :coderay
+    #!ruby
+    class BandsController < ApplicationController
+      before_filter :switch_database
+      after_filter :reset_database
+
+      private
+
+      def switch_database
+        I18n.locale = params[:locale] || I18n.default_locale
+        Mongoid.override_database("my_db_name_\#{I18n.locale}")
+      end
+
+      def reset_database
+        Mongoid.override_database(nil)
+      end
+    end
+
+  %p
+    In the above example, all persistence operations would be stored in the
+    alternative database <i>for all remaining operations on this thread</i>.
+    This is why the after request set the override back to nil - it ensures
+    subsequent requests with no local params use the default option.
+
+  %p
     <code>#with</code>is also used for changing safe mode options temporarily
     at runtime.
 
