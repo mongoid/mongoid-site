@@ -11,8 +11,40 @@
 .page-nav
   .container
     %ul.nav.nav-pills
+      %li= link_to "Issues", "#issues"
       %li= link_to "Core", "#core"
       %li= link_to "Docs", "#documentation"
+
+%section#issues
+  %h2 Issues
+
+  %p
+    As developers, we hate getting issue reports from users that we cannot
+    replicate don't we? The same applies when submitting issues as well. Here
+    are some guidelines on what to provide in a Github issue in order for us
+    to expedite resolving the problem.
+
+  %ul
+    %li
+      The version of Mongoid (and if applicable Moped and Origin) that you are
+      using. We cannot assume a particular version since we actively support
+      and maintain 10-20 patch releases and 2 major releases at the same time.
+    %li
+      Your operating system and version. Yes, this is important, especially from
+      a database driver perspective.
+    %li
+      Your Ruby version, with exact patch level. This is also very important
+      for the same reasons as above.
+    %li
+      If you are getting a stack trace, please provide the <i>entire thing</i>, not
+      just the message or the last line in it. Stack traces provide context
+      and omitting them for the sake of brevity is not helpful.
+    %li
+      The exact steps in your application to reproduce the error, or some code
+      that will reproduce the issue without need for interperetation from our side.
+      This is very important as we are not mind readers and cannot make any
+      assumptions about how the issue arose. The more information you provide,
+      the faster we can address it.
 
 %section#core
   %h2 Core Contributions
