@@ -74,41 +74,12 @@
     %i.icon-warning-sign
     Custom serializable fields have revamped. Your object no longer should
     include <code>Mongoid::Fields::Serializable</code> - instead it only needs to
-    implement 3 methods: <code>#mongoize</code>, <code>.demongoize</code>
-    and <code>.evolve</code>.
+    implement 4 methods: <code>#mongoize</code>, <code>.mongoize</code>, 
+    <code>.demongoize</code> and <code>.evolve</code>.
 
     %p
-      <code>#mongoize</code> is an instance method that transforms your object into
-      a mongo-friendly value.
-
-    %p
-      <code>.demongoize</code> is a class method, that can take some data from mongo
-      and instantiate an object of your custom type.
-
-    %p
-      <code>.evolve</code> is a class method, that can take any object, and
-      transform it for use in a <code>Mongoid::Criteria</code>.
-
-    %p
-      An example of an implementation of this for <code>Range</code>:
-
-    :coderay
-      #!ruby
-      class Range
-        def mongoize
-          { "min" => first, "max" => last }
-        end
-
-        class << self
-
-          def demongoize(object)
-            Range.new(object["min"], object["max"])
-          end
-          def evolve(object)
-            { "$gte" => object.first, "$lte" => object.last }
-          end
-        end
-      end
+      See <a href="/en/mongoid/docs/documents.html#custom_fields">Custom Fields Serialization</a>
+      for details on the implementation.
 
   %li
     %i.icon-warning-sign

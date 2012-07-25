@@ -163,6 +163,7 @@
       %li <code>DateTime</code>
       %li <code>Range</code>
 
+  %a{ name: "getters_and_setters" }
   %h3 Getting and setting field values
 
   %p
@@ -199,29 +200,30 @@
       first_name: "Jean-Baptiste",
       middle_name: "Emmanuel"
     )
-  
+
+  %a{ name: "hash_field_keys" }
   %h3 Hash Field Keys
-  
+
   %p
     When using a field of type <code>Hash</code>, be wary of adhering to the
-    = link_to 'legal key names for mongoDB', 'http://www.mongodb.org/display/DOCS/Legal+Key+Names'
+    = link_to "legal key names for mongoDB", "http://www.mongodb.org/display/DOCS/Legal+Key+Names"
     , or else the values will not store properly.
-  
+
   :coderay
     #!ruby
-    
+
     class Person
       include Mongoid::Document
       field :first_name
       field :url, type: Hash
-      
+
       # will update the fields properly and save the values
       def set_vals
         self.first_name = 'Daniel'
         self.url = {'home_page' => 'http://www.homepage.com'}
         save
       end
-      
+
       # all data will fail to save due to the illegal hashkey
       def set_vals_fail
         self.first_name = 'Daniel'
@@ -230,6 +232,7 @@
       end
     end
 
+  %a{ name: "field_defaults" }
   %h3 Defaults
 
   %p
@@ -273,6 +276,7 @@
           after all other attributes are set. If you want this to happen before
           the other attributes, set <code>pre_processed: true</code>.
 
+  %a{ name: "field_aliasing" }
   %h3 Field Aliasing
 
   %p
@@ -297,6 +301,7 @@
     criteria = Band.where(name: "Placebo")
     criteria.selector #=> { "n" => "Placebo" }
 
+  %a{ name: "custom_fields" }
   %h3 Custom field serialization
 
   %p
@@ -320,25 +325,35 @@
         @x, @y = x, y
       end
 
+      # Converts an object of this instance into a database friendly value.
       def mongoize
         [ x, y ]
       end
 
       class << self
 
+        # Get the object as it was stored in the database, and instantiate
+        # this custom class from it.
         def demongoize(object)
           Point.new(object[0], object[1])
         end
 
+        # Takes any possible object and converts it to how it would be
+        # stored in the database.
         def mongoize(object)
-          object
+          case object
+          when Point then object.mongoize
+          when Hash then Point.new(object[:x], object[:y]).mongoize
+          else object
+          end
         end
 
+        # Converts the object that was supplied to a criteria and converts it
+        # into a database friendly form.
         def evolve(object)
-          if object.is_a?(Point)
-            [ object.x, object.y ]
-          else
-            object
+          case object
+          when Point then object.mongoize
+          else object
           end
         end
       end
@@ -384,6 +399,7 @@
     that takes care of this. We check if the passed in object is a <code>Point</code>
     first, in case we also want to be able to pass in ordinary arrays instead.
 
+  %a{ name: "reserved_field_names" }
   %h3 Reserved names
 
   %p
@@ -391,6 +407,7 @@
     name in Mongoid, the configuration will raise an error. For a list of these
     you may look at <code>Mongoid.destructive_fields</code>.
 
+  %a{ name: "custom_ids" }
   %h3 Creating Custom Ids
 
   %p
