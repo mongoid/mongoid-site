@@ -106,6 +106,26 @@
     #!text
     $ rails g mongoid:config
 
+  %p
+    When Mongoid loads its configuration, it chooses the environment to used
+    based on the following order:
+
+    %ul
+      %li <code>Rails.env</code> if using Rails.
+      %li <code>Sinatra::Base.environment</code> if using Sinatra.
+      %li <code>RACK_ENV</code> environment variable.
+      %li <code>MONGOID_ENV</code> environment variable.
+
+  %p
+    If you are not using any rack based application and want to override the
+    environment programatically, you can pass a second paramter to <code>load!</code>
+    and Mongoid will use that.
+
+  :coderay
+    #!ruby
+    Mongoid.load!("path/to/your/mongoid.yml", :production)
+
+
   %h3 Anatomy of a Mongoid Config
 
   %p
