@@ -7,11 +7,12 @@
   .container
     %ul.nav.nav-pills
       %li= link_to "Ruby 1.9.3", "#ruby"
-      %li= link_to "Count Performance", "#count_performance"
-      %li= link_to "Reordering Embedded Docs", "#reorder_embedded"
+      %li= link_to "Counts", "#count_performance"
+      %li= link_to "Reordering", "#reorder_embedded"
       %li= link_to "GridFS", "#gridfs"
-      %li= link_to "Relational Associations", "#relational_associations"
+      %li= link_to "Relational Data", "#relational_associations"
       %li= link_to "Safe Mode", "#safe_mode"
+      %li= link_to "Other Mappers", "#other_mappers"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -128,14 +129,13 @@
     there is a gem in the pipeline for those who can wait a bit to upgrade.
     In the meantime you have a few options.
 
-    %li
-      %ul
-        Use the 10gen driver in conjunction with Mongoid 3 and Moped - the
-        namespaces will not collide.
-      %ul
-        Take advantage of Ara Howard's gist as a starting point to have basic
-        GridFS functionality:
-        <a href="https://gist.github.com/2407396">GridFS in Mongoid 3</a>
+  %li
+    %ul
+      Use the 10gen driver in conjunction with Mongoid 3 and Moped - the
+      namespaces will not collide.
+    %ul
+      Take advantage of Ara Howard's <code>mongoid-grid_fs</code> gem:
+      <a href="https://github.com/ahoward/mongoid-grid_fs">mongoid-grid_fs</a>
 
 %section#relational_associations
   %h2 Relational Associations
@@ -203,3 +203,31 @@
     %ul
       %li On OSX (with Homebrew): <code>/usr/local/var/log/mongodb/output.log</code>
       %li On Ubuntu (with apt-get): <code>/var/log/mongodb/mongodb.log</code>
+
+%section#other_mappers
+  %h2 Working With Other Mappers
+
+  %p
+    It's not always the case that you are using MongoDB as your only database, and
+    some apps like to combine databases for different use cases. Below is an example
+    of accessing an Active Record model from Mongoid manually.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+
+      field :user_id, type: Integer
+
+      def user
+        @user ||= Band.where(id: user_id).first
+      end
+
+      def user=(user)
+        self.user_id = user.id
+        @user = user
+      end
+    end
+
+    class User < ActiveRecord::Base
+    end
