@@ -703,6 +703,11 @@
     label.bands #=> [ band ] Must reload.
     label.reload.bands #=> []
 
+  %p
+    Note that you should not use default scopes in conjunction with
+    `Mongoid::Paranoia` as the default scope will override the paranoia scope
+    and cause all documents, soft-deleted or not, to be included.
+
   %h3 Class Methods
 
   %p
