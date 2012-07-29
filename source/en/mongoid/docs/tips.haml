@@ -18,10 +18,24 @@
   %h2 Ruby 1.9.3
 
   %p
-    Until 1.9.3, Ruby did not have a way to decode binary string data accurately
-    for both big endian and little endian systems across all the data types used
-    in the MongoDB wire protocol. All data sent via the wire protocol, as well
-    as the BSON specification itself use little endian and the ability to decode
+    Are you getting an error like the following?
+
+  :coderay
+    #!ruby
+    NoMethodError: undefined method `[]' for nil:NilClass
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:74:in `block in command'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:522:in `[]'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:522:in `block (3 levels) in flush'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:521:in `map'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:521:in `block (2 levels) in flush'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:113:in `ensure_connected'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:517:in `block in flush'
+
+  %p
+    If so, this is your issue. Until 1.9.3, Ruby did not have a way to decode binary
+    string data accurately for both big endian and little endian systems across all the
+    data types used in the MongoDB wire protocol. All data sent via the wire protocol,
+    as well as the BSON specification itself use little endian and the ability to decode
     32 bit and 64 bit signed longs and ints did not arrive in Ruby until this
     version. See <a href="http://ruby-doc.org/core-1.9.3/String.html#method-i-unpack">
     <code>String#unpack</code></a> and
