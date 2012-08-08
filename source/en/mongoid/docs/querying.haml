@@ -354,11 +354,26 @@
         %td.doc
           <code>Criteria#update</code>
           %p.doc
-            %i Update attributes of all matching documents.
+            %i Update attributes of the first matching document.
         %td
           :coderay
             #!ruby
             Band.where(name: "Photek").update(label: "Mute")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update({ "$set" => { label: "Mute" }})
+      %tr
+        %td.doc
+          <code>Criteria#update_all</code>
+          %p.doc
+            %i Update attributes of all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").update_all(label: "Mute")
         %td
           :coderay
             #!ruby
