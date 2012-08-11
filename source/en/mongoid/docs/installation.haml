@@ -295,6 +295,14 @@
     # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   %p
+    For Rails 3.2.3+ you'll also need to comment out the following line in
+    <code>myapp/config/application.rb</code>.
+
+  :coderay
+    #!ruby
+    # config.active_record.whitelist_attributes = true
+
+  %p
     You can also generate your new rails app sans Active Record like so.
 
   :coderay
