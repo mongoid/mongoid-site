@@ -74,7 +74,7 @@
     include Mongoid::Document
     field :location, type: Array
 
-    index({ location: "2d" }, { min: -200, max: 200 })
+    index({ location: "2d" })
   end
 
 %p
