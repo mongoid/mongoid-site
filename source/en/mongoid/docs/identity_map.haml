@@ -38,9 +38,9 @@
     Mongoid.identity_map_enabled = true
 
   %p
-    When a document is now loaded from the database, is is automatically
-    added to the identity map by it's class and id. Subsequent request for
-    that document by it's id will not hit the database, but rather pull
+    When a document is now loaded from the database, it is automatically
+    added to the identity map by its class and id. Subsequent request for
+    that document by its id will not hit the database, but rather pull
     the document back from the identity map itself.
 
   %p
