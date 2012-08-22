@@ -46,10 +46,11 @@
       include Mongoid::Paranoia
     end
 
-    person.delete # Sets the deleted_at field to the current time.
-    person.delete! # Permanently deletes the document.
-    person.destroy! # Permanently delete the document with callbacks.
-    person.restore # Brings the "deleted" document back to life.
+    person.delete   # Sets the deleted_at field to the current time, ignoring callbacks.
+    person.delete!  # Permanently deletes the document, ignoring callbacks.
+    person.destroy  # Sets the deleted_at field to the current time, firing callbacks.
+    person.destroy! # Permanently deletes the document, firing callbacks.
+    person.restore  # Brings the "deleted" document back to life.
 
   %p
     The documents that have been "flagged" as deleted (soft deleted)
