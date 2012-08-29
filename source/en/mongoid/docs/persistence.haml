@@ -549,6 +549,7 @@
     class Band
       include Mongoid::Document
       store_in collection: "artists", database: "music", session: "secondary"
+    end
 
   %p
     If no `store_in` macro would have been provided, Mongoid would store the model
