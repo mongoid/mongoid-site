@@ -240,12 +240,12 @@ ul.incompatible li {
 }
 
 /* Clean up padding on first and last list items for main and subnav only. Leave page-nav alone. */
-.navbar .nav:first-child li:first-child a,
-.subnav .nav:first-child li:first-child a {
+.navbar .nav:first-child > li:first-child > a,
+.subnav .nav:first-child > li:first-child > a {
   padding-left: 0;
 }
-.navbar .nav:last-child li:last-child a,
-.subnav .nav:last-child li:last-child a {
+.navbar .nav:last-child > li:last-child > a,
+.subnav .nav:last-child > li:last-child > a {
   padding-right: 0;
 }
 
@@ -287,5 +287,9 @@ ul.incompatible li {
   }
 }
 
+/* Compensate for fixed border */
+.subnav {
+  padding-top: 7px;
+}
 
 
