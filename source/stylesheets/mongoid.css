@@ -292,4 +292,6 @@ ul.incompatible li {
   padding-top: 7px;
 }
 
-
+.page-nav-fixed {
+  margin-top: 35px;
+}
