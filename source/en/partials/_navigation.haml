@@ -1,9 +1,9 @@
 #header{ class: section }
-  .navbar.navbar-fixed-top
+  .navbar.navbar-inverse.navbar-fixed-top
     .navbar-inner
       .container
         %ul.nav
-          %li.dropdown.link#project
+          %li.link
             = link_to "/en/mongoid/index.html", title: "Mongoid" do
               = image_tag "/images/mongoid-logo-small-#{section == "mongoid" ? "green" : "white"}.png"
           %li.link

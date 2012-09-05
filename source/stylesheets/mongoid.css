@@ -34,23 +34,16 @@ h1 {
   margin-top: 30px;
 }
 
-#header {
-  background-repeat: no-repeat;
-  background-color: #000000;
-  height: 60px;
-  left: 0px;
-  width: 100%;
-}
-
-#header.mongoid {
+/* Navbar uses negative margins when < 767px. Apply border to .navbar instead of #header container. */
+#header.mongoid .navbar {
   border-bottom: 5px solid #e6a486;
 }
 
-#header.origin {
+#header.origin .navbar {
   border-bottom: 5px solid #eeda52;
 }
 
-#header.moped {
+#header.moped .navbar {
   border-bottom: 5px solid #82d8b8;
 }
 
@@ -154,10 +147,6 @@ p.doc {
   height: 60px;
 }
 
-.navbar li {
-  width: 60px;
-  text-align: center;
-}
 
 #navigation {
   background-color: #EEEEEE;
@@ -206,4 +195,103 @@ td.header {
 ul.incompatible li {
   padding-bottom: 20px;
   line-height: 30px;
+}
+
+
+/* Add margin to content to compensate for navbar being fixed */
+#content {
+  margin-top: 60px;
+}
+
+/* Remove vertical padding bootstrap adds < 980px. Keeps navbar height constant. */
+@media (max-width: 979px) {
+  .navbar-inner {
+    padding: 0 20px !important;
+  }
+}
+
+@media (max-width: 979px) {
+
+  /* Keep navbar fixed on all screen sizes. Bootstrap reverts to static < 980px by default. */
+  .navbar-fixed-top {
+    position: fixed;
+  }
+}
+
+@media (max-width: 767px) {
+
+  /* Negative margin for subnav so it matches .navbar */
+  #navigation {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  /* Navbar left-right padding matches content padding when < 768px. */
+  .navbar-fixed-top {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* Same for subnav */
+  .subnav .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Clean up padding on first and last list items for main and subnav only. Leave page-nav alone. */
+.navbar .nav:first-child > li:first-child > a,
+.subnav .nav:first-child > li:first-child > a {
+  padding-left: 0;
+}
+.navbar .nav:last-child > li:last-child > a,
+.subnav .nav:last-child > li:last-child > a {
+  padding-right: 0;
+}
+
+/* Keep the images in navbar properly padded. */
+.navbar .nav > li > a {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+@media (max-width: 979px) {
+
+  /* Remove default 9px bottom margin on .nav lists in navbar when <980px */
+  .navbar .nav {
+    margin-bottom: 0;
+  }
+
+  /* Stop navbar lists from default 100% width block mode display when <980px. */
+  .navbar .nav li {
+    float: left;
+    display: list-item;
+  }
+
+  /* Remove default 2px bottom margin on links in navbar when <980px */
+  .navbar .nav li a {
+    margin-bottom: 0;
+  }
+}
+
+/* Reduce horizontal padding of navbar elements for smaller screens */
+@media (max-width: 479px) {
+  .navbar .nav > li > a {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .logo-text {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Compensate for fixed border */
+.subnav {
+  padding-top: 7px;
+}
+
+.page-nav-fixed {
+  margin-top: 35px;
 }
