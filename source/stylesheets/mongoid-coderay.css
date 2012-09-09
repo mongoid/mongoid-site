@@ -24,7 +24,17 @@
 }
 
 pre {
+  background-color: #F5F5F5;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px 4px 4px 4px;
+  display: block;
+  font-size: 12.025px;
+  line-height: 18px;
+  margin: 0 0 9px;
   padding: 20px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
 }
 
 td pre {

@@ -9,6 +9,7 @@ a {
 
 body {
   background-color: #fcfcfc;
+  font-size: 13px;
 }
 
 .clear {
@@ -20,7 +21,19 @@ body {
 }
 
 h1 {
+  font-size: 30px;
+  line-height: 36px;
   margin-top: 30px;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 36px;
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 27px;
 }
 
 /* Navbar uses negative margins when < 767px. Apply border to .navbar instead of #header container. */
