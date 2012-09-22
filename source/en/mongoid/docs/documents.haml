@@ -584,8 +584,8 @@
       include Mongoid::Document
       field :description, localize: true
 
-      index "description.de"
-      index "description.en"
+      index "description.de" => 1
+      index "description.en" => 1
     end
 
   %h3 Validation
@@ -792,7 +792,7 @@
       field :name, type: String
       field :origin, type: String
 
-      attr_readonly :name, origin
+      attr_readonly :name, :origin
     end
 
     band = Band.create(name: "Placebo")
