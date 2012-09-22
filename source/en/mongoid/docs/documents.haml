@@ -792,7 +792,7 @@
       field :name, type: String
       field :origin, type: String
 
-      attr_readonly :name, origin
+      attr_readonly :name, :origin
     end
 
     band = Band.create(name: "Placebo")
