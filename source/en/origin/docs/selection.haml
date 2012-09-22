@@ -478,10 +478,20 @@
     in front of the selection you want to invert. This will add a <code>$not</code>
     clause to the query.
 
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          %p
+            Note that <code>$not</code> clauses can only be applied to other operators.
+            See the official
+            <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-Metaoperator%3A{{%24not}}">$not documentation</a> for more information.
+
   :coderay
     #!ruby
-    queryable.not.where(name: "Dave")
-    queryable.selector #=> { "$not" => { "name" => "Dave" }}
+    queryable.not.gt(age: 50)
+    queryable.selector #=> { "age" => { "$not" => { "$gt" => 50 }}}
 
 
 %section#symbol
