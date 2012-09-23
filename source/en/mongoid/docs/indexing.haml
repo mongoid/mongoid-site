@@ -98,7 +98,8 @@
   rake db:mongoid:create_indexes
 
 %p
-  Mongoid also provides a rake task to delete non-defined indexes.
+  Mongoid also provides a rake task to delete all secondary indexes, plus non-defined
+  indexes as well.
 
 :coderay
   #!ruby
