@@ -297,7 +297,7 @@
     end
 
     Band.includes(:albums).each do |band|
-      p band.album.name # Does not hit the database again.
+      p band.albums.first.name # Does not hit the database again.
     end
 
   .well
@@ -305,7 +305,7 @@
       %tr
         %td.achtung= image_tag "/images/achtung.png"
         %td.note
-          In order for eager loading to work, the <a>Identity Map</a>
+          In order for eager loading to work, the <a href="/en/mongoid/docs/identity_map.html">Identity Map</a>
           must be enabled.
 
 %section#query_plus
