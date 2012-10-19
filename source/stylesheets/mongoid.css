@@ -20,6 +20,16 @@ body {
   margin-bottom: 100px;
 }
 
+.donate {
+  font-size: 14px;
+  padding: 5px;
+  color: #666666;
+}
+
+.grey {
+  color: #999999;
+}
+
 h1 {
   font-size: 30px;
   line-height: 36px;
@@ -47,6 +57,11 @@ h3 {
 
 #header.moped .navbar {
   border-bottom: 5px solid #82d8b8;
+}
+
+span.heart {
+  font-size: 70px;
+  color: #FF6666;
 }
 
 html {
@@ -251,6 +266,10 @@ ul.incompatible li {
   padding-bottom: 10px;
 }
 
+.red {
+  color: #FF6666;
+}
+
 @media (max-width: 979px) {
 
   /* Remove default 9px bottom margin on .nav lists in navbar when <980px */
@@ -286,4 +305,9 @@ ul.incompatible li {
 /* Compensate for fixed border */
 .subnav {
   padding-top: 7px;
+}
+
+ul.highlight {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
