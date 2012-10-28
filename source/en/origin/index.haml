@@ -30,4 +30,4 @@
   criteria.where(name: "Syd").gt(age: 10).desc(:created_at)
 
   criteria.selector #=> { name: "Syd", age: { "$gt" => 10 }}
-  criteria.option #=> { sort: { created_at: -1 }}
+  criteria.options  #=> { sort: { created_at: -1 }}
