@@ -235,7 +235,7 @@
       field :user_id, type: Integer
 
       def user
-        @user ||= Band.where(id: user_id).first
+        @user ||= User.find(user_id)
       end
 
       def user=(user)
