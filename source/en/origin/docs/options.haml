@@ -246,5 +246,5 @@
   :coderay
     #!ruby
     queryable = Query.new({}, {}, :mongo)
-    queryable.order_by([[ :first_name, :desc ], [ :last_name, :desc ]])
+    queryable = queryable.order_by([[ :first_name, :desc ], [ :last_name, :desc ]])
     queryable.options #=> { sort: [[ "first_name", -1 ], [ "last_name", -1 ]]}

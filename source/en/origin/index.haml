@@ -27,7 +27,7 @@
   end
 
   criteria = Criteria.new
-  criteria.where(name: "Syd").gt(age: 10).desc(:created_at)
+  criteria = criteria.where(name: "Syd").gt(age: 10).desc(:created_at)
 
   criteria.selector #=> { name: "Syd", age: { "$gt" => 10 }}
   criteria.options  #=> { sort: { created_at: -1 }}
