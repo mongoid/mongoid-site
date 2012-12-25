@@ -74,8 +74,7 @@
 
   :coderay
     #!ruby
-    query = Query.new
-    query.where(name: "Syd").only(:name)
+    query = Query.new.where(name: "Syd").only(:name)
 
     # With Moped
     session[:users].find(query.selector).select(query.options.fields)
@@ -90,7 +89,7 @@
   :coderay
     #!ruby
     query = Query.new
-    query.where(name: "Syd").between(age: 18..25)
+    query = query.where(name: "Syd").between(age: 18..25)
     query.selector #=> { "name" => "Syd", "age" => { "$gte" => 18, "$lte" => 25 }}
 
   %p
@@ -101,7 +100,7 @@
   :coderay
     #!ruby
     query = Query.new
-    query.only(:name).skip(10).limit(20).desc(:name)
+    query = query.only(:name).skip(10).limit(20).desc(:name)
 
     query.options #=> { fields: { "name" => 1 }, skip: 10, limit: 20, sort: { "name" => -1 }}
 
