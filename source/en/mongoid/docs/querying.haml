@@ -94,6 +94,7 @@
               #!ruby
               collections[:bands].find.count
               collections[:bands].find(name: "Photek").count
+        %tr
           %td.doc
             <code>Criteria#distinct</code>
             %p.doc
@@ -103,12 +104,15 @@
             :coderay
               #!ruby
               Band.distinct(:name)
-              Band.where(:fans.gt => 100000).distinct(:name)
+              Band.where(:fans.gt => 100000).
+                distinct(:name)
           %td
             :coderay
               #!ruby
-              collections[:bands].find.distinct(:name)
-              collections[:bands].find(fans: { "$gt" => 100000 }).distinct(:name)
+              collections[:bands].find.
+                distinct(:name)
+              collections[:bands].find(fans: { "$gt" => 100000 }).
+                distinct(:name)
         %tr
           %td.doc
             <code>Criteria#each</code>
@@ -252,6 +256,25 @@
               collections[:bands].find(
                 { members: { "$size" => 3 }}
               ).sort(_id: 1).limit(-1)
+        %tr
+          %td.doc
+            <code>Criteria#for_js</code>
+            %p.doc
+              %i
+                Find documents for a provided javascript expression. This will
+                wrap the javascript in a `Moped::BSON::Code` object will is the
+                safe way to avoid javascript injection attacks.
+          %td
+            :coderay
+              #!ruby
+              Band.for_js("this.name = param", param: "Tool")
+          %td
+            :coderay
+              #!ruby
+              expr = Moped::BSON::Code.new(
+                "this.name = param", param: "Tool"
+              )
+              collections[:bands].find("$where" => expr)
         %tr
           %td.doc
             <code>Criteria#last</code>
