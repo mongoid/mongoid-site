@@ -38,6 +38,12 @@
     from your Gemfile and any other dependencies. They have been replaced by
     Moped (see <a href="/en/moped/docs/bson.html"><code>Moped::BSON</code></a>).
 
+    Note that if you had not been converting your object ids to strings and
+    were storing them in any way that would cause a Marshal dump, you may need
+    to restore these values as strings. This is because the internals of
+    Moped's BSON and the 10gen BSON gem are not designed in the same manner,
+    even though both have the same public API and adhere to the same spec.
+
   %li
     %i.icon-warning-sign
     GridFS support no longer exists. If you are using GridFS, you cannot
