@@ -36,7 +36,8 @@
           %p.doc
             %i
               Add $all selection. Documents must match all values
-              provided in the array.
+              provided in the array. <i>Also can be written with:</i>
+              <code>Queryable#all_in</code>
         %td
           :coderay
             #!ruby
@@ -150,7 +151,8 @@
           %p.doc
             %i
               Add $in selection. Matches documents who's field contains a
-              value that is in the array, similar to a SQL IN.
+              value that is in the array, similar to a SQL IN. <i>Also
+              can be written as:</i> <code>Queryable#any_in</code>.
         %td
           :coderay
             #!ruby
