@@ -185,7 +185,9 @@
       %td.doc
         %p.doc
           %i
-            Validate that an attribute exists.
+            Validate that an attribute exists. <i>Note that if you add a
+            presence validation to a relation, then Mongoid will enable
+            autosave for that relation.</i>
       %td
         :coderay
           #!ruby
