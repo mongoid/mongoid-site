@@ -17,8 +17,8 @@
       %td.note
         Mongoid behaves slightly different to Active Record when using <code>#valid?</code>
         on already persisted data. Active Record's <code>#valid?</code> will run all
-        validations whereas Mongoid's <code>#valid?</code> will only run validations on fields
-        where data has changed as an optimization.
+        validations whereas Mongoid's <code>#valid?</code> will only run validations on
+        documents that are in memory as an optimization.
 
 %p Common options that can be passed to all validations:
 
