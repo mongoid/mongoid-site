@@ -94,6 +94,21 @@
               #!ruby
               collections[:bands].find.count
               collections[:bands].find(name: "Photek").count
+          %td.doc
+            <code>Criteria#distinct</code>
+            %p.doc
+              %i
+                Get a list of distinct values for a single field.
+          %td
+            :coderay
+              #!ruby
+              Band.distinct(:name)
+              Band.where(:fans.gt => 100000).distinct(:name)
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.distinct(:name)
+              collections[:bands].find(fans: { "$gt" => 100000 }).distinct(:name)
         %tr
           %td.doc
             <code>Criteria#each</code>
