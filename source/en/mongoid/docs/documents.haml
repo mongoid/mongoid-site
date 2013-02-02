@@ -394,6 +394,16 @@
     point = Point.new(12, 24)
     Venue.where(location: point)
 
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          When accessing custom fields from the document, you will get a new
+          instance of that object with each call to the getter. This is
+          because Mongoid is generating a new object from the object from the
+          raw attributes on each access.
+
   %p
     We need the point object in the criteria to be transformed to a Mongo
     friendly value when it is not as well, and <code>evolve</code> is the method
