@@ -53,7 +53,7 @@
         %td.doc
           <code>Model.create</code>
           %p.doc
-            %i Insert a document into the database
+            %i Insert a document or multiple documents into the database
         %td
           :coderay
             #!ruby
@@ -61,6 +61,11 @@
               first_name: "Heinrich",
               last_name: "Heine"
             )
+
+            Person.create([
+              { first_name: "Heinrich", last_name: "Heine" },
+              { first_name: "Willy", last_name: "Brandt" }
+            ])
 
             Person.create(first_name: "Heinrich") do |doc|
               doc.last_name = "Heine"
@@ -72,12 +77,16 @@
               first_name: "Heinrich",
               last_name: "Heine"
             })
+            collections[:people].insert([
+              { first_name: "Heinrich", last_name: "Heine" },
+              { first_name: "Willy", last_name: "Brandt" }
+            ])
       %tr
         %td
           <code>Model.create!</code>
           %p.doc
             %i
-              Insert a document into the database,
+              Insert a document or multiple documents into the database,
               raising an error if a validation error occurs.
         %td
           :coderay
