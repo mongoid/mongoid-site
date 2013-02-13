@@ -17,6 +17,7 @@
       %li= link_to "Find and Modify", "#find_and_modify"
       %li= link_to "Map/Reduce", "#map_reduce"
       %li= link_to "Aggregations", "#aggregations"
+      %li= link_to "Geo Near", "#geo_near"
 
 %section#queries
   %h2 Queries
@@ -1153,3 +1154,136 @@
             #!ruby
             Band.sum(:likes)
             Band.where(:likes.gt => 100).sum(:likes)
+
+%section#geo_near
+  %h2 Geo Near
+
+  %p
+    Mongoid provides a DSL around MongoDB's <code>$geoNear</code> command.
+
+  %h3 Execution
+
+  %p
+    You can tell Mongoid off the class or a criteria to perform a $geoNear
+    by calling <code>geo_near</code> and providing an array of
+    <code>[ x, y ]</code> coordinates to search from.
+
+  :coderay
+    #!ruby
+    Bar.where(:likes.gt => 100).geo_near([ 50, 12 ]).spherical
+
+  %p
+    Just like criteria, <code>geo_near</code> calls are lazily evaluated. So
+    nothing will hit the database until you iterate over the results, or make
+    a call on the wrapper that would need to force a database hit. Note that
+    each instantiated document from a $geoNear query will get a special
+    dynamic attribute <code>geo_near_distance</code> that will be available
+    as long as the document is in memory.
+
+  :coderay
+    #!ruby
+    Bar.where(:likes.gt => 100).geo_near([ 50, 12 ]).each do |document|
+      p document.geo_near_distance
+    end
+
+  %p
+    The full API for $geoNear is as follows.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>GeoNear#average_distance</code>
+          %p.doc
+            %i
+              Get the average distance of all the documents from the
+              provided location.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).average_distance
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ]
+            })["stats"]["averageDistance"]
+      %tr
+        %td.doc
+          <code>GeoNear#distance_multiplier</code>
+          %p.doc
+            %i
+              Set the distance multiplier for returned distance
+              calculations.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).distance_multiplier(5012)
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              distanceMultiplier: 5012
+            })
+      %tr
+        %td.doc
+          <code>GeoNear#max_distance</code>
+          %p.doc
+            %i
+              Set the maximum distance to return documents for.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).max_distance(100)
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              maxDistance: 100
+            })
+      %tr
+        %td.doc
+          <code>GeoNear#spherical</code>
+          %p.doc
+            %i
+              Set the calculations to work for spheres.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).spherical
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              spherical: true
+            })
+      %tr
+        %td.doc
+          <code>GeoNear#unique</code>
+          %p.doc
+            %i
+              Specify whether unique documents should be returned.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).unique(false)
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              unique: false
+            })
