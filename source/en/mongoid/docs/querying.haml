@@ -448,9 +448,23 @@
             collections[:bands].insert(name: "Photek")
       %tr
         %td.doc
+          <code>Criteria#create!</code>
+          %p.doc
+            %i Create a newly persisted document with <code>create!</code>.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").create!
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(name: "Photek")
+            collections[:bands].insert(name: "Photek")
+      %tr
+        %td.doc
           <code>Criteria#build</code>
           %p.doc
-            %i Create a new document (unsaved).
+            %i Create a new document (unsaved). Also <code>new</code>.
         %td
           :coderay
             #!ruby
