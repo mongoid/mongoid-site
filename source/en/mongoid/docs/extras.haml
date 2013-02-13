@@ -141,3 +141,25 @@
     #!ruby
     person.timeless.save
     Person.timeless.create!
+
+  %p
+    If you'd like shorter timestamp fields with aliases on them to save space,
+    you can include the short versions of the modules.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      include Mongoid::Timestamps::Short # For c_at and u_at.
+    end
+
+    class Band
+      include Mongoid::Document
+      include Mongoid::Timestamps::Created::Short # For c_at only.
+    end
+
+    class Band
+      include Mongoid::Document
+      include Mongoid::Timestamps::Updated::Short # For u_at only.
+    end
+
