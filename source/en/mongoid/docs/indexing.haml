@@ -61,7 +61,6 @@
   class Person
     include Mongoid::Document
     field :ssn
-
     index({ ssn: 1 }, { unique: true, background: true })
   end
 
@@ -75,6 +74,17 @@
     field :location, type: Array
 
     index({ location: "2d" }, { min: -200, max: 200 })
+  end
+
+%p
+  Indexes can be scoped to a specific database.
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :ssn
+    index({ ssn: 1 }, { database: "users", unique: true, background: true })
   end
 
 %p
