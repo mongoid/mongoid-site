@@ -32,7 +32,9 @@
     Person.where(first_name: "Franziska").cache
 
 %section#paranoia
-  %h2 Paranoid Documents
+  %h2
+    Paranoid Documents
+    <span class="label label-info">Removing in 4.0.0</span>
 
   %p
     There may be times when you don't want documents to actually get deleted
@@ -62,7 +64,9 @@
     Person.deleted # Returns documents that have been "flagged" as deleted.
 
 %section#versioning
-  %h2 Versioning
+  %h2
+    Versioning
+    <span class="label label-info">Removing in 4.0.0</span>
 
   %p
     Mongoid supports simple versioning through inclusion of the
