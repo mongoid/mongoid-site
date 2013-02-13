@@ -209,7 +209,7 @@
               collections[:bands].find(name: "Photek").first
         %tr
           %td.doc
-            <code>Model.find_or_create_by</code>
+            <code>Criteria#find_or_create_by</code>
             %p.doc
               %i
                 Find a document by the provided attributes, and if not found
@@ -218,13 +218,17 @@
             :coderay
               #!ruby
               Band.find_or_create_by(name: "Photek")
+              Band.where(:likes.gt => 10).find_or_create_by(name: "Photek")
           %td
             :coderay
               #!ruby
               collections[:bands].find(name: "Photek").first
+              collections[:bands].find(
+                likes: { "$gt" => 10 }, name: "Photek"
+              ).first
         %tr
           %td.doc
-            <code>Model.find_or_initialize_by</code>
+            <code>Criteria#find_or_initialize_by</code>
             %p.doc
               %i
                 Find a document by the provided attributes, and if not found
@@ -233,10 +237,14 @@
             :coderay
               #!ruby
               Band.find_or_initialize_by(name: "Photek")
+              Band.where(:likes.gt => 10).find_or_create_by(name: "Photek")
           %td
             :coderay
               #!ruby
               collections[:bands].find(name: "Photek").first
+              collections[:bands].find(
+                likes: { "$gt" => 10 }, name: "Photek"
+              ).first
         %tr
           %td.doc
             <code>Criteria#first</code>
@@ -258,7 +266,7 @@
               ).sort(_id: 1).limit(-1)
         %tr
           %td.doc
-            <code>Model.first_or_create</code><br/>
+            <code>Criteria#first_or_create</code><br/>
             <span class="label label-info">Since 3.1.0</span>
             %p.doc
               %i
@@ -274,7 +282,7 @@
               collections[:bands].find(name: "Photek").first
         %tr
           %td.doc
-            <code>Model.first_or_create!</code><br/>
+            <code>Criteria#first_or_create!</code><br/>
             <span class="label label-info">Since 3.1.0</span>
             %p.doc
               %i
@@ -290,7 +298,7 @@
               collections[:bands].find(name: "Photek").first
         %tr
           %td.doc
-            <code>Model.first_or_initialize</code><br/>
+            <code>Criteria#first_or_initialize</code><br/>
             <span class="label label-info">Since 3.1.0</span>
             %p.doc
               %i
@@ -360,6 +368,21 @@
               #!ruby
               collections[:bands].find.count
               collections[:bands].find(name: "Photek").count
+        %tr
+          %td.doc
+            <code>Criteria#pluck</code><br/>
+            <span class="label label-info">Since 3.1.0</span>
+            %p.doc
+              %i
+                Get all the non nil values for the provided field.
+          %td
+            :coderay
+              #!ruby
+              Band.all.pluck(:name)
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.select(name: 1)
 
   %h3 Eager Loading
 
