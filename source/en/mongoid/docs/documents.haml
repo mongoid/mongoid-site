@@ -67,6 +67,17 @@
     end
 
   %p
+    The <code>store_in</code> macro can also take lambdas - a common case for this
+    is multi-tenant applications.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      store_in database: ->{ Thread.current[:database] }
+    end
+
+  %p
     When a document is stored in the database the ruby object will get
     serialized into BSON and have a structure like so:
 
