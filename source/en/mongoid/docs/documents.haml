@@ -521,7 +521,7 @@
 
   :coderay
     #!ruby
-    # Using a default locale of en.
+    I18n.default_locale = :en
     product = Product.new
     product.description = "Marvelous!"
     I18n.locale = :de
@@ -570,7 +570,8 @@
 
   :coderay
     #!ruby
-    # Using a default locale of en.
+    I18n.default_locale = :en
+    I18n.fallbacks = true
     ::I18n.fallbacks[:de] = [ :de, :en, :es ]
     product = Product.new
     product.description = "Marvelous!"
