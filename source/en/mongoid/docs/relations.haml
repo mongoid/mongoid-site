@@ -96,6 +96,20 @@
       embedded_in :alcoholic, class_name: "Lush", inverse_of: :whiskey
     end
 
+  %p
+    In class <code>Lush</code> <code>:whiskey</code> is the variable name of 
+    the relation.  This relation contains many classes named <code>Drink</code>.   
+    The <code>inverse_of: :alcoholic</code> states that class <code>Drink</code> 
+    will have a variable named <code>:alcoholic</code> containing the inverse 
+    relationship pointing back to <code>:whiskey</code>.
+
+  %p
+    In the class <code>Drink</code>, <code>:alcoholic</code> is the variable 
+    name containing the relationship and that <code>:alcoholic</code> is a class 
+    of <code>Lush</code>.  <code>Lush</code> contains a variable named 
+    <code>:whiskey</code> that points back to <code>Drink</code>.
+
+
   %h3 Validations
 
   %p
