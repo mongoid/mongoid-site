@@ -31,6 +31,19 @@
     #!ruby
     Person.where(first_name: "Franziska").cache
 
+  %p
+    The Mongoid cache is not a true cache - it simply keeps documents in 
+    memory if you iterate over the same Criteria. That is, this will hit
+    the database twice:
+
+  :coderay
+    #!ruby
+    query = Person.where(first_name: "Jon").cache
+    query.each { |p| puts(p) }
+    query2 = Person.where(first_name: "Jon").cache
+    # This will make another database call because query2 is a new Criteria
+    query2.each { |p| puts(p) }
+
 %section#paranoia
   %h2
     Paranoid Documents
