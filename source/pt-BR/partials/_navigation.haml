@@ -1,0 +1,16 @@
+#header{ class: section }
+  .navbar.navbar-inverse.navbar-fixed-top
+    .navbar-inner
+      .container
+        %ul.nav
+          %li.link
+            = link_to "/en/mongoid/index.html", title: "Mongoid" do
+              = image_tag "/images/mongoid-logo-small-#{section == "mongoid" ? "green" : "white"}.png"
+          %li.link
+            = link_to "/en/origin/index.html", title: "Origin" do
+              = image_tag "/images/origin-logo-small-#{section == "origin" ? "green" : "white"}.png"
+          %li.link
+            = link_to "/en/moped/index.html", title: "Moped" do
+              = image_tag "/images/moped-logo-small-#{section == "moped" ? "green" : "white"}.png"
+        .logo-text
+          #{section}

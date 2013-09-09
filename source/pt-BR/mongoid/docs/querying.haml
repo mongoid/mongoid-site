@@ -1,0 +1,1289 @@
+- content_for :head do
+  %title Mongoid: Querying
+
+%h1 Querying
+
+%p
+  One of MongoDB's greatest features is its ability to execute dynamic
+  queries, which Origin abstracts in a familiar Arel-style DSL that
+  Mongoid includes.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Queries", "#queries"
+      %li= link_to "Queries + Persistence", "#query_plus"
+      %li= link_to "Scoping", "#scoping"
+      %li= link_to "Find and Modify", "#find_and_modify"
+      %li= link_to "Map/Reduce", "#map_reduce"
+      %li= link_to "Aggregations", "#aggregations"
+      %li= link_to "Geo Near", "#geo_near"
+
+%section#queries
+  %h2 Queries
+
+  %p
+    All queries in Mongoid are <code>Criteria</code>, which is a chainable and
+    lazily evaluated wrapper to a MongoDB dynamic query. Criteria only
+    touch the database when they need to, for example on iteration of the
+    results, and when executed wrap a cursor in order to keep memory
+    management and performance predictable.
+
+  %h3 Queryable DSL
+
+  %p
+    Mongoid's main query DSL is provided by Origin. Any method that is available
+    on an <code>Origin::Queryable</code> exists on a <code>Mongoid::Criteria</code>
+    <i>as well as</i> off the model's class.
+
+  :coderay
+    #!ruby
+    Band.where(name: "Depeche Mode")
+    Band.
+      where(:founded.gte => "1980-1-1").
+      in(name: [ "Tool", "Deftones" ]).
+      union.
+      in(name: [ "Melvins" ])
+
+  %p
+    With each chained method on a criteria, a newly cloned criteria
+    is returned with the new query added. This is so that with scoping
+    or exposures, for example, the original queries are unmodified
+    and remain reusable.
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          Most of Mongoid's criteria has been extracted into its own
+          gem, Origin, which Mongoid now depends on for most of its API.
+          A complete list of commands can be found in
+          <a href="/en/origin/docs/selection.html">Selection with Origin</a>
+          and <a href="/en/origin/docs/options.html">Options with Origin</a>.
+          Note that the API has changed from 2.0 - see the
+          <a href="/en/mongoid/docs/upgrading.html">Upgrading</a> section for
+          a list of backwards incompatible changes.
+
+  %h3 Additional Query Methods
+
+  %p
+    In addition to behavior that Origin provides, Mongoid also has some helpful
+    methods on criteria.
+
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th Operation
+          %th Mongoid
+          %th Moped
+      %tbody
+        %tr
+          %td.doc
+            <code>Criteria#count</code>
+            %p.doc
+              %i
+                Get a count of persisted documents. Note this will always hit
+                the database for the count.
+          %td
+            :coderay
+              #!ruby
+              Band.count
+              Band.where(name: "Photek").count
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.count
+              collections[:bands].find(name: "Photek").count
+        %tr
+          %td.doc
+            <code>Criteria#distinct</code>
+            %p.doc
+              %i
+                Get a list of distinct values for a single field.
+          %td
+            :coderay
+              #!ruby
+              Band.distinct(:name)
+              Band.where(:fans.gt => 100000).
+                distinct(:name)
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.
+                distinct(:name)
+              collections[:bands].find(fans: { "$gt" => 100000 }).
+                distinct(:name)
+        %tr
+          %td.doc
+            <code>Criteria#each</code>
+            %p.doc
+              %i
+                Iterate over all documents in the collection.
+          %td
+            :coderay
+              #!ruby
+              Band.each do |band|
+                p band.name
+              end
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find
+        %tr
+          %td.doc
+            <code>Criteria#exists?</code>
+            %p.doc
+              %i
+                Determine if any documents exist in the database. Will return
+                true for 1 or more.
+          %td
+            :coderay
+              #!ruby
+              Band.exists?
+              Band.where(name: "Photek").exists?
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.count
+              collections[:bands].find(
+                { name: "Photek" }
+              ).count
+        %tr
+          %td.doc
+            <code>Criteria#find</code>
+            %p.doc
+              %i
+                Find a document or multiple documents by their ids. Will raise
+                an error by default if any of the ids do not match.
+          %td
+            :coderay
+              #!ruby
+              Band.find("4baa56f1230048567300485c")
+              Band.find(
+                "4baa56f1230048567300485c",
+                "4baa56f1230048567300485d"
+              )
+              Band.where(name: "Photek").find(
+                "4baa56f1230048567300485c"
+              )
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(
+                { _id: "4baa56f1230048567300485c" }
+              )
+              collections[:bands].find(
+                { _id:
+                  { "$in" => [
+                    "4baa56f1230048567300485c",
+                    "4baa56f1230048567300485d"
+                    ]
+                  }
+                }
+              )
+              collections[:bands].find(
+                {
+                  _id: "4baa56f1230048567300485c",
+                  name: "Photek"
+                }
+              )
+        %tr
+          %td.doc
+            <code>Model.find_by</code>
+            %p.doc
+              %i
+                Find a document by the provided attributes, and if not found
+                raise an error or return nil depending on the
+                <code>raise_not_found_error</code> configuration option.
+          %td
+            :coderay
+              #!ruby
+              Band.find_by(name: "Photek")
+
+              Band.find_by(name: "Tool") do |band|
+                band.impressions += 1
+              end
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+        %tr
+          %td.doc
+            <code>Criteria#find_or_create_by</code>
+            %p.doc
+              %i
+                Find a document by the provided attributes, and if not found
+                create and return a newly persisted one.
+          %td
+            :coderay
+              #!ruby
+              Band.find_or_create_by(name: "Photek")
+              Band.where(:likes.gt => 10).find_or_create_by(name: "Photek")
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+              collections[:bands].find(
+                likes: { "$gt" => 10 }, name: "Photek"
+              ).first
+        %tr
+          %td.doc
+            <code>Criteria#find_or_initialize_by</code>
+            %p.doc
+              %i
+                Find a document by the provided attributes, and if not found
+                initialize and return a new one.
+          %td
+            :coderay
+              #!ruby
+              Band.find_or_initialize_by(name: "Photek")
+              Band.where(:likes.gt => 10).find_or_create_by(name: "Photek")
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+              collections[:bands].find(
+                likes: { "$gt" => 10 }, name: "Photek"
+              ).first
+        %tr
+          %td.doc
+            <code>Criteria#first</code>
+            %p.doc
+              %i
+                Get the first document. If no sort options are provided, Mongoid
+                will add an ascending _id sort to the criteria.
+          %td
+            :coderay
+              #!ruby
+              Band.first
+              Band.where(:members.with_size => 3).first
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.sort(_id: 1).limit(-1)
+              collections[:bands].find(
+                { members: { "$size" => 3 }}
+              ).sort(_id: 1).limit(-1)
+        %tr
+          %td.doc
+            <code>Criteria#first_or_create</code><br/>
+            <span class="label label-info">Since 3.1.0</span>
+            %p.doc
+              %i
+                Find the first document by the provided attributes, and if not found
+                create and return a newly persisted one.
+          %td
+            :coderay
+              #!ruby
+              Band.where(name: "Photek").first_or_create
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+        %tr
+          %td.doc
+            <code>Criteria#first_or_create!</code><br/>
+            <span class="label label-info">Since 3.1.0</span>
+            %p.doc
+              %i
+                Find the first document by the provided attributes, and if not found
+                create and return a newly persisted one using `create!`.
+          %td
+            :coderay
+              #!ruby
+              Band.where(name: "Photek").first_or_create!
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+        %tr
+          %td.doc
+            <code>Criteria#first_or_initialize</code><br/>
+            <span class="label label-info">Since 3.1.0</span>
+            %p.doc
+              %i
+                Find the first document by the provided attributes, and if not found
+                instantiate and return a new one.
+          %td
+            :coderay
+              #!ruby
+              Band.where(name: "Photek").first_or_initialize
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find(name: "Photek").first
+        %tr
+          %td.doc
+            <code>Criteria#for_js</code>
+            %p.doc
+              %i
+                Find documents for a provided javascript expression. This will
+                wrap the javascript in a `Moped::BSON::Code` object will is the
+                safe way to avoid javascript injection attacks.
+          %td
+            :coderay
+              #!ruby
+              Band.for_js("this.name = param", param: "Tool")
+          %td
+            :coderay
+              #!ruby
+              expr = Moped::BSON::Code.new(
+                "this.name = param", param: "Tool"
+              )
+              collections[:bands].find("$where" => expr)
+        %tr
+          %td.doc
+            <code>Criteria#last</code>
+            %p.doc
+              %i
+                Get the last document. If no sort options are provided, Mongoid
+                will add a descending _id sort to the criteria.
+          %td
+            :coderay
+              #!ruby
+              Band.last
+              Band.where(:members.with_size => 3).last
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.sort(_id: -1).limit(-1)
+              collections[:bands].find(
+                { members: { "$size" => 3 }}
+              ).sort(_id: -1).limit(-1)
+        %tr
+          %td.doc
+            <code>Criteria#length</code>
+            %p.doc
+              %i
+                Also <code>size</code>. Get a count of persisted documents. After
+                being called once for the criteria, will cache subsequent calls
+                and not hit the database.
+          %td
+            :coderay
+              #!ruby
+              Band.length
+              Band.where(name: "Photek").length
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.count
+              collections[:bands].find(name: "Photek").count
+        %tr
+          %td.doc
+            <code>Criteria#pluck</code><br/>
+            <span class="label label-info">Since 3.1.0</span>
+            %p.doc
+              %i
+                Get all the non nil values for the provided field.
+          %td
+            :coderay
+              #!ruby
+              Band.all.pluck(:name)
+          %td
+            :coderay
+              #!ruby
+              collections[:bands].find.select(name: 1)
+
+  %h3 Eager Loading
+
+  %p
+    Mongoid provides a facility to eager load documents
+    from relations to prevent the n+1 issue when
+    iterating over documents with relation access. Eager loaded is supported on
+    all relations with the exception of polymorphic <code>belongs_to</code>
+    associations.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      has_many :albums
+    end
+
+    class Album
+      include Mongoid::Document
+      belongs_to :band
+    end
+
+    Band.includes(:albums).each do |band|
+      p band.albums.first.name # Does not hit the database again.
+    end
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          In order for eager loading to work, the <a href="/en/mongoid/docs/identity_map.html">Identity Map</a>
+          must be enabled.
+
+%section#query_plus
+  %h2 Queries + Persistence
+
+  %p
+    Mongoid supports persistence operations off of criteria
+    in a light capacity for when you want to expressively perform multi
+    document inserts, updates, and deletion.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Criteria#create</code>
+          %p.doc
+            %i Create a newly persisted document.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").create
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(name: "Photek")
+            collections[:bands].insert(name: "Photek")
+      %tr
+        %td.doc
+          <code>Criteria#create!</code>
+          %p.doc
+            %i Create a newly persisted document with <code>create!</code>.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").create!
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(name: "Photek")
+            collections[:bands].insert(name: "Photek")
+      %tr
+        %td.doc
+          <code>Criteria#build</code>
+          %p.doc
+            %i Create a new document (unsaved). Also <code>new</code>.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").build
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(name: "Photek")
+      %tr
+        %td.doc
+          <code>Criteria#update</code>
+          %p.doc
+            %i Update attributes of the first matching document.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").update(label: "Mute")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update({ "$set" => { label: "Mute" }})
+      %tr
+        %td.doc
+          <code>Criteria#update_all</code>
+          %p.doc
+            %i Update attributes of all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").update_all(label: "Mute")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$set" => { label: "Mute" }})
+      %tr
+        %td.doc
+          <code>Criteria#add_to_set</code>
+          %p.doc
+            %i Perform an $addToSet on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").add_to_set(:label, "Mute")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$addToSet" => { label: "Mute" }})
+      %tr
+        %td.doc
+          <code>Criteria#bit</code>
+          %p.doc
+            %i Perform a $bit on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").bit(:likes, { and: 14, or: 4 })
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$bit" => { likes: { and: 14, or: 4} }})
+      %tr
+        %td.doc
+          <code>Criteria#inc</code>
+          %p.doc
+            %i Perform an $inc on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").inc(:likes, 123)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$inc" => { likes: 123 }})
+      %tr
+        %td.doc
+          <code>Criteria#pop</code>
+          %p.doc
+            %i Perform a $pop on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Photek").pop(:members, -1)
+            Band.where(name: "Photek").pop(:members, 1)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$pop" => { members: -1 }})
+
+            collections[:bands].find(
+              { name: "Photek" }
+            ).update_all({ "$pop" => { members: 1 }})
+      %tr
+        %td.doc
+          <code>Criteria#pull</code>
+          %p.doc
+            %i Perform a $pull on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").pull(:members, "Maynard")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$pull" => { members: "Maynard" }})
+      %tr
+        %td.doc
+          <code>Criteria#pull_all</code>
+          %p.doc
+            %i Perform a $pullAll on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").
+              pull_all(:members, [ "Maynard", "Danny" ])
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all(
+              { "$pullAll" => { members: [ "Maynard", "Danny" ] }}
+            )
+      %tr
+        %td.doc
+          <code>Criteria#push</code>
+          %p.doc
+            %i Perform a $push on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").push(:members, "Maynard")
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all(
+              { "$push" => { members: "Maynard" }}
+            )
+      %tr
+        %td.doc
+          <code>Criteria#push_all</code>
+          %p.doc
+            %i Perform a $pushAll on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").
+              push_all(:members, [ "Maynard", "Danny" ])
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all(
+              { "$pushAll" => { members: [ "Maynard", "Danny" ] }}
+            )
+      %tr
+        %td.doc
+          <code>Criteria#rename</code>
+          %p.doc
+            %i Perform a $rename on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").rename(:name, :title)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$rename" => { "name" => "title" }})
+      %tr
+        %td.doc
+          <code>Criteria#set</code>
+          %p.doc
+            %i Perform a $set on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").set(:likes, 10000)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$set" => { likes: 10000 }})
+      %tr
+        %td.doc
+          <code>Criteria#unset</code>
+          %p.doc
+            %i Perform a $unset on all matching documents.
+        %td
+          :coderay
+            #!ruby
+            Band.where(name: "Tool").unset(:likes)
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(
+              { name: "Tool" }
+            ).update_all({ "$unset" => { likes: true }})
+      %tr
+        %td.doc
+          <code>Criteria#delete</code>
+          %p.doc
+            %i
+              Delete all matching documents. Note that this will ignore
+              any skip and limit arguments that exist on the criteria.
+        %td
+          :coderay
+            #!ruby
+            Band.where(label: "Mute").delete
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(label: "Mute").remove_all
+      %tr
+        %td.doc
+          <code>Criteria#destroy</code>
+          %p.doc
+            %i
+              Destroy all matching documents and run callbacks. This will
+              respect skip and limit criteria.
+        %td
+          :coderay
+            #!ruby
+            Band.where(label: "Mute").destroy
+        %td
+          :coderay
+            #!ruby
+            collections[:bands].find(label: "Mute").remove_all
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          Be careful with using <code>Criteria#destroy</code> in this context as
+          it will load every matching document into memory in order to run the
+          destroy callbacks.
+
+
+%section#scoping
+  %h2 Scoping
+
+  %p
+    Scopes provide a convenient way to reuse common criteria with more
+    business domain style syntax.
+
+  %h3 Named Scopes
+
+  %p
+    Named scopes are simply criteria defined at class load that are referenced
+    by a provided name. Just like normal criteria, they are lazy and chainable.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :country, type: String
+      field :genres, type: Array
+
+      scope :english, where(country: "England")
+      scope :rock, where(:genres.in => [ "rock" ])
+    end
+
+    Band.english.rock # Get the English rock bands.
+
+  %p
+    Named scopes can take procs and blocks for accepting parameters or
+    extending functionality.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :country, type: String
+      field :active, type: Boolean, default: true
+
+      scope :named, ->(name){ where(name: name) }
+      scope :active, where(active: true) do
+        def deutsch
+          tap |scope| do
+            scope.selector.store("origin" => "Deutschland")
+          end
+        end
+      end
+    end
+
+    Band.named("Depeche Mode") # Find Depeche Mode.
+    Band.active.deutsch # Find active German bands.
+
+  %h3 Default Scopes
+
+  %p
+    Default scopes can be useful when you find yourself applying the same
+    criteria to most queries, and want something to be there by default.
+    Default scopes take either criteria objects or procs that return criteria
+    objects for cases like multi-tenant applications.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :active, type: Boolean, default: true
+
+      default_scope where(active: true)
+    end
+
+    Band.each do |band|
+      # All bands here are active.
+    end
+
+  %p
+    You can tell Mongoid not to apply the default scope by using
+    <code>unscoped</code>, which can be inline or take a block.
+
+  :coderay
+    #!ruby
+    Band.unscoped.where(name: "Depeche Mode")
+    Band.unscoped do
+      Band.where(name: "Depeche Mode")
+    end
+
+  %p
+    You can also tell Mongoid to explicitly apply the default scope
+    again later to always ensure it's there.
+
+  :coderay
+    #!ruby
+    Band.unscoped.where(name: "Depeche Mode").scoped
+
+  %p
+    If you are using a default scope on a model that is part of a relation like a
+    <code>has_many</code>, <code>has_and_belongs_to_many</code>, or
+    <code>embeds_many</code>, you must reload the relation to have scoping reapplied.
+    This is important to note if you change a value of a document in the relation
+    that would affect its visibility within the scoped relation.
+
+  :coderay
+    #!ruby
+    class Label
+      include Mongoid::Document
+      embeds_many :bands
+    end
+
+    class Band
+      include Mongoid::Document
+      field :active, default: true
+      embedded_in :label
+      default_scoped where(active: true)
+    end
+
+    label.bands.push(band)
+    label.bands #=> [ band ]
+    band.update_attribute(:active, false)
+    label.bands #=> [ band ] Must reload.
+    label.reload.bands #=> []
+
+  %p
+    Note that you should not use default scopes in conjunction with
+    `Mongoid::Paranoia` as the default scope will override the paranoia scope
+    and cause all documents, soft-deleted or not, to be included.
+
+  %h3 Class Methods
+
+  %p
+    Class methods on models that return criteria objects are also
+    treated like scopes, and can be chained as well.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :active, type: Boolean, default: true
+
+      def self.active
+        where(active: true)
+      end
+    end
+
+    Band.active
+
+%section#find_and_modify
+  %h2 Find and Modify
+
+  %p
+    MongoDB's <code>$findAndModify</code> command is a unique atomic "find, perform
+    some operation, and return" operation. In Mongoid, this can be used from the
+    model class level or chained to a criteria.
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          The atomic operation that is provided to the <code>find_and_modify</code>
+          operates on the first document it locates in the database. Therefore it is
+          usually important to provide sorting criteria as well.
+
+  %h3 Execution
+
+  %p
+    Simply call <code>#find_and_modify</code> from the class or the end of a
+    criteria. Unlike other lazy Mongoid operations, this command executes
+    immediately.
+
+  :coderay
+    #!ruby
+    Queue.
+      where(pending: true).
+      asc(:created_at).
+      find_and_modify({ "$set" => { pending: false }}, new: true)
+
+  %p
+    The first parameter to <code>find_and_modify</code> is an atomic update
+    selector, and the optional second parameter is a hash of options. Valid
+    options are:
+
+    %ul
+      %li <code>new: (true|false)</code> Return the updated document.
+      %li <code>remove: (true|false)</code> Delete the found document.
+
+%section#map_reduce
+  %h2 Map/Reduce
+
+  %p
+    Mongoid provides a DSL around MongoDB's map/reduce framework, for performing
+    custom map/reduce jobs or simple aggregations.
+
+  %h3 Execution
+
+  %p
+    You can tell Mongoid off the class or a criteria to perform a map/reduce
+    by calling <code>map_reduce</code> and providing map and reduce javascript
+    functions.
+
+  :coderay
+    #!ruby
+    map = %Q{
+      function() {
+        emit(this.name, { likes: this.likes });
+      }
+    }
+
+    reduce = %Q{
+      function(key, values) {
+        var result = { likes: 0 };
+        values.forEach(function(value) {
+          result.likes += value.likes;
+        });
+        return result;
+      }
+    }
+
+    Band.where(:likes.gt => 100).map_reduce(map, reduce).out(inline: true)
+
+  %p
+    Just like criteria, map/reduce calls are lazily evaluated. So nothing will
+    hit the database until you iterate over the results, or make a call on the
+    wrapper that would need to force a database hit.
+
+  :coderay
+    #!ruby
+    Band.map_reduce(map, reduce).out(replace: "mr-results").each do |document|
+      p document # { "_id" => "Tool", "value" => { "likes" => 200 }}
+    end
+
+  %p
+    The only required thing you provide along with a map/reduce is where to
+    output the results. If you do not provide this an error will be raised.
+    Valid options to <code>#out</code> are:
+
+    %ul
+      %li
+        <code>inline: 1</code>: Don't store the output in a collection.
+      %li
+        <code>replace: "name"</code>: Store in a collection with the
+        provided name, and overwrite any documents that exist in it.
+      %li
+        <code>merge: "name"</code>: Store in a collection with the
+        provided name, and merge the results with the existing documents.
+      %li
+        <code>reduce: "name"</code>: Store in a collection with the
+        provided name, and reduce all existing results in that collection.
+
+  %p
+    The full API for map/reduce is as follows.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+    %tbody
+      %tr
+        %td.doc
+          <code>MapReduce#out</code>
+          %p.doc
+            %i Specify the result output location
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1)
+      %tr
+        %td.doc
+          <code>MapReduce#counts</code>
+          %p.doc
+            %i
+              Get the count statistics for the map reduce (input, emit,
+              reduce, count).
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).counts
+      %tr
+        %td.doc
+          <code>MapReduce#emitted</code>
+          %p.doc
+            %i
+              Get the number of emits.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).emitted
+      %tr
+        %td.doc
+          <code>MapReduce#finalize</code>
+          %p.doc
+            %i
+              Provide a finalize function to run at the end of the job.
+        %td
+          :coderay
+            #!ruby
+            func = %Q{
+              function(key, value) {
+                value.extra = true;
+                return value;
+              }
+            }
+            Band.map_reduce(m, r).out(inline: 1).finalize(func)
+      %tr
+        %td.doc
+          <code>MapReduce#input</code>
+          %p.doc
+            %i
+              Get the number of inputs.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).input
+      %tr
+        %td.doc
+          <code>MapReduce#js_mode</code>
+          %p.doc
+            %i
+              Execute the map/reduce in jsMode.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).js_mode
+      %tr
+        %td.doc
+          <code>MapReduce#output</code>
+          %p.doc
+            %i
+              Get the number of outputs.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).output
+      %tr
+        %td.doc
+          <code>MapReduce#reduced</code>
+          %p.doc
+            %i
+              Get the number of reduces.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).reduced
+      %tr
+        %td.doc
+          <code>MapReduce#scope</code>
+          %p.doc
+            %i
+              Provide values to set in the global js scope.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).scope(field: 10)
+      %tr
+        %td.doc
+          <code>MapReduce#time</code>
+          %p.doc
+            %i
+              Returns the execution time.
+        %td
+          :coderay
+            #!ruby
+            Band.map_reduce(m, r).out(inline: 1).time
+
+%section#aggregations
+  %h2 Aggregations
+
+  %p
+    Mongoid provides convenience methods for simple aggregations, which
+    can be invoked from the class or criteria. Note that with
+    <code>#min</code>, <code>#max</code> and <code>#sum</code>, if a
+    block is provided it behaves just like they would with a Ruby
+    enumerable.
+
+  :coderay
+    #!ruby
+    # Use map/reduce, return a float with the max value.
+    Band.where(:likes.gt => 100).max(:likes)
+
+    # Use enumerable, returning the document with the max value.
+    Band.where(:likes.gt => 100).max do |a,b|
+      a.likes <=> b.likes
+    end
+
+  %p The full API is as follows.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+    %tbody
+      %tr
+        %td.doc
+          <code>Criteria#avg</code>
+          %p.doc
+            %i Get the average value for the given field.
+        %td
+          :coderay
+            #!ruby
+            Band.avg(:likes)
+            Band.where(:likes.gt => 100).avg(:likes)
+      %tr
+        %td.doc
+          <code>Criteria#max</code>
+          %p.doc
+            %i Get the max value for the given field.
+        %td
+          :coderay
+            #!ruby
+            Band.max(:likes)
+            Band.where(:likes.gt => 100).max(:likes)
+      %tr
+        %td.doc
+          <code>Criteria#min</code>
+          %p.doc
+            %i Get the min value for the given field.
+        %td
+          :coderay
+            #!ruby
+            Band.min(:likes)
+            Band.where(:likes.gt => 100).min(:likes)
+      %tr
+        %td.doc
+          <code>Criteria#sum</code>
+          %p.doc
+            %i Get the sum of all values for a given field.
+        %td
+          :coderay
+            #!ruby
+            Band.sum(:likes)
+            Band.where(:likes.gt => 100).sum(:likes)
+
+%section#geo_near
+  %h2 Geo Near
+
+  %p
+    Mongoid provides a DSL around MongoDB's <code>$geoNear</code> command.
+
+  %h3 Execution
+
+  %p
+    You can tell Mongoid off the class or a criteria to perform a $geoNear
+    by calling <code>geo_near</code> and providing an array of
+    <code>[ x, y ]</code> coordinates to search from.
+
+  :coderay
+    #!ruby
+    Bar.where(:likes.gt => 100).geo_near([ 50, 12 ]).spherical
+
+  %p
+    Just like criteria, <code>geo_near</code> calls are lazily evaluated. So
+    nothing will hit the database until you iterate over the results, or make
+    a call on the wrapper that would need to force a database hit. Note that
+    each instantiated document from a $geoNear query will get a special
+    dynamic attribute <code>geo_near_distance</code> that will be available
+    as long as the document is in memory.
+
+  :coderay
+    #!ruby
+    Bar.where(:likes.gt => 100).geo_near([ 50, 12 ]).each do |document|
+      p document.geo_near_distance
+    end
+
+  %p
+    The full API for $geoNear is as follows.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>GeoNear#average_distance</code>
+          %p.doc
+            %i
+              Get the average distance of all the documents from the
+              provided location.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).average_distance
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ]
+            })["stats"]["averageDistance"]
+      %tr
+        %td.doc
+          <code>GeoNear#distance_multiplier</code>
+          %p.doc
+            %i
+              Set the distance multiplier for returned distance
+              calculations.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).distance_multiplier(5012)
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              distanceMultiplier: 5012
+            })
+      %tr
+        %td.doc
+          <code>GeoNear#max_distance</code>
+          %p.doc
+            %i
+              Set the maximum distance to return documents for.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).max_distance(100)
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              maxDistance: 100
+            })
+      %tr
+        %td.doc
+          <code>GeoNear#spherical</code>
+          %p.doc
+            %i
+              Set the calculations to work for spheres.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).spherical
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              spherical: true
+            })
+      %tr
+        %td.doc
+          <code>GeoNear#unique</code>
+          %p.doc
+            %i
+              Specify whether unique documents should be returned.
+        %td
+          :coderay
+            #!ruby
+            Bar.geo_near([ 50, 13 ]).unique(false)
+        %td
+          :coderay
+            #!ruby
+            session.command({
+              geoNear: "bars",
+              near: [ 50, 13 ],
+              unique: false
+            })

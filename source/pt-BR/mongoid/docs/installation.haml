@@ -1,0 +1,401 @@
+- content_for :head do
+  %title Mongoid: Installation
+
+%h1 Getting Started
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Prerequisites", "#prerequisites"
+      %li= link_to "Installation", "#installation"
+      %li= link_to "Configuration", "#configuration"
+      %li= link_to "Logging", "#logging"
+      %li= link_to "Replica Sets", "#replica"
+      %li= link_to "Sharding", "#sharding"
+
+%section#prerequisites
+  %h2 Prerequisites
+
+  %p
+    There are a few things you need to have in your toolbox before tackling
+    a web application using Mongoid.
+
+    %ul
+      %li A good to advanced knowledge of Ruby.
+      %li Have good knowledge of your web framework if using one.
+      %li A thorough understanding of MongoDB.
+
+  %p
+    This may seem like a "thank you Captain Obvious" moment, however if you
+    believe that you can just hop over to Mongoid because you read a blog
+    post on how cool Ruby and MongoDB were, you are in for a
+    <i>world of pain</i>.
+
+  %p
+    Mongoid leverages many aspects of the Ruby programming
+    language that are not for beginner use, and sending the core
+    team into a frenzy tracking down a bug for a common Ruby mistake is a
+    waste of our time, and all of the other users of the framework as well.
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          %p
+            <i>THE DATABASE IS NOT A BLACK BOX</i>.
+          Mongoid is an abstraction to make application developers'
+          lives easier, however the internals leverage the
+          power of MongoDB and it is truly important to know what is going on
+          under the covers. This is why the documentation provides the exact
+          queries that Mongoid is executing against the database when you call a
+          persistence operation. If we took the time to tell you, you should listen. :)
+
+%section#installation
+  %h2 Installation
+
+  %p
+    The preferred method for installing Mongoid is with bundler. Simply add
+    Mongoid to your <code>Gemfile</code>.
+
+  :coderay
+    #!ruby
+    gem "mongoid", "~> 3.0.0"
+
+  %p
+    Alternatively you can get the Mongoid gem direcly from rubygems.org:
+
+  :coderay
+    #!ruby
+    $ gem install mongoid
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          The minimum version of MongoDB that is required for you to run Mongoid
+          is <code>2.0.0</code> for 3.0.x and <code>2.2.0</code> for 3.1.x.
+
+%section#configuration
+  %h2 Configuration
+
+  %p
+    Mongoid configuration can be done through a <code>mongoid.yml</code> that
+    specifies your options and database sessions. The simplest configuration
+    is as follows, which sets the default session to "localhost:27017"
+    and provides a single database in that session named "mongoid".
+
+  :coderay
+    #!yaml
+    development:
+      sessions:
+        default:
+          database: mongoid
+          hosts:
+            - localhost:27017
+
+  %h3 Rails Applications
+
+  %p
+    You can generate a config file by executing the generator and then editing
+    <code>myapp/config/mongoid.yml</code> to your heart's desire. Mongoid will
+    then handle everything else from there.
+
+  :coderay
+    #!text
+    $ rails g mongoid:config
+
+  %p
+    When Mongoid loads its configuration, it chooses the environment to used
+    based on the following order:
+
+    %ul
+      %li <code>Rails.env</code> if using Rails.
+      %li <code>Sinatra::Base.environment</code> if using Sinatra.
+      %li <code>RACK_ENV</code> environment variable.
+      %li <code>MONGOID_ENV</code> environment variable.
+
+  %p
+    If you are not using any rack based application and want to override the
+    environment programatically, you can pass a second paramter to <code>load!</code>
+    and Mongoid will use that.
+
+  :coderay
+    #!ruby
+    Mongoid.load!("path/to/your/mongoid.yml", :production)
+
+
+  %h3 Anatomy of a Mongoid Config
+
+  %p
+    Let's have a look at a full-blown <code>mongoid.yml</code> and explain
+    the full power of what Mongoid can do. The following configuration has its
+    explanation in the comments above each key.
+
+  :coderay
+    #!yaml
+    # Tell Mongoid which environment this configuration is for.
+    production:
+      # This starts the session configuration settings. You may have as
+      # many sessions as you like, but you must have at least 1 named
+      # 'default'.
+      sessions:
+        # Define the default session.
+        default:
+          # A session can have any number of hosts. Usually 1 for a single
+          # server setup, and at least 3 for a replica set. Hosts must be
+          # an array of host:port pairs. This session is single server.
+          hosts:
+            - flame.mongohq.com:27017
+          # Define the default database name.
+          database: mongoid
+          # Since this database points at a session connected to MongoHQ, we must
+          # provide the authentication details.
+          username: user
+          password: password
+        # This defines a secondary session at a replica set.
+        replica_set:
+          # This configuration is a 3 node replica set.
+          hosts:
+            - dedicated1.myapp.com:27017
+            - dedicated2.myapp.com:27017
+            - dedicated3.myapp.com:27017
+          database: mongoid
+          # We can set session specific options, like reads executing
+          # on secondary nodes, and defaulting the session to safe mode.
+          options:
+            consistency: :eventual
+            safe: true
+        # This defines a tertiary session at a Mongos fronted shard.
+        shard:
+          # This configuration is a Mongos shard server.
+          hosts:
+            - mongos.myapp.com:27017
+          database: mongoid
+        # This configuration shows an authenticated replica set via a uri.
+        another:
+          uri: mongodb://user:pass@59.1.22.1:27017,59.1.22.2:27017/mongoid
+      # Here we put the Mongoid specific configuration options. These are explained
+      # in more detail next.
+      options:
+        allow_dynamic_fields: false
+        identity_map_enabled: true
+        include_root_in_json: true
+        include_type_for_serialization: true
+        # Note this can also be true if you want to preload everything, but this is
+        # almost never necessary. Most of the time set this to false.
+        preload_models:
+          - Canvas
+          - Browser
+          - Firefox
+        scope_overwrite_exception: true
+        raise_not_found_error: false
+        skip_version_check: false
+        use_activesupport_time_zone: false
+        use_utc: true
+
+  %h3 Configuration options
+
+  %p
+    Mongoid currently supports the following configuration options, either
+    provided in the mongoid.yml or programatically (defaults in
+    parenthesis).
+
+
+  %ul.config
+    %li
+      <code>allow_dynamic_fields</code>(true): When attributes are not defined
+      as fields but added to an object, they will get fields added for them
+      dynamically and will get persisted. If set to false an error will get
+      raised when attempting to set a value that has no field defined.
+    %li
+      <code>identity_map_enabled</code>(false): When set to true Mongoid will store
+      documents loaded from the database in the identity map by their ids, so
+      subsequent database queries for the same document in the same unit of
+      work do not hit the database. This is only for relation queries at the
+      moment. See the identity map documentation for more info.
+    %li
+      <code>include_root_in_json</code>(false): When set to true mongoid will
+      include the name of the root document and the name of each association
+      as the root element when calling <code>#to_json</code> on a model.
+    %li
+      <code>include_type_for_serialization</code>(false): When set to true this will
+      tell Mongoid to include the "_type" field when serializing to JSON and XML.
+    %li
+      <code>preload_models</code>(false): Tells Mongoid to preload application
+      model classes on each request in environments where classes are not
+      being cached. Specify an array of class names when enabling, only to the
+      classes that use inheritance.
+    %li
+      <code>protect_sensitive_fields</code>(true): Mongoid by default will auto
+      protect '_id' and '_type' from mass assignment. Set this to false if you
+      are daring with your application's security.
+    %li
+      <code>raise_not_found_error</code>(true): Will raise a
+      <code>Mongoid::Errors::DocumentNotFound</code> when attempting to find a
+      document by an id that doesnt exist. When set to false will only return
+      nil for the same query.
+    %li
+      <code>skip_version_check</code>(false): If you are having issues
+      authenticating against MongoHQ or MongoMachine because of access to the
+      system collection being not allowed, set this to true.
+    %li
+      <code>scope_overwrite_exception</code>(false): This will instruct Mongoid
+      to raise an error if you define a scope with the same name as an existing
+      method.
+    %li
+      <code>use_activesupport_time_zone</code>(true): When in a Rails app will
+      tell Mongoid to convert all times in the application to the local defined
+      time zone in Active Support.
+    %li
+      <code>use_utc</code>(false): Instructs Mongoid to convert all times to
+      UTC times in all cases.
+
+  %p
+    If you would like to see samples, there is one in the
+    <a href="https://github.com/mongoid/mongoid/blob/master/spec/config/mongoid.yml">
+    Mongoid repository</a> and one in the
+    <a href="https://github.com/mongoid/echo/blob/master/config/mongoid.yml">
+    Echo sample application</a>.
+
+
+  %h3 Getting Rid of Active Record
+
+  %p
+    Now that you have a <code>mongoid.yml</code> you can't wait to delete that
+    pesky <code>database.yml</code>, right? Do it and you'll start getting
+    <code>ActiveRecord</code> errors all over the place.
+    You don't need ActiveRecord unless you're trying to use Mongo in concert
+    with a SQL database. Here's how you remove ActiveRecord from the most
+    recent version of Rails 3...
+
+  %p
+    Open <code>myapp/config/application.rb</code> and near the top, remove
+    the line <code>require "rails/all"</code> and add the following lines
+    so you end up with this:
+
+  :coderay
+    #!ruby
+    require "action_controller/railtie"
+    require "action_mailer/railtie"
+    require "active_resource/railtie"
+    require "rails/test_unit/railtie"
+    # require "sprockets/railtie" # Uncomment this line for Rails 3.1+
+
+  %p
+    For Rails 3.2+ you'll also need to remove configuration options for
+    Active Record that reside in your environments, ie
+    <code>myapp/config/environments/development.rb</code>. Make sure the
+    lines are commented out like as follows.
+
+  :coderay
+    #!ruby
+    # config.active_record.mass_assignment_sanitizer = :strict
+    # config.active_record.auto_explain_threshold_in_seconds = 0.5
+
+  %p
+    For Rails 3.2.3+ you'll also need to comment out the following line in
+    <code>myapp/config/application.rb</code>.
+
+  :coderay
+    #!ruby
+    # config.active_record.whitelist_attributes = true
+
+  %p
+    You can also generate your new rails app sans Active Record like so.
+
+  :coderay
+    #!text
+    rails new app_name --skip-active-record
+
+  %h3 Sinatra, Padrino, and others
+
+  %p
+    You can create your <code>mongoid.yml</code> and place it anywhere you like.
+    Just be sure that on application initialization you do the following:
+
+  :coderay
+    #!ruby
+    Mongoid.load!("path/to/your/mongoid.yml")
+
+%section#logging
+  %h2 Logging
+
+  %p
+    Changing logging options is done simply by telling Mongoid or Moped's
+    logger to have a different level. Logging is turned off by default.
+
+  :coderay
+    #!ruby
+    module MyApplication
+      class Application < Rails::Application
+        Mongoid.logger.level = Logger::DEBUG
+        Moped.logger.level = Logger::DEBUG
+      end
+    end
+
+  %p
+    If you want to change the logger instance, you can simply just set a
+    new one.
+
+  :coderay
+    #!ruby
+    Mongoid.logger = Logger.new($stdout)
+    Moped.logger = Logger.new($stdout)
+
+%section#replica
+  %h2 Replica Sets
+
+  %p
+    For replica sets, you only need to put each member of the replica set
+    under the <code>hosts</code> section in your <code>mongoid.yml</code> -
+    Mongoid and Moped will take care of the rest. The default consistency is
+    <code>:eventual</code>, which means that reads will attempt to go to
+    secondaries. If you don't want this, switch this option to
+    <code>:strong</code>, which will send everything to the master node.
+
+  :coderay
+    #!yaml
+    sessions:
+      default:
+        hosts:
+          - repl0.myapp.com:27017
+          - repl1.myapp.com:27017
+          - repl3.myapp.com:27017
+        database: mongoid
+        options:
+          consistency: :strong
+
+%section#sharding
+  %h2 Sharding
+
+  %p
+    If you are using Mongoid in a sharded MongoDB environment and want to tell
+    Mongoid to include the shard keys in its updates, specify this at the
+    model class level.
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+
+      field :first_name, type: String
+      field :last_name, type: String
+
+      shard_key :first_name, :last_name
+    end
+
+  %p
+    In your <code>mongoid.yml</code>, just ensure that you are pointed at the
+    <code>mongos</code> server in your hosts.
+
+  :coderay
+    #!yaml
+    sessions:
+      default:
+        hosts:
+          - mongos.myapp.com:27017
+        database: mongoid
+        options:
+          consistency: :eventual

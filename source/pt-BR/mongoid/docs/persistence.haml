@@ -1,0 +1,689 @@
+- content_for :head do
+  %title Mongoid: Persistence
+
+%h1 Persistence
+
+%p
+  Mongoid supports all expected <tt>CRUD</tt> operations for those familiar
+  with other Ruby mappers like
+  <a href="http://rubyonrails.org/">Active Record</a> or
+  <a href="https://datamapper.org">Data Mapper</a>.
+  What distinguishes Mongoid from other mappers for MongoDB is that the
+  general persistence operations perform atomic
+  updates on only the fields that have changed instead of writing the entire
+  document to the database each time.
+
+%p
+  The persistence sections will provide examples on what database operation
+  is performed when executing the documented command.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Standard", "#standard"
+      %li= link_to "Atomic", "#atomic"
+      %li= link_to "Custom", "#custom"
+
+%section#standard
+  %h2 Standard
+
+  %p
+    Mongoid's standard persistence methods come in the form of common methods
+    you would find in other mapping frameworks. The following table is a cheat
+    sheet with the method in Mongoid on the left, and the Moped driver operation
+    on the right.
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          Mongoid never persists the entire document at once unless it is new.
+          It figures out what has changed, and only ever updates the changed
+          items atomically.
+
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Operation
+        %th Mongoid
+        %th Moped
+    %tbody
+      %tr
+        %td.doc
+          <code>Model.create</code>
+          %p.doc
+            %i Insert a document or multiple documents into the database
+        %td
+          :coderay
+            #!ruby
+            Person.create(
+              first_name: "Heinrich",
+              last_name: "Heine"
+            )
+
+            Person.create([
+              { first_name: "Heinrich", last_name: "Heine" },
+              { first_name: "Willy", last_name: "Brandt" }
+            ])
+
+            Person.create(first_name: "Heinrich") do |doc|
+              doc.last_name = "Heine"
+            end
+        %td
+          :coderay
+            #!ruby
+            collections[:people].insert({
+              first_name: "Heinrich",
+              last_name: "Heine"
+            })
+            collections[:people].insert([
+              { first_name: "Heinrich", last_name: "Heine" },
+              { first_name: "Willy", last_name: "Brandt" }
+            ])
+      %tr
+        %td
+          <code>Model.create!</code>
+          %p.doc
+            %i
+              Insert a document or multiple documents into the database,
+              raising an error if a validation error occurs.
+        %td
+          :coderay
+            #!ruby
+            Person.create!(
+              first_name: "Heinrich",
+              last_name: "Heine"
+            )
+
+            Person.create!(first_name: "Heinrich") do |doc|
+              doc.last_name = "Heine"
+            end
+        %td
+          :coderay
+            #!ruby
+            collections[:people].insert({
+              first_name: "Heinrich",
+              last_name: "Heine"
+            })
+      %tr
+        %td
+          <code>Model#save</code>
+          %p.doc
+            %i
+              Saves the changed attributes to the database
+              atomically, or insert the document if flagged as a new_record via
+              <code>Model#new_record?</code>. Can bypass validations if wanted.
+        %td
+          :coderay
+            #!ruby
+            person = Person.new(
+              first_name: "Heinrich",
+              last_name: "Heine"
+            )
+            person.save
+            person.save(validate: false)
+
+            person.first_name = "Christian Johan"
+            person.save
+        %td
+          :coderay
+            #!ruby
+            collections[:people].insert({
+              first_name: "Heinrich",
+              last_name: "Heine"
+            })
+
+            collections[:people].find(...).
+              update("$set" => { first_name: "Christian Johan" })
+      %tr
+        %td
+          <code>Model#save!</code>
+          %p.doc
+            %i
+              Saves the changed attributes to the database
+              atomically, or insert the document if new. Will
+              raise an error of validations fail.
+        %td
+          :coderay
+            #!ruby
+            person = Person.new(
+              first_name: "Heinrich",
+              last_name: "Heine"
+            )
+            person.save!
+
+            person.first_name = "Christian Johan"
+            person.save!
+        %td
+          :coderay
+            #!ruby
+            collections[:people].insert({
+              first_name: "Heinrich",
+              last_name: "Heine"
+            })
+
+            collections[:people].find(...).
+              update("$set" => { first_name: "Christian Johan" })
+      %tr
+        %td
+          <code>Model#update_attributes</code>
+          %p.doc
+            %i
+              Update the provided attributes atomically.
+        %td
+          :coderay
+            #!ruby
+            person.update_attributes(
+              first_name: "Jean",
+              last_name: "Zorg"
+            )
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).
+              update("$set" => {
+                first_name: "Jean",
+                last_name: "Zorg"
+              })
+      %tr
+        %td
+          <code>Model#update_attributes!</code>
+          %p.doc
+            %i
+              Update the attributes and raise an error if validation fails.
+        %td
+          :coderay
+            #!ruby
+            person.update_attributes!(
+              first_name: "Jean",
+              last_name: "Zorg"
+            )
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).
+              update("$set" => {
+                first_name: "Jean",
+                last_name: "Zorg"
+              })
+      %tr
+        %td
+          <code>Model#update_attribute</code>
+          %p.doc
+            %i
+              Update a single attribute, bypassing validations.
+        %td
+          :coderay
+            #!ruby
+            person.update_attribute(:first_name, "Jean")
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).
+              update("$set" => { first_name: "Jean" })
+      %tr
+        %td
+          <code>Model#upsert</code>
+          %p.doc
+            %i
+              Performs a MongoDB <code>upsert</code> on the document. If the
+              document exists in the database, it will get overwritten with
+              the current attributes of the document in memory. If the document
+              does not exist in the database, it will be inserted. Note that
+              this only runs the <code>{before|after|around}_upsert</code>
+              callbacks.
+        %td
+          :coderay
+            #!ruby
+            person = Person.new(
+              first_name: "Heinrich",
+              last_name: "Heine"
+            )
+            person.upsert
+        %td
+          :coderay
+            #!ruby
+            collections[:people].upsert({
+              first_name: "Heinrich",
+              last_name: "Heine"
+            })
+      %tr
+        %td
+          <code>Model#touch</code>
+          %p.doc
+            %i
+              Update the document's updated_at timestamp, optionally
+              with one extra provided time field. This will cascade the
+              touch to all <code>belongs_to</code> relations of the
+              document with the option set. This operation skips validations
+              and callbacks.
+        %td
+          :coderay
+            #!ruby
+            person.touch
+            person.touch(:audited_at)
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).
+              update("$set" => { updated_at: Time.now })
+
+            collections[:people].find(...).
+              update({
+                "$set" => {
+                  updated_at: Time.now,
+                  audited_at: Time.now
+                }
+              })
+      %tr
+        %td
+          <code>Model#delete</code>
+          %p.doc
+            %i
+              Deletes the document from the database without
+              running callbacks.
+        %td
+          :coderay
+            #!ruby
+            person.delete
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).remove
+      %tr
+        %td
+          <code>Model#destroy</code>
+          %p.doc
+            %i
+              Deletes the document from the database while running
+              destroy callbacks.
+        %td
+          :coderay
+            #!ruby
+            person.destroy
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find(...).remove
+      %tr
+        %td
+          <code>Model.delete_all</code>
+          %p.doc
+            %i
+              Deletes all documents from the database that match the
+              provided attributes. Does not run any callbacks.
+        %td
+          :coderay
+            #!ruby
+            Person.delete_all
+
+            Person.delete_all(first_name: "Heinrich")
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find.remove_all
+
+            collections[:people].find(first_name: "Heinrich").
+              remove_all
+      %tr
+        %td
+          <code>Model.destroy_all</code>
+          %p.doc
+            %i
+              Deletes all documents from the database that match the
+              provided attributes. Runs each document's destroy
+              callbacks
+        %td
+          :coderay
+            #!ruby
+            Person.destroy_all
+
+            Person.destroy_all(first_name: "Heinrich")
+        %td
+          :coderay
+            #!ruby
+            collections[:people].find.remove_all
+
+            collections[:people].find(first_name: "Heinrich").
+              remove_all
+
+%section#atomic
+  %h2 Atomic Persistence
+
+  %p
+    Although Mongoid performs atomic operations under the covers by default,
+    there may be cases where you want to do this explicitly without
+    persisting other fields. Mongoid provides support for all of
+    these operations as well.
+
+    .well
+      %table
+        %tr
+          %td.achtung= image_tag "/images/achtung.png"
+          %td.note
+            When executing atomic operations via these methods, no callbacks
+            will ever get run, nor will any validations.
+
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th Operation
+          %th Mongoid
+          %th Moped
+      %tbody
+        %tr
+          %td.doc
+            <code>Model#add_to_set</code><br/>
+            %p.doc
+              %i Performs an atomic $addToSet on the field.
+          %td
+            :coderay
+              #!ruby
+              person.add_to_set(:aliases, "Bond")
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$addToSet" => { aliases: "Bond" })
+        %tr
+          %td
+            <code>Model#bit</code><br/>
+            %p.doc
+              %i Performs an atomic $bit on the field.
+          %td
+            :coderay
+              #!ruby
+              person.bit(:age, { and: 10, or: 12 })
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$bit" => { age: { and: 10, or: 12 }})
+        %tr
+          %td
+            <code>Model#inc</code><br/>
+            %p.doc
+              %i Performs an atomic $inc on the field.
+          %td
+            :coderay
+              #!ruby
+              person.inc(:age, 1)
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$inc" => { age: 1 })
+        %tr
+          %td
+            <code>Model#pop</code><br/>
+            %p.doc
+              %i Performs an atomic $pop on the field.
+          %td
+            :coderay
+              #!ruby
+              person.pop(:aliases, 1)
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$pop" => { aliases: 1 })
+        %tr
+          %td
+            <code>Model#pull</code><br/>
+            %p.doc
+              %i Performs an atomic $pull on the field.
+          %td
+            :coderay
+              #!ruby
+              person.pull(:aliases, "Bond")
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$pull" => { aliases: "Bond" })
+        %tr
+          %td
+            <code>Model#pull_all</code><br/>
+            %p.doc
+              %i Performs an atomic $pullAll on the field.
+          %td
+            :coderay
+              #!ruby
+              person.pull_all(:aliases, [ "Bond", "James" ])
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$pullAll" => { aliases: [ "Bond", "James" ]})
+        %tr
+          %td
+            <code>Model#push</code><br/>
+            %p.doc
+              %i Performs an atomic $push on the field.
+          %td
+            :coderay
+              #!ruby
+              person.push(:aliases, "007")
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$push" => { aliases: "007" })
+        %tr
+          %td
+            <code>Model#push_all</code><br/>
+            %p.doc
+              %i Performs an atomic $pushAll on the field.
+          %td
+            :coderay
+              #!ruby
+              person.push_all(:aliases, [ "007", "008" ])
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$pushAll" => { aliases: [ "007", "008" ]})
+        %tr
+          %td
+            <code>Model#rename</code><br/>
+            %p.doc
+              %i Performs an atomic $rename on the field.
+          %td
+            :coderay
+              #!ruby
+              person.rename(:bday, :dob)
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$rename" => { "bday" => "dob" })
+        %tr
+          %td
+            <code>Model#set</code><br/>
+            %p.doc
+              %i Performs an atomic $set on the field.
+          %td
+            :coderay
+              #!ruby
+              person.set(:name, "Tyler Durden")
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$set" => { name: "Tyler Durden" })
+        %tr
+          %td
+            <code>Model#unset</code><br/>
+            %p.doc
+              %i Performs an atomic $unset on the field.
+          %td
+            :coderay
+              #!ruby
+              person.unset(:name)
+          %td
+            :coderay
+              #!ruby
+              collections[:people].find(...).
+                update("$unset" => { name: 1 })
+
+%section#custom
+  %h2 Custom
+
+  %p
+    There may be cases where you want to persist documents to different
+    sources from their defaults, or with different options from the default.
+    Mongoid provides run-time support for this as well as support on a per-model
+    basis.
+
+  %h3
+    Model Level Persistence Options
+
+  %p
+    On a per-model basis, you can tell it to store in a custom collection name,
+    a different database, or a different session. The following example would
+    store the Band class by default into a collection named "artists" in the
+    database named "music", with the session "secondary".
+
+    .well
+      %table
+        %tr
+          %td.achtung= image_tag "/images/achtung.png"
+          %td.note
+            Note that the value supplied to the <code>session</code> option must be
+            configured under <code>sessions</code> in your mongoid.yml.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      store_in collection: "artists", database: "music", session: "secondary"
+    end
+
+  %p
+    If no `store_in` macro would have been provided, Mongoid would store the model
+    in a collection named "bands" in the default database in the default session.
+
+  %h3
+    Runtime Persistence Options
+
+  %p
+    You can change at runtime where to store, query, update, or remove documents
+    by prefixing any operation with <code>#with</code>.
+
+  :coderay
+    #!ruby
+    Band.with(database: "music-non-stop").create
+    Band.with(collection: "artists").delete_all
+    band.with(session: :tertiary).save!
+
+  %p
+    Persisting using <code>with</code> is a <i>one time</i> switch in the persistence
+    context - it changes back to its defaults immediately after. Mongoid
+    will not remember anything specific on the document level regarding how it was
+    saved when using this method. A potential gotcha with this is persisting a document
+    via <code>with</code> and then immediately updating it after.
+
+  :coderay
+    #!ruby
+    band = Band.new(name: "Scuba")
+    band.with(collection: "artists").save!
+    band.update_attribute(likes: 1000) # This will not save - tries the collection "bands"
+    band.with(collection: "artists").update_attribute(likes: 1000) # This will update the document.
+
+  %p
+    If you want to switch the persistence context for all operations at runtime,
+    but don't want to be using <code>with</code> all over your code, Mongoid provides
+    the ability to do this as the session and database level globally. The methods
+    for this are <code>Mongoid.override_session</code> and
+    <code>Mongoid.override_database</code>. A useful case for this are internationalized
+    applications that store information for different locales in different databases
+    or sessions, but the schema in each remains the same.
+
+  :coderay
+    #!ruby
+    class BandsController < ApplicationController
+      before_filter :switch_database
+      after_filter :reset_database
+
+      private
+
+      def switch_database
+        I18n.locale = params[:locale] || I18n.default_locale
+        Mongoid.override_database("my_db_name_\#{I18n.locale}")
+      end
+
+      def reset_database
+        Mongoid.override_database(nil)
+      end
+    end
+
+  %p
+    In the above example, all persistence operations would be stored in the
+    alternative database <i>for all remaining operations on this thread</i>.
+    This is why the after request set the override back to nil - it ensures
+    subsequent requests with no local params use the default option.
+
+  %p
+    <code>#with</code>is also used for changing safe mode options temporarily
+    at runtime.
+
+  :coderay
+    #!ruby
+    Band.with(safe: true).create
+    Band.with(safe: { w: 3 }).create!
+
+  %p
+    The values that can be passed with <code>:safe</code> are:
+
+  %ul
+    %li <code>true</code>: Persist in safe mode, no extra options.
+    %li <code>false</code>: Don't persist in safe mode.
+    %li <code>fsync: true|false</code>: Whether to perform an fsync.
+    %li <code>w: n</code>: The number of nodes to write to before returning.
+    %li <code>wtimeout: n</code>: The timeout value for writing to multiple nodes.
+
+  %h3 Session and Collection Access
+
+  %p
+    If you want to drop down to the driver level to perform operations, you
+    can grab the Moped session or collection from the model or document instance.
+
+  :coderay
+    #!ruby
+    Band.mongo_session
+    band.mongo_session
+    Band.collection
+    band.collection
+
+  %p
+    From here you also have the same runtime persistence options using Moped's
+    <code>#with</code>. The Moped documentation will go into more detail
+    about this.
+
+  :coderay
+    #!ruby
+    Band.mongo_session.with(safe: false, database: "musik") do |session|
+      session[:artists].find(...)
+    end
+
+  %h3 Capped Collections
+
+  %p
+    Mongoid does not provide a mechanism for creating capped collections on
+    the fly - you will need to create these yourself one time up front either
+    with Moped or via the Mongo console.
+
+  %p
+    To create a capped collection with Moped:
+
+  :coderay
+    #!ruby
+    session.command(create: "name", capped: true, size: 10000000, max: 1000)
+
+  %p
+    To create a capped collection from the Mongo console:
+
+  :coderay
+    #!javascript
+    db.createCollection("name", { capped: true, size: 10000000, max: 1000 });

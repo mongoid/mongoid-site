@@ -1,0 +1,44 @@
+- content_for :head do
+  %title Origin: Aliases
+
+%h1 Aliases
+
+%p
+  In MongoDB, since the database is schemaless and the field names are
+  included for every document in the JSON, much more storage space is
+  required than traditional databases with schemas. Because of this,
+  a common practice is to store very short field names in the documents
+  to conserve space. This is not ideal from a business domain standpoint
+  so mappers like Mongoid provide alias functionality to keep the
+  domain model expressive. An example of this in Mongoid is:
+
+:coderay
+  #!ruby
+  class Band
+    include Mongoid::Document
+    field :n, as: :name, type: String
+  end
+
+%p
+  In the above example you can reference the field by `Band#name`, but the
+  field in the database is stored as `n`. We want to maintain this
+  expressiveness in querying the database as well, so the Queryable needs
+  a hash to know how to map the name to the field in the database. You pass
+  this as the first argument to the queryable's constructor.
+
+:coderay
+  #!ruby
+  class Query
+    include Origin::Queryable
+  end
+
+  queryable = Query.new({ "name" => "n" })
+
+%p
+  The aliases hash *must* be string keys and string values. Then you can do
+  this and it will get converted to the database field name `n`:
+
+:coderay
+  #!ruby
+  queryable.where(name: "value")
+  queryable.selector #=> { "n" => "value" }

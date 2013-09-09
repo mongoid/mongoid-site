@@ -1,0 +1,33 @@
+- content_for :head do
+  %title Origin: Home
+
+%h1 Origin
+
+%p
+  Origin provides a DSL to mix in to any object to give it the ability
+  to build MongoDB queries easily. It was extracted from
+  <a href="/mongoid/index.html">Mongoid</a> in an attempt to allow
+  others to leverage the DSL in their own applications without needing
+  a mapper.
+
+%h2 Sample Syntax
+
+.well
+  %table
+    %tr
+      %td.achtung= image_tag "/images/achtung.png"
+      %td.note
+        Origin only supports MRI 1.9.2, 1.9.3, and HEAD, Rubinius 2 in 1.9 mode,
+        and JRuby 1.6.0+ in 1.9 mode. All code samples will use 1.9 syntax.
+
+:coderay
+  #!ruby
+  class Criteria
+    include Origin::Queryable
+  end
+
+  criteria = Criteria.new
+  criteria = criteria.where(name: "Syd").gt(age: 10).desc(:created_at)
+
+  criteria.selector #=> { name: "Syd", age: { "$gt" => 10 }}
+  criteria.options  #=> { sort: { created_at: -1 }}

@@ -1,0 +1,68 @@
+- content_for :head do
+  %title Mongoid: Donate
+
+.hero-unit
+  %h1
+    %span.heart &hearts;
+    Support Mongoid
+
+.well
+  %h3.grey
+    With over 800,000 gem downloads over the course of the last 3.5 years,
+    Mongoid has been an actively maintained and popular project in the
+    Ruby community. I'd like to keep the project and it's ecosystem
+    going strong in the years to come, but your support is needed in
+    order to make this happen.
+
+.well
+  %h5.grey
+    The current time alotted to gems in the Mongoid organization is around
+    8 hours a week. This includes the following gems and projects:
+
+    %ul.highlight
+      %li
+        <a href="http://github.com/mongoid/mongoid">Mongoid</a>:
+        The core Ruby ODM for MongoDB.
+      %li
+        <a href="http://github.com/mongoid/moped">Moped</a>:
+        Our pure Ruby driver for MongoDB.
+      %li
+        <a href="http://github.com/mongoid/origin">Origin</a>:
+        A DSL for generating MongoDB queries.
+      %li
+        <a href="http://github.com/mongoid/moped-turbo">Moped-Turbo</a> (in development):
+        C Extensions for Moped.
+      %li
+        <a href="http://github.com/mongoid/evolver">Evolver</a> (in development):
+        Rails migrations for MongoDB.
+      %li
+        <a href="http://github.com/mongoid/scooter">Scooter</a> (in development):
+        An asynchronous JVM driver for MongoDB.
+
+    1 day a week is simply not enough time to keep up with all the needed work for
+    these projects, which includes bug fixes, new feature implementations,
+    maintaining documentation, answering direct emails, and answering
+    questions on twitter and the mailing list.
+
+.well
+  %h2 The Goal: &euro;20,000
+
+.well
+  %h4.grey
+    If this amount of money can be raised, I can stop my part-time job and dedicate
+    20-30 hours a week to all projects in the Mongoid organization for the foreseeable
+    future. This would also include availability again in the <code>#mongoid</code>
+    IRC channel for those who need immediate assistance during reasonable hours.
+
+.well
+  %h5.grey
+    The buttons below link to the donation pages on both Pledgie and WePAY. If you
+    do not want to donate via either of those methods and would prefer to send
+    money directly, please email me at <span class="red">durran at gmail dot com</span> for
+    bank details. <span class="red"><i>Please ensure to include your Github username as well when
+    sending donations if you do not wish to be anonymous<i></span>.
+
+.well
+  = link_to "http://www.pledgie.com/campaigns/7757" do
+    <img alt='Click here to lend your support to: Mongoid' src='http://www.pledgie.com/campaigns/7757.png?skin_name=chrome' border='0'/>
+  <a class="wepay-widget-button wepay-green" id="wepay_widget_anchor_50813546b6bda" href="https://www.wepay.com/donations/53299">Donate via WePAY</a><script type="text/javascript">var WePay = WePay || {};WePay.load_widgets = WePay.load_widgets || function() { };WePay.widgets = WePay.widgets || [];WePay.widgets.push( {object_id: 53299,widget_type: "donation_campaign",anchor_id: "wepay_widget_anchor_50813546b6bda",widget_options: {list_suggested_donations: true,allow_cover_fee: true,enable_recurring: true,allow_anonymous: true,button_text: "Donate via WePAY"}});if (!WePay.script) {WePay.script = document.createElement('script');WePay.script.type = 'text/javascript';WePay.script.async = true;WePay.script.src = 'https://static.wepay.com/min/js/widgets.v2.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(WePay.script, s);} else if (WePay.load_widgets) {WePay.load_widgets();}</script>
