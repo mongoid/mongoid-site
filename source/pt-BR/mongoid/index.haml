@@ -1,0 +1,50 @@
+- content_for :head do
+  %title Mongoid: Home
+
+%h1 Mongoid
+
+%p
+  Mongoid (pronounced mann-goyd) is an Object-Document-Mapper (ODM) for
+  <a href="http://mongodb.org">MongoDB</a> written in Ruby. It was conceived in August,
+  2009 during a whiskey-induced evening at the infamous Oasis in Florida,
+  USA by <a href="http://github.com/durran">Durran Jordan</a>.
+
+%p
+  The philosophy of Mongoid is to provide a familiar API to Ruby developers
+  who have been using Active Record or Data Mapper, while leveraging the
+  power of MongoDB's schemaless and performant document-based design, dynamic
+  queries, and atomic modifier operations.
+
+%p
+  %i
+    This is the site for Mongoid 3 documentation, along with Origin and Moped. If you
+    want the Mongoid 2 docs, <a href="http://two.mongoid.org">please go here</a>.
+
+%h2 Sample Syntax
+
+.well
+  %table
+    %tr
+      %td.achtung= image_tag "/images/achtung.png"
+      %td.note
+        Mongoid only supports MRI 1.9.3, and HEAD, and JRuby 1.6.0+ in
+        1.9 mode. All code samples will use 1.9 syntax.
+
+:coderay
+  #!ruby
+
+  class Artist
+    include Mongoid::Document
+    field :name, type: String
+    embeds_many :instruments
+  end
+
+  class Instrument
+    include Mongoid::Document
+    field :name, type: String
+    embedded_in :artist
+  end
+
+  syd = Artist.where(name: "Syd Vicious").between(age: 18..25).first
+  syd.instruments.create(name: "Bass")
+  syd.with(database: "bands", session: "backup").save!

@@ -1,0 +1,281 @@
+- content_for :head do
+  %title Mongoid: Tips
+
+%h1 Tips and FAQs
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Ruby 1.9.3", "#ruby"
+      %li= link_to "Counts", "#count_performance"
+      %li= link_to "Reordering", "#reorder_embedded"
+      %li= link_to "GridFS", "#gridfs"
+      %li= link_to "Relational Data", "#relational_associations"
+      %li= link_to "Safe Mode", "#safe_mode"
+      %li= link_to "Other Mappers", "#other_mappers"
+      %li= link_to "Sidekiq", "#sidekiq"
+
+%section#ruby
+  %h2 Ruby 1.9.3
+
+  %p
+    Are you getting an error like the following?
+
+  :coderay
+    #!ruby
+    NoMethodError: undefined method `[]' for nil:NilClass
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:74:in `block in command'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:522:in `[]'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:522:in `block (3 levels) in flush'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:521:in `map'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:521:in `block (2 levels) in flush'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:113:in `ensure_connected'
+      from /.rvm/gems/ruby-1.9.2-p290/gems/moped-1.1.0/lib/moped/node.rb:517:in `block in flush'
+
+  %p
+    If so, this is your issue. Until 1.9.3, Ruby did not have a way to decode binary
+    string data accurately for both big endian and little endian systems across all the
+    data types used in the MongoDB wire protocol. All data sent via the wire protocol,
+    as well as the BSON specification itself use little endian and the ability to decode
+    32 bit and 64 bit signed longs and ints did not arrive in Ruby until this
+    version. See <a href="http://ruby-doc.org/core-1.9.3/String.html#method-i-unpack">
+    <code>String#unpack</code></a> and
+    <a href="http://www.mongodb.org/display/DOCS/Mongo+Wire+Protocol">Mongo Wire Protocol</a>
+    for more detailed information.
+
+  %p
+    What this means is that prior to 1.9.3, the data received back from big
+    endian systems such as SPARC or PPC would get incorrect data decoded when receiving
+    replies from the database. We have thus made 1.9.3 the minimum requirement
+    to be able to support all architectures.
+
+  %p
+    For those of you on Heroku bamboo, you will need to do two things in order to
+    run on 1.9.3 in your applications. First, you will need to upgrade to the
+    Cedar stack, and then you will need to specify 1.9.3 as your Ruby in your
+    application's <code>Gemfile</code>.
+    See <a href="http://blog.heroku.com/archives/2012/5/9/multiple_ruby_version_support_on_heroku/">
+    Multiple Rubies on Heroku</a> for instructions on making this migration.
+
+%section#count_performance
+  %h2 Count Performance
+
+  %p
+    MongoDB uses non counting B-Tree indexes which causes issuing count commands
+    to be extremely slow when providing a selector with the command. For example:
+
+  :coderay
+    #!ruby
+    Band.where(name: "Depeche Mode").count
+    session[:bands].find(name: "Depeche Mode").count
+
+  %p
+    This doesn't affect queries on small data sets, but large data sets (millions
+    of documents) can experience count queries in the neighborhood of seconds,
+    which can easily cripple application performance.
+
+    %ul
+      %li See: <a href="http://jira.mongodb.org/browse/SERVER-1752">SERVER-1752</a>
+      %li See: <a href="http://jira.mongodb.org/browse/SERVER-2274">SERVER-2274</a>
+
+%section#reorder_embedded
+  %h2 Reordering Embedded Documents
+
+  %p
+    Due to only a partially implemented feature in MongoDB, the <code>$</code>
+    positional operator, it is not possible to accurately update embedded
+    documents that are nested more than one level deep based on a query
+    selector. For example:
+
+  :coderay
+    #!ruby
+    session[:bands].find(
+      "_id" => 1,
+      "albums._id" => 2,
+      "albums.tracks._id" => 3,
+    ).update(
+      "$set" => { "albums.$.tracks.$.name" => "Sober" }
+    )
+
+  %p
+    The above query does not work, and is not possible in MongoDB. To get around
+    this, Mongoid stores the index of the embedded documents in memory, and
+    would execute the same query like so:
+
+  :coderay
+    #!ruby
+    session[:bands].find(
+      "_id" => 1,
+      "albums._id" => 2,
+      "albums.tracks._id" => 3,
+    ).update(
+      "$set" => { "albums.0.tracks.2.name" => "Sober" }
+    )
+
+  %p
+    This works, however it comes with a caveat in that you cannot reorder your
+    embedded documents in another process. If you were to do so, Mongoid would
+    be updating the incorrect field. It is recommended until this is fixed that
+    you sort your documents in memory and leave the underlying order untouched.
+    See <a href="http://jira.mongodb.org/browse/SERVER-831">SERVER-831</a> for
+    more information.
+
+%section#gridfs
+  %h2 No GridFS Support
+
+  %p
+    GridFS is marketed as a core database feature, when in fact it is not. It is
+    simply a <i>pattern</i> for storing chunked file data as documents in a
+    collection, just like any other document. The implementation of this
+    behaviour is handled in the client drivers, not in the core database itself,
+    which can lead to discrepencies in how this is handled across platforms.
+
+  %p
+    Even if having this behaviour in the client is acceptable, the effects of this
+    on application performance where you are not just storing file data is quite
+    large. Since files are stored as documents, they consume RAM just as any other
+    document in the database would, and can easily cause memory consumption on
+    your server to max out. There are also limitations in chunking the data, such
+    as you do not have the ability to update a file - you must delete the file
+    and replace it with a new one.
+
+  %p
+    Given this, we did not prioritize any work with GridFS at the front, but
+    there is a gem in the pipeline for those who can wait a bit to upgrade.
+    In the meantime you have a few options.
+
+  %li
+    %ul
+      Use the 10gen driver in conjunction with Mongoid 3 and Moped - the
+      namespaces will not collide.
+    %ul
+      Take advantage of Ara Howard's <code>mongoid-grid_fs</code> gem:
+      <a href="https://github.com/ahoward/mongoid-grid_fs">mongoid-grid_fs</a>
+
+%section#relational_associations
+  %h2 Relational Associations
+
+  %p
+    Mongoid provides relational-style associations as a convenience for
+    application developers who are used to dealing with relational databases,
+    but we do not recommend you use these extensively.
+
+  %p
+    MongoDB provides no transactions, and no join support, so it is
+    impossible to ensure that the database is kept in a consistent state with
+    regards to referencing documents from one collection to another. Also,
+    without support for joins, you will find that the number of database
+    queries executed grows in order to retrieve documents with their
+    associations, and can have a huge affect on performance since this is
+    not where MongoDB's power lies.
+
+  %p
+    If you find that you have more relational associations in your application
+    than embedded ones, it is recommended that you not use MongoDB and move
+    to a relational database. Also, you will probably find this feature removed
+    in future versions of Mongoid, in order to not allow developers to use
+    the database in an incorrect fashion.
+
+%section#safe_mode
+  %h2 Safe Mode
+
+  %p
+    By default, safe mode is turned off by default due to that being MongoDB's
+    recommendation. However for users, especially first timers, we recommend
+    that you always have this setting on at least in development and test mode.
+    This will help you understand what is going on with more clarity, instead
+    of jsut making the assumption that your data was actually persisted.
+
+  %p
+    To ensure safe mode is on in development and test, you should simply
+    configure this in your <code>mongoid.yml</code>:
+
+  :coderay
+    #!yaml
+    development:
+      sessions:
+        default:
+          database: my_app_dev
+          hosts:
+            - localhost:27017
+          options:
+            safe: true
+    test:
+      sessions:
+        default:
+          database: my_app_test
+          hosts:
+            - localhost:27017
+          options:
+            safe: true
+
+  %p
+    Also we recommend keeping an eye on the MongoDB logs if you are also getting
+    started, as safe mode itself won't even catch all errors - sometimes MongoDB
+    will simply log an error on the server but send a message back to the client
+    that the operation succeeded.
+
+    %ul
+      %li On OSX (with Homebrew): <code>/usr/local/var/log/mongodb/output.log</code>
+      %li On Ubuntu (with apt-get): <code>/var/log/mongodb/mongodb.log</code>
+
+%section#other_mappers
+  %h2 Working With Other Mappers
+
+  %p
+    It's not always the case that you are using MongoDB as your only database, and
+    some apps like to combine databases for different use cases. Below is an example
+    of accessing an Active Record model from Mongoid manually.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+
+      field :user_id, type: Integer
+
+      def user
+        @user ||= User.find(user_id)
+      end
+
+      def user=(user)
+        self.user_id = user.id
+        @user = user
+      end
+    end
+
+    class User < ActiveRecord::Base
+    end
+
+%section#sidekiq
+  %h2 Sidekiq
+
+  %p
+    If you are using Sidekiq, you need to ensure that MongoDB sessions are
+    diconnected after each worker runs, or you will quickly overload MongoDB
+    with more active connections that it can handle. In order to handle this
+    seamlessly for you, we have provided a gem with a Sidekiq middleware that
+    handles this - <a href="https://github.com/mongoid/kiqstand">Kiqstand</a>.
+    You will need to be on Mongoid version 3.0.3 or higher.
+
+  %p
+    To use Kiqstand, first add it to your <code>Gemfile</code>.
+
+  :coderay
+    #!ruby
+    gem "kiqstand"
+
+  %p
+    When you intialize Sidekiq, add the middleware to the Kiqstand server
+    stack.
+
+  :coderay
+    #!ruby
+    Sidekiq.configure_server do |config|
+      config.server_middleware do |chain|
+        chain.add Kiqstand::Middleware
+      end
+    end
+
+  %p
+    After this, all connection handling is taken care of for you.
