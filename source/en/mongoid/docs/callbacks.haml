@@ -107,10 +107,28 @@
       %li <code>before_add</code>
       %li <code>before_remove</code>
 
+  %p
     Each time a document is added or removed from any of the following relations,
     the respective callbacks are fired: <code>embeds_many</code>,
     <code>has_many</code>, and <code>has_and_belongs_to_many</code>.
 
+  %p
+    Relation Callbacks are specified as an option on the relation. The element added/removed is the parameter to the method you call via the callback. Example:
+
+    :coderay
+      #!ruby
+      class Person
+        include Mongoid::Document
+
+        has_many :posts, after_add: :send_email_to_subscribers
+      end
+
+      def send_email_to_subscribers(post)
+        Notifications.new_post(post).deliver
+      end
+
+  %p
+    Relation Callbacks are not available to Observers.
 
 %section#observers
   %h2 Observers
