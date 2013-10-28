@@ -417,7 +417,7 @@
         %td
           :coderay
             #!ruby
-            query.update(name: "Tool")
+            query.update('$set' => {name: "Tool"})
       %tr
         %td.doc
           <code>Query#update_all</code>
@@ -427,7 +427,7 @@
         %td
           :coderay
             #!ruby
-            query.update_all(pending: true)
+            query.update_all('$set' => {pending: true})
       %tr
         %td.doc
           <code>Query#upsert</code>
