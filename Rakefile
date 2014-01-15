@@ -62,15 +62,12 @@ task :generate do
 
   puts "Generating 301 meta redirects."
 
-  Dir.mkdir("build/docs") unless Dir.exists?("build/docs")
-  Dir.mkdir("build/docs/installation") unless Dir.exists?("build/docs/installation")
-  Dir.mkdir("build/docs/documents") unless Dir.exists?("build/docs/documents")
-  Dir.mkdir("build/docs/persistence") unless Dir.exists?("build/docs/persistence")
-  Dir.mkdir("build/docs/querying") unless Dir.exists?("build/docs/querying")
-  Dir.mkdir("build/docs/relations") unless Dir.exists?("build/docs/relations")
-  Dir.mkdir("build/docs/relations/embedded") unless Dir.exists?("build/docs/relations/embedded")
-  Dir.mkdir("build/docs/relations/referenced") unless Dir.exists?("build/docs/relations/referenced")
-  Dir.mkdir("build/docs/rails") unless Dir.exists?("build/docs/rails")
+  folders = ['docs', 'docs/installation', 'docs/documents', 'docs/persistence', 'docs/querying',
+    'docs/relations', 'docs/relations/embedded', 'docs/relations/referenced', 'docs/rails']
+
+  folders.each do |dir|
+    Dir.mkdir("build/#{dir}") unless Dir.exists?("build/#{dir}")
+  end
 
   MAPPINGS.each_pair do |old, new|
     File.open("build#{old}", "w") do |file|
@@ -79,3 +76,5 @@ task :generate do
     end
   end
 end
+
+task :default => :generate
