@@ -253,7 +253,7 @@
   %p
     If you are using Sidekiq, you need to ensure that MongoDB sessions are
     diconnected after each worker runs, or you will quickly overload MongoDB
-    with more active connections that it can handle. In order to handle this
+    with more active connections than it can handle. In order to handle this
     seamlessly for you, we have provided a gem with a Sidekiq middleware that
     handles this - <a href="https://github.com/mongoid/kiqstand">Kiqstand</a>.
     You will need to be on Mongoid version 3.0.3 or higher.
