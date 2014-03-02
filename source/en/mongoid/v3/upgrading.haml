@@ -1,0 +1,376 @@
+- content_for :head do
+  %title Mongoid: Upgrading
+
+%h1 Upgrading
+
+%p
+  Use this as a reference when upgrading between Mongoid versions.
+  You can always reference the
+  <a href="http://github.com/mongoid/mongoid/blob/master/CHANGELOG.md">
+  <code>CHANGELOG</code></a> for bug fixes, new features, and major changes
+  between versions.
+
+.well
+  %table
+    %tr
+      %td.achtung= image_tag "/images/achtung.png"
+      %td.note
+        Mongoid follows versioning guidelines as outlined by the
+        <a href="http://semver.org/">Semantic Versioning Specification</a>, so
+        you can expect only backwards incompatible changes in major versions.
+
+%h2 Upgrading to 3.0
+
+%p
+  If you are just wanting to generate a new <code>mongoid.yml</code> from
+  scratch, ensure you delete the old one first so you do not get validation
+  errors when initializing the app at generation time.
+
+%p
+  The following are backwards incompatible changes in this release.
+
+%ul.incompatible
+  %li
+    %i.icon-warning-sign
+    bson and bson_ext gems are no longer necessary, and `BSON::ObjectId` objects
+    are no longer compatible with Mongoid documents. Use
+    <code>Moped::BSON::ObjectId</code> instead. It is safe to remove both gems
+    from your Gemfile and any other dependencies. They have been replaced by
+    Moped (see <a href="/en/moped/docs/bson.html"><code>Moped::BSON</code></a>).
+
+    Note that if you had not been converting your object ids to strings and
+    were storing them in any way that would cause a Marshal dump, you may need
+    to restore these values as strings. This is because the internals of
+    Moped's BSON and the 10gen BSON gem are not designed in the same manner,
+    even though both have the same public API and adhere to the same spec.
+
+  %li
+    %i.icon-warning-sign
+    GridFS support no longer exists. If you are using GridFS, you cannot
+    upgrade.
+
+  %li
+    %i.icon-warning-sign
+    Indexing syntax has changed. The first parameter is now a hash of
+    name/direction pairs with an optional second hash parameter for
+    additional options.
+
+    %p Normal indexing with options, directions are either 1 or -1:
+
+    :coderay
+      #!ruby
+      class Band
+        include Mongoid::Document
+        field :name, type: String
+        index({ name: 1 }, { unique: true, background: true })
+      end
+
+    %p Geospatial indexing needs "2d" as its direction.
+
+    :coderay
+      #!ruby
+      class Venue
+        include Mongoid::Document
+        field :location, type: Array
+
+        index location: "2d"
+      end
+
+  %li
+    %i.icon-warning-sign
+    Custom serializable fields have revamped. Your object no longer should
+    include <code>Mongoid::Fields::Serializable</code> - instead it only needs to
+    implement 4 methods: <code>#mongoize</code>, <code>.mongoize</code>, 
+    <code>.demongoize</code> and <code>.evolve</code>.
+
+    %p
+      See <a href="/en/mongoid/docs/documents.html#custom_fields">Custom Fields Serialization</a>
+      for details on the implementation.
+
+  %li
+    %i.icon-warning-sign
+    <code>Document#changes</code> is no longer a hash with indifferent access.
+
+  %li
+    %i.icon-warning-sign
+    <code>after_initialize</code> callbacks no longer cascade to children if the option
+    is set.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1865">#1865</a>
+    <code>count</code> on the memory and mongo contexts now behave exactly the
+    same as Ruby's <code>count</code> on enumerable, and can take an object or a block.
+    This is optimized on the mongo context not to load everything in memory
+    with the exception of passing a block.
+
+    :coderay
+      #!ruby
+      Band.where(name: "Tool").count
+      Band.where(name: "Tool").count(tool) # redundant.
+      Band.where(name: "Tool") do |doc|
+        doc.likes > 0
+      end
+
+    %p
+      Note that although the signatures are the same for both the memory and
+      mongo contexts, it's recommended you only use the block syntax for the
+      memory context since the embedded documents are already loaded into
+      memory.
+
+    %p
+      Also note that passing a boolean to take skip and limit into account
+      is no longer supported, as this is not necessarily a useful feature.
+
+  %li
+    %i.icon-warning-sign
+    The <code>autocreate_indexes</code> configuration option has been removed.
+
+  %li
+    %i.icon-warning-sign
+    <code>Model.defaults</code> no longer exists. You may get all defaults with a
+    combination of <code>Model.pre_processed_defaults</code> and
+    <code>Model.post_processed_defaults</code>.
+
+    :coderay
+      #!ruby
+      Band.pre_processed_defaults
+      Band.post_processed_defaults
+
+  %li
+    %i.icon-warning-sign
+    <code>Model.identity</code> and <code>Model.key</code> have been removed.
+    For custom ids, users must now override the _id field.
+
+    %p
+      When the default value is a proc, the default is applied *after* all
+      other attributes are set.
+
+    :coderay
+      #!ruby
+      class Band
+        include Mongoid::Document
+        field :_id, type: String, default: ->{ name }
+      end
+
+    %p
+      To have the default applied <i>before</i> other attributes, set
+      <code>:pre_processed</code> to true.
+
+    :coderay
+      #!ruby
+      class Band
+        include Mongoid::Document
+        field :_id,
+          type: String,
+          pre_processed: true,
+          default: ->{ Moped::BSON::ObjectId.new.to_s }
+      end
+
+  %li
+    %i.icon-warning-sign
+    Custom application exceptions in various languages has been removed,
+    along with the <code>Mongoid.add_language</code> feature.
+
+  %li
+    %i.icon-warning-sign
+    Mongoid no longer supports 1.8 syntax. 1.9.x or other vms running in
+    1.9 mode is now only supported.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1734">#1734</a>
+    When searching for documents via <code>Model.find</code> with multiple ids,
+    Mongoid will raise an error if not <i>all</i> ids are found, and tell you
+    what the missing ones were. Previously the error only got raised if
+    nothing was returned.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1675">#1675</a>
+    Adding presence validation on a relation now enables autosave.
+    This is to ensure that when a new parent object is saved with a new
+    child and marked is valid, both are persisted to ensure a correct
+    state in the database.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1484">#1484</a>
+    <code>Model#has_attribute?</code> now behaves the same as Active Record.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1475">#1475</a>
+    Active Support's time zone is now used by default in time
+    serialization if it is defined.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1471">#1471</a>
+    Mongoid no longer strips any level of precision off of times.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1342">#1342</a>
+    <code>Model.find</code> and <code>model.relation.find</code> now only
+    take a single or multiple ids. <code>Model.first</code>, <code>Model.last</code>
+    also no longer take arguments. For these use <code>Model.find_by</code>
+    instead.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1291">#1291</a>
+    The <code>mongoid.yml</code> has been revamped completely, and upgrading
+    existing applications will greet you with some lovely Mongoid specific
+    configuration errors. You can re-generate a new mongoid.yml via the
+    existing rake task, which is commented to an insane degree to help you
+    with all the configuration possibilities.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1291">#1291</a>
+    The <code>persist_in_safe_mode</code> configuration option has been removed.
+    You must now tell a database session in the mongoid.yml whether or not
+    it should persist in safe mode by default.
+
+    :coderay
+      #!yaml
+      production:
+        sessions:
+          default:
+            database: my_app_prod
+            hosts:
+              - db.app.com:27018
+              - db.app.com:27019
+            options:
+              consistency: :eventual
+              safe: true
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1291">#1291</a>
+    <code>safely</code> and <code>unsafely</code> have been removed.
+    Please now use <code>with</code> to provide safe mode options at runtime.
+
+    :coderay
+      #!ruby
+      Band.with(safe: true).create
+      band.with(safe: { w: 3 }).save!
+      Band.with(safe: false).create!
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1270">#1270</a>
+    Relation macros have been changed to match their AR counterparts:
+    only <code>:has_one</code>, <code>:has_many</code>,
+    <code>:has_and_belongs_to_many</code>, and <code>:belongs_to</code>
+    exist now.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1268">#1268</a>
+    <code>Model#new?</code> has been removed, developers must now always use
+    <code>Model#new_record?</code>.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1182">#1182</a>
+    A reload is no longer required to refresh a relation after setting
+    the value of the foreign key field for it. Note this behaves exactly as
+    Active Record.
+
+    %p
+      If the id is set, but the document for it has not been persisted, accessing
+      the relation will return empty results.
+
+    %p
+      If the id is set and its document is persisted, accessing the relation
+      will return the document.
+
+    %p
+      If the id is set, but the base document is not saved afterwards, then
+      reloading will return the document to its original state.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/1093">#1093</a>
+    Field serialization strategies have changed on Array, Hash, Integer
+    and Boolean to be more consistent and match AR where appropriate.
+
+    %p
+      Serialization of arrays calls <code>Array.wrap(object)</code>
+
+    %p
+      Serialization of hashes calls <code>Hash[object]</code> (to_hash on the object)
+
+    %p
+      Serialization of integers always returns an int via <code>to_i</code>
+
+    %p
+      Serialization of booleans defaults to false instead of nil.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/933">#933</a>
+    <code>:field.size</code> has been renamed to <code>:field.with_size</code>
+    in criteria for $size not to conflict with Symbol's size method.
+
+  %li
+    %i.icon-warning-sign
+    <a href="http://github.com/mongoid/mongoid/issues/797">#797</a>
+    Mongoid scoping code has been completely rewritten, and now
+    matches the Active Record API. With this backwards incompatible change,
+    some methods have been removed or renamed.
+
+    %p
+      <code>Criteria#as_conditions</code> and <code>Criteria#fuse</code>
+      no longer exist.
+
+    %p
+      <code>Criteria#merge</code> now only accepts another object that responds to
+      <code>to_criteria</code>.
+
+    %p
+      <code>Criteria#merge!</code> now merges in another object without creating a new
+      criteria object.
+
+    :coderay
+      #!ruby
+      Band.where(name: "Tool").merge!(criteria)
+
+    %p
+      Named scopes and default scopes no longer take hashes as parameters.
+      From now on only criteria and procs wrapping criteria will be
+      accepted, and an error will be raised if the arguments are incorrect.
+
+    :coderay
+      #!ruby
+      class Band
+        include Mongoid::Document
+
+        default_scope ->{ where(active: true) }
+        scope :inactive, where(active: false)
+        scope :invalid, where: { valid: false } # This will raise an error.
+      end
+
+    %p
+      The <code>named_scope</code> macro has been removed, from now on only
+      use <code>scope</code>.
+
+    %p
+      <code>Model.unscoped</code> now accepts a block which will not allow
+      default scoping to be applied for any calls inside the block.
+
+    :coderay
+      #!ruby
+      Band.unscoped do
+        Band.scoped.where(name: "Ministry")
+      end
+
+    %p
+      <code>Model.scoped</code> now takes options that will be set directly
+      on the criteria options hash.
+
+    :coderay
+      #!ruby
+      Band.scoped(skip: 10, limit: 20)

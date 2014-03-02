@@ -1,0 +1,915 @@
+- content_for :head do
+  %title Mongoid: Documents
+
+%h1 Documents
+
+%p
+  Documents are the core objects in Mongoid and any object that is to be
+  persisted to the database must include <code>Mongoid::Document</code>. The
+  representation of a Document in MongoDB is a BSON object that is very similar
+  to a Ruby hash or JSON object. Documents can be stored in their own
+  collections in the database, or can be embedded in other Documents n levels
+  deep.
+
+.page-nav
+  .container
+    %ul.nav.nav-pills
+      %li= link_to "Storage", "#storage"
+      %li= link_to "Fields", "#fields"
+      %li= link_to "Dynamic Fields", "#dynamic_fields"
+      %li= link_to "Localized Fields", "#localized_fields"
+      %li= link_to "Dirty Tracking", "#dirty"
+      %li= link_to "Security", "#security"
+      %li= link_to "Readonly Attributes", "#readonly"
+      %li= link_to "Inheritance", "#inheritance"
+
+%section#storage
+  %h2 Storage
+
+  %p
+    Mongoid by default stores documents in a collection that is the pluralized
+    form of the class name. For the following <code>Person</code> class, the
+    collection the document would get stored in would be named <code>people</code>.
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+    end
+
+  %p
+    Model class name cannot end with "s", because it will be considered as
+    the pluralized form of the word. For example <code>Status</code> would be considered
+    as the plural form of <code>Statu</code>, which will cause a few known problems.
+
+  %p
+    This is a limitation of the <code>ActiveSupport::Inflector#classify</code> which
+    Mongoid uses to convert from filenames and collection names to class names.
+    You can overcome this by specifying a custom inflection rule for your model class.
+    For example, the following code will take care of the model named <code>Status</code>
+
+  :coderay
+    #!ruby
+    ActiveSupport::Inflector.inflections do |inflect|
+      inflect.singular("status", "status")
+    end
+
+  %p
+    The collection for the model's documents can be changed at the class level
+    if you would like them persisted elsewhere. You can also change the database
+    and session the model gets persisted in from the defaults.
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+      store_in collection: "citizens", database: "other", session: "secondary"
+    end
+
+  %p
+    The <code>store_in</code> macro can also take lambdas - a common case for this
+    is multi-tenant applications.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      store_in database: ->{ Thread.current[:database] }
+    end
+
+  %p
+    When a document is stored in the database the ruby object will get
+    serialized into BSON and have a structure like so:
+
+  :coderay
+    #!javascript
+    {
+      "_id" : ObjectId("4d3ed089fb60ab534684b7e9"),
+      "title" : "Sir",
+      "name" : {
+        "_id" : ObjectId("4d3ed089fb60ab534684b7ff"),
+        "first_name" : "Durran"
+      },
+      "addresses" : [
+        {
+          "_id" : ObjectId("4d3ed089fb60ab534684b7e0"),
+          "city" : "Berlin",
+          "country" : "Deutschland"
+        }
+      ]
+    }
+
+%section#fields
+  %h2 Fields
+
+  %p
+    Even though MongoDB is a schemaless database, most uses will be with
+    web applications where form parameters always come to the server as strings.
+    Mongoid provides an easy mechanism for transforming these strings into
+    their appropriate types through the definition of fields in a
+    <code>Mongoid::Document</code>.
+
+  %p
+    Consider a simple class for modeling a person in an application. A person may
+    have a first name, last name, and middle name. We can define these
+    attributes on a person by using the fields macro.
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+      field :first_name, type: String
+      field :middle_name, type: String
+      field :last_name, type: String
+    end
+
+  %p
+    Below is a list of valid types for fields.
+
+    %ul
+      %li <code>Array</code>
+      %li <code>BigDecimal</code>
+      %li <code>Boolean</code>
+      %li <code>Date</code>
+      %li <code>DateTime</code>
+      %li <code>Float</code>
+      %li <code>Hash</code>
+      %li <code>Integer</code>
+      %li <code>Moped::BSON::ObjectId</code>
+      %li <code>Moped::BSON::Binary</code>
+      %li <code>Range</code>
+      %li <code>Regexp</code>
+      %li <code>String</code>
+      %li <code>Symbol</code>
+      %li <code>Time</code>
+      %li <code>TimeWithZone</code>
+
+  %p
+    If you decide not to specify the type of field with the definition, Mongoid
+    will treat it as an object and not try to typecast it when sending the
+    values to the database. This can be advantageous in 2 places, since
+    the lack of attempted conversion will yield a slight performance gain. However
+    some fields are not supported if not defined as fields. A note of thumb for
+    what fields you can use are:
+
+    %ul
+      %li You're not using a web front end and values are already properly cast.
+      %li All of your fields are strings.
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+      field :first_name
+      field :middle_name
+      field :last_name
+    end
+
+  %p
+    Types that are not supported as dynamic attributes since they cannot be cast
+    are:
+
+    %ul
+      %li <code>BigDecimal</code>
+      %li <code>Date</code>
+      %li <code>DateTime</code>
+      %li <code>Range</code>
+
+  %a{ name: "getters_and_setters" }
+  %h3 Getting and setting field values
+
+  %p
+    When a field is defined, Mongoid provides several different ways of
+    accessing the field.
+
+  :coderay
+    #!ruby
+
+    # Get the value of the first name field.
+    person.first_name
+    person[:first_name]
+    person.read_attribute(:first_name)
+
+    # Set the value for the first name field.
+    person.first_name = "Jean"
+    person[:first_name] = "Jean"
+    person.write_attribute(:first_name, "Jean")
+
+  %p
+    In cases where you want to set multiple field values at once, there are a
+    few different ways of handling this as well.
+
+  :coderay
+    #!ruby
+
+    # Get the field values as a hash.
+    person.attributes
+
+    # Set the field values in the document.
+    Person.new(first_name: "Jean-Baptiste", middle_name: "Emmanuel")
+    person.attributes = { first_name: "Jean-Baptiste", middle_name: "Emmanuel" }
+    person.write_attributes(
+      first_name: "Jean-Baptiste",
+      middle_name: "Emmanuel"
+    )
+
+  %a{ name: "hash_field_keys" }
+  %h3 Hash Field Keys
+
+  %p
+    When using a field of type <code>Hash</code>, be wary of adhering to the
+    = link_to "legal key names for mongoDB", "http://www.mongodb.org/display/DOCS/Legal+Key+Names"
+    , or else the values will not store properly.
+
+  :coderay
+    #!ruby
+
+    class Person
+      include Mongoid::Document
+      field :first_name
+      field :url, type: Hash
+
+      # will update the fields properly and save the values
+      def set_vals
+        self.first_name = 'Daniel'
+        self.url = {'home_page' => 'http://www.homepage.com'}
+        save
+      end
+
+      # all data will fail to save due to the illegal hashkey
+      def set_vals_fail
+        self.first_name = 'Daniel'
+        self.url = {'home.page' => 'http://www.homepage.com'}
+        save
+      end
+    end
+
+  %a{ name: "field_defaults" }
+  %h3 Defaults
+
+  %p
+    You can tell a field in Mongoid to always have a default value if nothing
+    has been provided. Defaults are either static values or lambdas.
+
+  :coderay
+    #!ruby
+
+    class Person
+      include Mongoid::Document
+      field :blood_alcohol_level, type: Float, default: 0.40
+      field :last_drink, type: Time, default: ->{ 10.minutes.ago }
+    end
+
+  %p
+    Be wary that default values that are not defined as lambdas or procs are
+    evaluated at class load time, so the following 2 definitions are not
+    equivalent. (You probably would prefer the second, which is at document
+    creation time.)
+
+  :coderay
+    #!ruby
+    field :dob, type: Time, default: Time.now
+    field :dob, type: Time, default: ->{ Time.now }
+
+  %p
+    If you want to set a default with a dependency on the document's state,
+    <code>self</code> inside a lambda or proc evaluates to the document instance.
+
+  :coderay
+    #!ruby
+    field :wasted_at, type: Time, default: ->{ new_record? ? 2.hours.ago : Time.now }
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          When defining a default value as a proc, Mongoid will apply the default
+          after all other attributes are set. If you want this to happen before
+          the other attributes, set <code>pre_processed: true</code>.
+
+  %a{ name: "field_aliasing" }
+  %h3 Field Aliasing
+
+  %p
+    One of the drawbacks of having a schemaless database is that MongoDB must
+    store all field information along with every document, meaning that it takes
+    up a lot of storage space in RAM and on disk. A common pattern to limit this
+    is to alias fields to a small number of characters, while keeping the
+    domain in the application expressive. Mongoid allows you to do this and
+    reference the fields in the domain via their long names in getters, setters,
+    and criteria while performing the conversion for you.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :n, as: :name, type: String
+    end
+
+    band = Band.new(name: "Placebo")
+    band.attributes #=> { "n" => "Placebo" }
+
+    criteria = Band.where(name: "Placebo")
+    criteria.selector #=> { "n" => "Placebo" }
+
+  %a{ name: "custom_fields" }
+  %h3 Custom field serialization
+
+  %p
+    You can define custom types in Mongoid and determine how they are
+    serialized and deserialized. You simply need to provide 3 methods on it
+    for Mongoid to call to convert your object to and from MongoDB friendly
+    values.
+
+  :coderay
+    #!ruby
+    class Profile
+      include Mongoid::Document
+      field :location, type: Point
+    end
+
+    class Point
+
+      attr_reader :x, :y
+
+      def initialize(x, y)
+        @x, @y = x, y
+      end
+
+      # Converts an object of this instance into a database friendly value.
+      def mongoize
+        [ x, y ]
+      end
+
+      class << self
+
+        # Get the object as it was stored in the database, and instantiate
+        # this custom class from it.
+        def demongoize(object)
+          Point.new(object[0], object[1])
+        end
+
+        # Takes any possible object and converts it to how it would be
+        # stored in the database.
+        def mongoize(object)
+          case object
+          when Point then object.mongoize
+          when Hash then Point.new(object[:x], object[:y]).mongoize
+          else object
+          end
+        end
+
+        # Converts the object that was supplied to a criteria and converts it
+        # into a database friendly form.
+        def evolve(object)
+          case object
+          when Point then object.mongoize
+          else object
+          end
+        end
+      end
+    end
+
+  %p
+    The instance method <code>mongoize</code> take an instance of your object,
+    and converts it into how it will be stored in the database. In our example
+    above, we want to store our point object as an array in the form
+    <code>[ x, y ]</code>.
+
+  %p
+    The class method <code>demongoize</code> takes an object as how it was
+    stored in the database, and is responsible for instantiating an object of
+    your custom type. In this case, we take an array and instantiate a
+    <code>Point</code> from it.
+
+  %p
+    The class method <code>mongoize</code> takes an object that you would use
+    to set on your model from your application code, and create the object as
+    it would be stored in the database. This is for cases where you are not
+    passing your model instances of your custom type in the setter:
+
+  :coderay
+    #!ruby
+    point = Point.new(12, 24)
+    venue = Venue.new(location: point) #=> This uses the mongoize instance method.
+    venue = Venue.new(location: [ 12, 24 ]) #=> This uses the mongoize class method.
+
+  %p
+    The class method <code>evolve</code> takes an object, and determines how it
+    is to be transformed for use in criteria. For example we may want to write
+    a query like so:
+
+  :coderay
+    #!ruby
+    point = Point.new(12, 24)
+    Venue.where(location: point)
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          When accessing custom fields from the document, you will get a new
+          instance of that object with each call to the getter. This is
+          because Mongoid is generating a new object from the object from the
+          raw attributes on each access.
+
+  %p
+    We need the point object in the criteria to be transformed to a Mongo
+    friendly value when it is not as well, and <code>evolve</code> is the method
+    that takes care of this. We check if the passed in object is a <code>Point</code>
+    first, in case we also want to be able to pass in ordinary arrays instead.
+
+  %a{ name: "reserved_field_names" }
+  %h3 Reserved names
+
+  %p
+    If you define a field on your document that conflicts with a reserved method
+    name in Mongoid, the configuration will raise an error. For a list of these
+    you may look at <code>Mongoid.destructive_fields</code>.
+
+  %a{ name: "custom_ids" }
+  %h3 Creating Custom Ids
+
+  %p
+    For cases when you do not want to have <code>Moped::BSON::ObjectId</code> ids, you
+    can override Mongoid's <code>_id</code> field and set them to whatever you
+    like.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :_id, type: String, default: ->{ name }
+    end
+
+%section#dynamic_fields
+  %h2 Dynamic fields
+
+  %p
+    By default Mongoid supports dynamic fields - that is it will allow
+    attributes to get set and persisted on the document even if a field was not
+    defined for them. There is a slight 'gotcha' however when dealing with
+    dynamic attributes in that Mongoid is not completely lenient about the use of
+    <code>method_missing</code> and breaking the public interface of the Document
+    class.
+
+  %p
+    When dealing with dynamic attributes the following rules apply:
+
+  %p
+    If the attribute exists in the document, Mongoid will provide you with your
+    standard getter and setter methods. For example, consider a person who has an
+    attribute of "gender" set on the document:
+
+  :coderay
+    #!ruby
+
+    # Set the person's gender to male.
+    person[:gender] = "Male"
+    person.gender = "Male"
+
+    # Get the person's gender.
+    person.gender
+
+  %p
+    If the attribute does not already exist on the document, Mongoid will not
+    provide you with the getters and setters and will enforce normal
+    <code>method_missing</code> behavior. In this case you must use the other
+    provided accessor methods: (<code>[]</code> and <code>[]=</code>) or
+    (<code>read_attribute</code> and <code>write_attribute</code>).
+
+  :coderay
+    #!ruby
+
+    # Raise a NoMethodError if value isn't set.
+    person.gender
+    person.gender = "Male"
+
+    # Retrieve a dynamic field safely.
+    person[:gender]
+    person.read_attribute(:gender)
+
+    # Write a dynamic field safely.
+    person[:gender] = "Male"
+    person.write_attribute(:gender, "Male")
+
+  %p
+    Dynamic attributes can be completely turned off by setting the Mongoid
+    configuration option <code>allow_dynamic_fields</code> to <code>false</code>.
+
+%section#localized_fields
+  %h2 Localized fields
+
+  %p
+    From 2.4.0 Mongoid now supports localized fields without the need of any
+    external gem.
+
+  :coderay
+    #!ruby
+    class Product
+      include Mongoid::Document
+      field :description, localize: true
+    end
+
+  %p
+    By telling the field to <code>localize</code>, Mongoid will under the covers
+    store the field as a hash of locale/value pairs, but normal access to it will
+    behave like a string.
+
+  :coderay
+    #!ruby
+    I18n.default_locale = :en
+    product = Product.new
+    product.description = "Marvelous!"
+    I18n.locale = :de
+    product.description = "Fantastisch!"
+
+    product.attributes
+    #=> { "description" => { "en" => "Marvelous!", "de" => "Fantastisch!" }
+
+  %p
+    You can get and set all the translations at once by using the
+    corresponding <code>_translations</code> method.
+
+  :coderay
+    #!ruby
+    product.description_translations
+    #=> { "en" => "Marvelous!", "de" => "Fantastisch!" }
+    product.description_translations =
+      { "en" => "Marvelous!", "de" => "Wunderbar!" }
+
+  %h3 Fallbacks
+
+  %p
+    When using fallbacks, Mongoid will automatically use them when a translation
+    is not available.
+
+  %p
+    For Rails applications, set the fallbacks configuration setting to true in
+    your environment.
+
+  :coderay
+    #!ruby
+    config.i18n.fallbacks = true
+
+  %p
+    For non-rails applications, you must include the fallbacks module straight
+    to the I18n gem.
+
+  :coderay
+    #!ruby
+    require "i18n/backend/fallbacks"
+    I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
+
+  %p
+    Then when the fallbacks are defined, if a translation is not present Mongoid
+    will fallback in order of the defined locales.
+
+  :coderay
+    #!ruby
+    I18n.default_locale = :en
+    I18n.fallbacks = true
+    ::I18n.fallbacks[:de] = [ :de, :en, :es ]
+    product = Product.new
+    product.description = "Marvelous!"
+    I18n.locale = :de
+    product.description #=> "Marvelous!"
+
+  %h3 Querying
+
+  %p
+    When querying for localized fields using Mongoid's criteria API, Mongoid
+    will automatically alter the criteria to match the current locale.
+
+  %mongoid mongoid
+  :coderay
+    #!ruby
+    # Match all prodcucts with Marvelous as the description. Locale is en.
+    Product.where(description: "Marvelous!")
+
+  %mongodb mongodb query selector
+  :coderay
+    #!ruby
+    { "description.en" : "Marvelous!" }
+
+  %h3 Indexing
+
+  %p
+    If you plan to be querying extensively on localized fields, you should index
+    each of the locales that you plan on searching on.
+
+  :coderay
+    #!ruby
+    class Product
+      include Mongoid::Document
+      field :description, localize: true
+
+      index "description.de" => 1
+      index "description.en" => 1
+    end
+
+  %h3 Validation
+
+  %p
+    Mongoid's presence validator will make sure that translations are present
+    for all locales that are in the underlying hash.
+
+%section#dirty
+  %h2 Dirty Tracking
+
+  %p
+    Mongoid supports tracking of changed or "dirty" fields with an API that
+    mirrors that of Active Model. If a defined field has been modified in
+    a model the model will be marked as dirty and some additional behavior
+    comes into play.
+
+  %h3 Viewing changes
+
+  %p
+    There are various ways to view what has been altered on a model. Changes
+    are recorded from the time a document is instantiated, either as a
+    new document or via loading from the database up to the time it is
+    saved. Any persistence operation clears the changes.
+
+  :coderay
+    #!ruby
+    class Person
+      include Mongoid::Document
+      field :name, type: String
+    end
+
+    person = Person.first
+    person.name = "Alan Garner"
+
+    # Check to see if the document has changed.
+    person.changed? #=> true
+
+    # Get an array of the names of the changed fields.
+    person.changed #=> [ :name ]
+
+    # Get a hash of the old and changed values for each field.
+    person.changes #=> { "name" => [ "Alan Parsons", "Alan Garner" ] }
+
+    # Check if a specific field has changed.
+    person.name_changed? #=> true
+
+    # Get the changes for a specific field.
+    person.name_change #=> [ "Alan Parsons", "Alan Garner" ]
+
+    # Get the previous value for a field.
+    person.name_was #=> "Alan Parsons"
+
+  %h3 Resetting changes
+
+  %p
+    You can reset changes of a field to its previous value by calling the
+    reset method.
+
+  :coderay
+    #!ruby
+    person = Person.first
+    person.name = "Alan Garner"
+
+    # Reset the changed name back to the original
+    person.reset_name!
+    person.name #=> "Alan Parsons"
+
+  %h3 Notes on persistence
+
+  %p
+    Mongoid uses dirty tracking as the core of its persistence operations.
+    It looks at the changes on a document and atomically updates only what
+    has changed unlike other frameworks that write the entire document on
+    each save. If no changes have been made, Mongoid will not hit the database
+    on a call to <code>Model#save</code>.
+
+  %h3 Viewing previous changes
+
+  %p
+    After a document has been persisted, you can see what the changes were
+    previously by calling <code>Model#previous_changes</code>
+
+  :coderay
+    #!ruby
+    person = Person.first
+    person.name = "Alan Garner"
+    person.save #=> Clears out current changes.
+
+    # View the previous changes.
+    person.previous_changes #=> { "name" => [ "Alan Parsons", "Alan Garner" ] }
+
+%section#security
+  %h2 Security
+
+  %p
+    There are cases where you don't want Mongoid to allow attributes to be
+    set through mass assignment, like passwords. This is a common event when
+    submitting forms, and fields can be protected by using Mongoid's
+    <code>attr_protected</code> or <code>attr_accessible</code> thanks to the
+    wonders of Active Model.
+
+  .well
+    %table
+      %tr
+        %td.achtung= image_tag "/images/achtung.png"
+        %td.note
+          Mongoid auto-protects the <code>_id</code> and <code>_type</code>
+          attributes by default.
+
+  %h3 Protected
+
+  %p
+    When defining a list of fields as protected, all other fields in the
+    document will NOT be able to be set through mass assignment.
+
+  :coderay
+    #!ruby
+    class User
+      include Mongoid::Document
+      field :first_name, type: String
+      field :password, type: String
+      attr_protected :password
+    end
+
+    # Set attributes on a person properly.
+    Person.new(first_name: "Corbin")
+    person.attributes = { first_name: "Corbin" }
+    person.write_attributes(first_name: "Corbin")
+
+    # Attempt to set attributes a person, logging an error.
+    Person.new(first_name: "Corbin", password: "password")
+    person.attributes = { first_name: "Corbin", password: "password" }
+    person.write_attributes(first_name: "Corbin", password: "password")
+
+  %h3 Accessible
+
+  %p
+    Providing a list of fields as accessible is simply the inverse of
+    protecting them. Anything not defined as accessible will cause the
+    error.
+
+  :coderay
+    #!ruby
+    class User
+      include Mongoid::Document
+      field :first_name, type: String
+      field :password, type: String
+      attr_accessible :first_name
+    end
+
+    # Set attributes on a user properly.
+    User.new(first_name: "Corbin")
+    user.attributes = { first_name: "Corbin" }
+    user.write_attributes(first_name: "Corbin")
+
+    # Attempt to set attributes on a user, will silently ignore protected ones.
+    User.new(first_name: "Corbin", password: "password")
+    user.attributes = { first_name: "Corbin", password: "password" }
+    user.write_attributes(first_name: "Corbin", password: "password")
+
+  %p
+    You can scope the mass assignment by role by providing the role as an
+    option to the constructor or create methods.
+
+  :coderay
+    #!ruby
+    class User
+      include Mongoid::Document
+      field :first_name, type: String
+      field :password, type: String
+      attr_accessible :first_name, as: [ :default, :admin ]
+    end
+
+    # Set attributes on a person for the admin role
+    Person.new({ first_name: "Corbin" }, as: :admin)
+    Person.create({ first_name: "Corbin" }, as: :default)
+    Person.create!({ first_name: "Corbin" }, as: :admin)
+
+  %h3 Overriding
+
+  %p
+    In the case you want to override the security in a single call,
+    you can pass a block to the document constructor to set fields manually.
+
+  :coderay
+    #!ruby
+    Person.new(first_name: "Corbin") do |person|
+      person.password = "password"
+    end
+
+%section#readonly
+  %h2 Readonly Attributes
+
+  %p
+    You can tell Mongoid that certain attributes are readonly. This will
+    allow documents to be created with theses attributes, but changes to
+    them will be filtered out.
+
+  :coderay
+    #!ruby
+    class Band
+      include Mongoid::Document
+      field :name, type: String
+      field :origin, type: String
+
+      attr_readonly :name, :origin
+    end
+
+    band = Band.create(name: "Placebo")
+    band.update_attributes(name: "Tool") # Filters out the name change.
+
+  %p
+    If you explicitly try to update or remove the attribute by itself, then
+    a <code>ReadonlyAttribute</code> error will be raised.
+
+  :coderay
+    #!ruby
+    band.update_attribute(:name, "Tool") # Raises the error.
+    band.remove_attribute(:name) # Raises the error.
+
+%section#inheritance
+  %h2 Inheritance
+
+  %p
+    Mongoid supports inheritance in both root and embedded documents. In
+    scenarios where documents are inherited from their fields, relations,
+    validations and scopes get copied down into their child documents, but
+    not vise-versa.
+
+  :coderay
+    #!ruby
+    class Canvas
+      include Mongoid::Document
+      field :name, type: String
+      embeds_many :shapes
+    end
+
+    class Browser < Canvas
+      field :version, type: Integer
+      scope :recent, where(:version.gt => 3)
+    end
+
+    class Firefox < Browser
+    end
+
+    class Shape
+      include Mongoid::Document
+      field :x, type: Integer
+      field :y, type: Integer
+      embedded_in :canvas
+    end
+
+    class Circle < Shape
+      field :radius, type: Float
+    end
+
+    class Rectangle < Shape
+      field :width, type: Float
+      field :height, type: Float
+    end
+
+  %p
+    In the above example, <code>Canvas</code>, <code>Browser</code> and
+    <code>Firefox</code> will all save in the <code>canvases</code> collection.
+    An additional attribute <code>_type</code> is stored in order
+    to make sure when loaded from the database the correct document is
+    returned. This also holds true for the embedded documents <code>Circle</code>,
+    <code>Rectangle</code>, and <code>Shape</code>.
+
+  %h3 Querying for Subclasses
+
+  %p
+    Querying for subclasses is handled in the normal manner, and although
+    the documents are all in the same collection, queries will only return
+    documents of the correct type, similar to Single Table Inheritance in
+    ActiveRecord.
+
+  :coderay
+    #!ruby
+    # Returns Canvas documents and subclasses
+    Canvas.where(name: "Paper")
+    # Returns only Firefox documents
+    Firefox.where(name: "Window 1")
+
+  %h3 Associations
+
+  %p
+    You can add any type of subclass to a has one or has many association,
+    through either normal setting or through the build and create methods
+    on the association:
+
+  :coderay
+    #!ruby
+    firefox = Firefox.new
+    # Builds a Shape object
+    firefox.shapes.build({ x: 0, y: 0 })
+    # Builds a Circle object
+    firefox.shapes.build({ x: 0, y: 0 }, Circle)
+    # Creates a Rectangle object
+    firefox.shapes.create({ x: 0, y: 0 }, Rectangle)
+
+    rect = Rectangle.new(width: 100, height: 200)
+    firefox.shapes
