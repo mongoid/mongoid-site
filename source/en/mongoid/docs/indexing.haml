@@ -65,6 +65,17 @@
   end
 
 %p
+  For unique indexes that are defined for a column that might already have duplicate values, you can use drop the duplicate entries:
+
+:coderay
+  #!ruby
+  class Person
+    include Mongoid::Document
+    field :ssn
+    index({ ssn: 1 }, { unique: true, drop_dups: true })
+  end
+
+%p
   For geospatial indexes, make sure the field you are indexing is an <tt>Array</tt>.
 
 :coderay
