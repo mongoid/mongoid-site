@@ -542,7 +542,7 @@
         %td
           :coderay
             #!ruby
-            Band.where(name: "Photek").inc(:likes, 123)
+            Band.where(name: "Photek").inc(likes: 123)
         %td
           :coderay
             #!ruby
@@ -557,8 +557,8 @@
         %td
           :coderay
             #!ruby
-            Band.where(name: "Photek").pop(:members, -1)
-            Band.where(name: "Photek").pop(:members, 1)
+            Band.where(name: "Photek").pop(members: -1)
+            Band.where(name: "Photek").pop(members: 1)
         %td
           :coderay
             #!ruby
@@ -577,7 +577,7 @@
         %td
           :coderay
             #!ruby
-            Band.where(name: "Tool").pull(:members, "Maynard")
+            Band.where(name: "Tool").pull(members: "Maynard")
         %td
           :coderay
             #!ruby
@@ -610,7 +610,7 @@
         %td
           :coderay
             #!ruby
-            Band.where(name: "Tool").push(:members, "Maynard")
+            Band.where(name: "Tool").push(members: "Maynard")
         %td
           :coderay
             #!ruby
@@ -645,7 +645,7 @@
         %td
           :coderay
             #!ruby
-            Band.where(name: "Tool").rename(:name, :title)
+            Band.where(name: "Tool").rename(name: :title)
         %td
           :coderay
             #!ruby
@@ -660,7 +660,7 @@
         %td
           :coderay
             #!ruby
-            Band.where(name: "Tool").set(:likes, 10000)
+            Band.where(name: "Tool").set(likes: 10000)
         %td
           :coderay
             #!ruby
