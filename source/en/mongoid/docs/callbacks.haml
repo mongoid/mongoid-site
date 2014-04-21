@@ -8,7 +8,6 @@
     %ul.nav.nav-pills
       %li= link_to "Document Callbacks", "#callbacks"
       %li= link_to "Relation Callbacks", "#relation_callbacks"
-      %li= link_to "Observers", "#observers"
 
 %section#callbacks
   %h2 Document Callbacks
@@ -126,79 +125,3 @@
       def send_email_to_subscribers(post)
         Notifications.new_post(post).deliver
       end
-
-  %p
-    Relation Callbacks are not available to Observers.
-
-%section#observers
-  %h2
-    Observers
-    <span class="label label-info">Removing in 4.0.0</span>
-
-  %p
-    Observer classes respond to life cycle callbacks to implement trigger-like
-    behavior outside the original class. This is a great way to reduce the
-    clutter that normally comes when the model class is burdened with
-    functionality that doesn't pertain to the core responsibility of the
-    class. Mongoid's observers work similar to ActiveRecord's. Example:
-
-  :coderay
-    #!ruby
-    class ArticleObserver < Mongoid::Observer
-      def after_save(article)
-        Notifications.article("admin@do.com", "New article", article).deliver
-      end
-    end
-
-  %p
-    Observers are available for any document, whether it is embedded within
-    another document or not. Note that to be efficient, Mongoid only fires
-    the observers of the document that the persistence action was executed on.
-    This is that Mongoid aims to support large hierarchies and to handle
-    optimized atomic updates callbacks can't be firing all over the document
-    hierarchy.
-
-  %h3 Instantiation
-
-  %p
-    Observers will not be invoked unless they are instantiated first. If you are
-    using Rails, Mongoid will instantiate your observers automatically as long as
-    you register them in your <code>config/application.rb</code> file like so:
-
-  :coderay
-    #!ruby
-    config.mongoid.observers = :article_observer, :audit_observer
-
-  %p
-    If you're not using Rails, then you will have to load and register your
-    observers directly with Mongoid and afterwards instruct Mongoid to instantiate
-    them before they will work. Instantiating an observer registers it with its
-    observed model(s) so they will need to be loaded beforehand.
-
-  :coderay
-    #!ruby
-    require "article_observer"
-    require "audit_observer"
-    Mongoid.observers = ArticleObserver, AuditObserver
-    Mongoid.instantiate_observers
-
-  %h3 Mapping
-
-  %p
-    Observers will by default be mapped to the class with which they share a
-    name. So CommentObserver will be tied to observing Comment, ProductManagerObserver
-    to ProductManager, and so on. If you want to name your observer differently
-    than the class you're interested in observing, you can use the Observer.observe
-    class method which takes either the concrete class (Product) or a symbol for
-    that class (:product). If an observer needs to watch more than one kind of object,
-    this can be specified with multiple arguments.
-
-  :coderay
-    #!ruby
-    class AuditObserver < Mongoid::Observer
-      observe :account, :balance
-
-      def after_update(record)
-        AuditTrail.new(record, "UPDATED")
-      end
-    end
