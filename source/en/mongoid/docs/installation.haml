@@ -191,7 +191,6 @@
           - Firefox
         scope_overwrite_exception: true
         raise_not_found_error: false
-        skip_version_check: false
         use_activesupport_time_zone: false
         use_utc: true
 
@@ -236,10 +235,6 @@
       <code>Mongoid::Errors::DocumentNotFound</code> when attempting to find a
       document by an id that doesnt exist. When set to false will only return
       nil for the same query.
-    %li
-      <code>skip_version_check</code>(false): If you are having issues
-      authenticating against MongoHQ or MongoMachine because of access to the
-      system collection being not allowed, set this to true.
     %li
       <code>scope_overwrite_exception</code>(false): This will instruct Mongoid
       to raise an error if you define a scope with the same name as an existing
