@@ -209,12 +209,6 @@
       dynamically and will get persisted. If set to false an error will get
       raised when attempting to set a value that has no field defined.
     %li
-      <code>identity_map_enabled</code>(false): When set to true Mongoid will store
-      documents loaded from the database in the identity map by their ids, so
-      subsequent database queries for the same document in the same unit of
-      work do not hit the database. This is only for relation queries at the
-      moment. See the identity map documentation for more info.
-    %li
       <code>include_root_in_json</code>(false): When set to true mongoid will
       include the name of the root document and the name of each association
       as the root element when calling <code>#to_json</code> on a model.
