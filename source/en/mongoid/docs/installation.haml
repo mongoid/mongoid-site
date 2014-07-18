@@ -179,8 +179,6 @@
       # Here we put the Mongoid specific configuration options. These are explained
       # in more detail next.
       options:
-        allow_dynamic_fields: false
-        identity_map_enabled: true
         include_root_in_json: true
         include_type_for_serialization: true
         # Note this can also be true if you want to preload everything, but this is
@@ -203,11 +201,6 @@
 
 
   %ul.config
-    %li
-      <code>allow_dynamic_fields</code>(true): When attributes are not defined
-      as fields but added to an object, they will get fields added for them
-      dynamically and will get persisted. If set to false an error will get
-      raised when attempting to set a value that has no field defined.
     %li
       <code>include_root_in_json</code>(false): When set to true mongoid will
       include the name of the root document and the name of each association
