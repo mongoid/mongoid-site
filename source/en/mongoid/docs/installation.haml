@@ -165,8 +165,9 @@
           # We can set session specific options, like reads executing
           # on secondary nodes, and defaulting the session to safe mode.
           options:
-            consistency: :eventual
-            safe: true
+            read: :secondary
+            write:
+              w: :majority
         # This defines a tertiary session at a Mongos fronted shard.
         shard:
           # This configuration is a Mongos shard server.
@@ -336,10 +337,10 @@
   %p
     For replica sets, you only need to put each member of the replica set
     under the <code>hosts</code> section in your <code>mongoid.yml</code> -
-    Mongoid and Moped will take care of the rest. The default consistency is
-    <code>:eventual</code>, which means that reads will attempt to go to
-    secondaries. If you don't want this, switch this option to
-    <code>:strong</code>, which will send everything to the master node.
+    Mongoid and Moped will take care of the rest. The default read option is
+    <code>:primary</code>, which means that reads will happen on the primary
+    node. If you don't want this, switch this option to
+    <code>:secondary</code>, which will send reads to the secondary(slaves) nodes.
 
   :coderay
     #!yaml
@@ -351,7 +352,7 @@
           - repl3.myapp.com:27017
         database: mongoid
         options:
-          consistency: :strong
+          read: :secondary
 
 %section#sharding
   %h2 Sharding
@@ -384,4 +385,4 @@
           - mongos.myapp.com:27017
         database: mongoid
         options:
-          consistency: :eventual
+          read: :secondary
