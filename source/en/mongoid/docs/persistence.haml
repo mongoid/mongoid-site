@@ -625,13 +625,13 @@
     subsequent requests with no local params use the default option.
 
   %p
-    <code>#with</code>is also used for changing safe mode options temporarily
+    <code>#with</code>is also used for changing write mode options temporarily
     at runtime.
 
   :coderay
     #!ruby
-    Band.with(safe: true).create
-    Band.with(safe: { w: 3 }).create!
+    Band.with(write: { w: "majority" }).create
+    Band.with(write: { w: 3 }).create!
 
   %p
     The values that can be passed with <code>:safe</code> are:
@@ -663,7 +663,7 @@
 
   :coderay
     #!ruby
-    Band.mongo_session.with(safe: false, database: "musik") do |session|
+    Band.mongo_session.with(write: {w: 0}, database: "musik") do |session|
       session[:artists].find(...)
     end
 
