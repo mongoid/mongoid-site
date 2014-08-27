@@ -743,8 +743,8 @@
       field :country, type: String
       field :genres, type: Array
 
-      scope :english, where(country: "England")
-      scope :rock, where(:genres.in => [ "rock" ])
+      scope :english, -> { where(country: "England") }
+      scope :rock, -> { where(:genres.in => [ "rock" ]) }
     end
 
     Band.english.rock # Get the English rock bands.
