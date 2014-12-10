@@ -195,8 +195,12 @@
     are as follows:
 
   %ul
-    %li <code>:delete</code>: Delete the child document.
-    %li <code>:destroy</code>: Destroy the child document.
+    %li
+      <code>:delete</code>: Delete the child document without run any of the
+      model callbacks.
+    %li
+      <code>:destroy</code>: Destroy the child document running all of the
+      model callbacks.
     %li <code>:nullify</code>: Orphan the child document.
     %li <code>:restrict</code>: Raise an error if the child is not empty.
 
