@@ -450,7 +450,7 @@
           %td
             :coderay
               #!ruby
-              person.pull_all(:aliases, [ "Bond", "James" ])
+              person.pull_all(aliases: [ "Bond", "James" ])
           %td
             :coderay
               #!ruby
@@ -464,26 +464,12 @@
           %td
             :coderay
               #!ruby
-              person.push(aliases: "007")
+              person.push(aliases: ["007","008"])
           %td
             :coderay
               #!ruby
               collections[:people].find(...).
-                update("$push" => { aliases: "007" })
-        %tr
-          %td
-            <code>Model#push_all</code><br/>
-            %p.doc
-              %i Performs an atomic $pushAll on the field.
-          %td
-            :coderay
-              #!ruby
-              person.push_all(:aliases, [ "007", "008" ])
-          %td
-            :coderay
-              #!ruby
-              collections[:people].find(...).
-                update("$pushAll" => { aliases: [ "007", "008" ]})
+                update("$push" => { aliases: ["007","008'] })
         %tr
           %td
             <code>Model#rename</code><br/>
