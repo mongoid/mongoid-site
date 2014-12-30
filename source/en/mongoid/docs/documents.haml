@@ -449,13 +449,20 @@
   %h2 Dynamic fields
 
   %p
-    By default Mongoid supports dynamic fields - that is it will allow
+    By default Mongoid doesn't supports dynamic fields. You can tell mongoid that you want to add dynamic fields by including 'Mongoid::Attributes::Dynamic' in model.
+    'Mongoid::Attributes::Dynamic' will allow
     attributes to get set and persisted on the document even if a field was not
     defined for them. There is a slight 'gotcha' however when dealing with
     dynamic attributes in that Mongoid is not completely lenient about the use of
     <code>method_missing</code> and breaking the public interface of the Document
     class.
 
+    :coderay
+      #!ruby
+      class Person
+        include Mongoid::Document
+        include Mongoid::Attributes::Dynamic
+      end
   %p
     When dealing with dynamic attributes the following rules apply:
 
@@ -496,9 +503,6 @@
     person[:gender] = "Male"
     person.write_attribute(:gender, "Male")
 
-  %p
-    Dynamic attributes can be completely turned off by setting the Mongoid
-    configuration option <code>allow_dynamic_fields</code> to <code>false</code>.
 
 %section#localized_fields
   %h2 Localized fields
