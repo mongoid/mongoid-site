@@ -185,19 +185,16 @@
   :coderay
     #!ruby
 
-    # Get the value of the first_name field (raw data)
+    # Get the value of the first_name field
+    person.first_name
     person[:first_name]
     person.read_attribute(:first_name)
 
-    # Get the values of the first_name field (via getter, if any defined in the model as 'def first_name; ...; end')
-    person.first_name
 
     # Set the value for the first_name field (as raw data)
+    person.first_name = "Jean"
     person[:first_name] = "Jean"
     person.write_attribute(:first_name, "Jean")
-
-    # Set the value for the first_name field (via setter, if any defined in the model as 'def first_name(name); ...; end')
-    person.first_name = "Jean"
 
   %p
     If you have defined custom getter/setter, those will be used when using the dot notation
@@ -216,7 +213,7 @@
       end
 
       # custom setter
-      def first_name(value)
+      def first_name=(value)
         p 'Setting.. '
         self.first_name = value
         p '.. done!'
