@@ -185,15 +185,49 @@
   :coderay
     #!ruby
 
-    # Get the value of the first name field.
+    # Get the value of the first_name field
     person.first_name
     person[:first_name]
     person.read_attribute(:first_name)
 
-    # Set the value for the first name field.
+
+    # Set the value for the first_name field
     person.first_name = "Jean"
     person[:first_name] = "Jean"
     person.write_attribute(:first_name, "Jean")
+
+  %p
+    If you have defined custom getter/setter, those will be used when using the dot notation
+
+  :coderay
+    #!ruby
+
+    class Person
+      include Mongoid::Document
+
+      field :first_name
+
+      # custom getter
+      def first_name
+        "My name is Johnny"
+      end
+
+      # custom setter
+      def first_name=(value)
+        p 'Setting.. '
+        self.first_name = value
+        p '.. done!'
+      end
+    end
+
+    # Like this:
+    person.first_name = 'John'
+    # Setting..
+    # .. done!
+
+    person.first_name                  # My name is Johnny
+    person[:first_name]                # John
+    person.read_attribute(:first_name) # John
 
   %p
     In cases where you want to set multiple field values at once, there are a
