@@ -5,6 +5,5 @@ tmp/*
 .bundle/*
 output/*
 .sass-cache
-build/*
 publish.sh
 .mm-pid*
