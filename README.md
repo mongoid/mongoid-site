@@ -13,6 +13,14 @@ extensions to our website docs, and give credit for your help!
 Clone this repo and run `bundle install`. Then run
 `bundle exec middleman` to start the server at http://localhost:4567
 
+# How to deploy a new version of mongoid.org
+
+Clone the 'mongoid.github.io' submodule:
+`git submodule init; git submodule update`
+Then run `bundle exec rake`, to build the html version of the site.
+Commit and push the submodule:
+`cd build; git commit -am'Update website'; git push origin master`
+
 # Notes
 
 All pages are written in haml, and for consistency must stay that way.
