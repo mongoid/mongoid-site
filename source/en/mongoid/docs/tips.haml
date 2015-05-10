@@ -15,7 +15,6 @@
       %li= link_to "Relational Data", "#relational_associations"
       %li= link_to "Safe Mode", "#safe_mode"
       %li= link_to "Other Mappers", "#other_mappers"
-      %li= link_to "Sidekiq", "#sidekiq"
 
 %section#ruby
   %h2 Ruby 1.9.3
@@ -248,36 +247,3 @@
 
     class User < ActiveRecord::Base
     end
-
-%section#sidekiq
-  %h2 Sidekiq
-
-  %p
-    If you are using Sidekiq, you need to ensure that MongoDB sessions are
-    diconnected after each worker runs, or you will quickly overload MongoDB
-    with more active connections than it can handle. In order to handle this
-    seamlessly for you, we have provided a gem with a Sidekiq middleware that
-    handles this - <a href="https://github.com/mongoid/kiqstand">Kiqstand</a>.
-    You will need to be on Mongoid version 3.0.3 or higher.
-
-  %p
-    To use Kiqstand, first add it to your <code>Gemfile</code>.
-
-  :coderay
-    #!ruby
-    gem "kiqstand"
-
-  %p
-    When you intialize Sidekiq, add the middleware to the Kiqstand server
-    stack.
-
-  :coderay
-    #!ruby
-    Sidekiq.configure_server do |config|
-      config.server_middleware do |chain|
-        chain.add Kiqstand::Middleware
-      end
-    end
-
-  %p
-    After this, all connection handling is taken care of for you.
