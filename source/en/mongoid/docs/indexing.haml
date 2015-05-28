@@ -125,3 +125,11 @@
 :coderay
   #!ruby
   rake db:mongoid:remove_indexes
+
+%p
+  Finally, Mongoid provides a rake task to delete all and only the non-defined 
+  indexes (the ones that do not exist in the models anymore).
+
+:coderay
+  #!ruby
+  rake db:mongoid:remove_undefined_indexes
