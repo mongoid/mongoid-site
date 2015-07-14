@@ -774,15 +774,15 @@
       attr_protected :password
     end
 
-    # Set attributes on a person properly.
-    Person.new(first_name: "Corbin")
-    person.attributes = { first_name: "Corbin" }
-    person.write_attributes(first_name: "Corbin")
+    # Set attributes on a user properly.
+    User.new(first_name: "Corbin")
+    user.attributes = { first_name: "Corbin" }
+    user.write_attributes(first_name: "Corbin")
 
-    # Attempt to set attributes a person, logging an error.
-    Person.new(first_name: "Corbin", password: "password")
-    person.attributes = { first_name: "Corbin", password: "password" }
-    person.write_attributes(first_name: "Corbin", password: "password")
+    # Attempt to set attributes a user, logging an error.
+    User.new(first_name: "Corbin", password: "password")
+    user.attributes = { first_name: "Corbin", password: "password" }
+    user.write_attributes(first_name: "Corbin", password: "password")
 
   %h3 Accessible
 
@@ -823,10 +823,10 @@
       attr_accessible :first_name, as: [ :default, :admin ]
     end
 
-    # Set attributes on a person for the admin role
-    Person.new({ first_name: "Corbin" }, as: :admin)
-    Person.create({ first_name: "Corbin" }, as: :default)
-    Person.create!({ first_name: "Corbin" }, as: :admin)
+    # Set attributes on a user for the admin role
+    User.new({ first_name: "Corbin" }, as: :admin)
+    User.create({ first_name: "Corbin" }, as: :default)
+    User.create!({ first_name: "Corbin" }, as: :admin)
 
   %h3 Overriding
 
