@@ -7,3 +7,4 @@ output/*
 .sass-cache
 publish.sh
 .mm-pid*
+Gemfile.lock
