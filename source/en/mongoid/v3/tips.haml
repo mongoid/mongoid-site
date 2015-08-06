@@ -253,12 +253,18 @@
   %h2 Sidekiq
 
   %p
-    If you are using Sidekiq, you need to ensure that MongoDB sessions are
-    diconnected after each worker runs, or you will quickly overload MongoDB
-    with more active connections than it can handle. In order to handle this
+    If you are using Sidekiq, you need to ensure that your identity map is cleared
+    after each job runs. In order to handle this
     seamlessly for you, we have provided a gem with a Sidekiq middleware that
     handles this - <a href="https://github.com/mongoid/kiqstand">Kiqstand</a>.
     You will need to be on Mongoid version 3.0.3 or higher.
+
+  %p
+    When using Sidekiq, connections will disconnect from MongoDB at each job since
+    sessions are stored on Fiber-local variables. If you want to reuse connections,
+    you can patch <code>Celluloid::Thread</code>. See
+    <a href="https://groups.google.com/forum/#!topic/mongoid/8rpSlgsRSSc">this discussion on the Mongoid
+    users group</a> for more information.
 
   %p
     To use Kiqstand, first add it to your <code>Gemfile</code>.
