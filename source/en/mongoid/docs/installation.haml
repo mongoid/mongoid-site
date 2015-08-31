@@ -156,6 +156,21 @@
           # provide the authentication details.
           username: user
           password: password
+          options:
+            # All of the tunable session/cluster/node options with defaults as of Moped 2.0.2.  
+            # These are for advanced users and do not need to be configured for regular usage.
+            # Some are determined by other settings unless overridden here, ie. max_retries is
+            # based on the number of seeds unless configured to some fixed number 
+            pool_size: 5
+            pool_timeout: 0.5
+            retry_interval: 1
+            max_retries: 2 
+            timeout: 5
+            refresh_interval: 300
+            down_interval: 30
+            ssl: false
+            auto_discover: true
+
         # This defines a secondary session at a replica set.
         replica_set:
           # This configuration is a 3 node replica set.
@@ -170,6 +185,7 @@
             read: :secondary
             write:
               w: :majority
+
         # This defines a tertiary session at a Mongos fronted shard.
         shard:
           # This configuration is a Mongos shard server.
@@ -199,7 +215,7 @@
 
   %p
     Mongoid currently supports the following configuration options, either
-    provided in the mongoid.yml or programatically (defaults in
+    provided in the mongoid.yml or programmatically (defaults in
     parenthesis).
 
 
@@ -236,6 +252,47 @@
     %li
       <code>use_utc</code>(false): Instructs Mongoid to convert all times to
       UTC times in all cases.
+
+
+
+  %h3 Moped/Session Configuration options
+
+  %p
+    Mongoid currently supports the following Moped/session configuration options,
+    either provided in the mongoid.yml or programmatically (defaults in parenthesis).
+
+  %ul.config
+    %li
+      <code>pool_size</code>(5): Determines the connection pool size on a per-node 
+      basis.  If running Mongoid in a multi-threaded environment, this should equal
+      or exceed the number of threads.
+    %li 
+      <code>pool_timeout</code>(0.5): The amount of time in seconds to wait 
+      for a connection to become available in the pool when all available connections
+      are checked out. This should most likely remain at the default unless you are 
+      severely limited for some reason to a small pool_size and would prefer to 
+      have processes wait for a connection to become available.  This configuration
+      does not affect any other variables such as connection timeouts etc.
+    %li
+      <code>retry_interval</code>(1): The amount of time in seconds to wait between
+      retries for any failed Mongo operation.
+    %li
+      <code>max_retries</code>(# of seeds): The number of times to retry a failed 
+      operation, while waiting <code>retry_interval</code> between retries.
+    %li
+      <code>timeout</code>(5): The amount of time in seconds to wait before timing out a 
+      connection or node operation.
+    %li
+      <code>refresh_interval</code>(300): The amount of time in seconds to scan through
+      seeds and nodes, to check for new peers, bad connections etc.
+    %li
+      <code>down_interval</code>(30): The amount of time in seconds that a node would be
+      flagged as down.
+    %li
+      <code>ssl</code>(nil/false): Determines if connections use SSL or not.
+    %li
+      <code>auto_discover</code>(true): Determines if Mongoid/Moped will attempt to
+      discover new nodes from the initial seeds/nodes to add to read/write operations.
 
   %p
     If you would like to see samples, there is one in the
