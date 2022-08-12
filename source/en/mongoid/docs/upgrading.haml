@@ -8,7 +8,7 @@
 %p
   Use this as a reference when upgrading between Mongoid versions.
   You can always reference the
-  <a href="http://github.com/mongoid/mongoid/blob/master/CHANGELOG.md">
+  <a href="https://github.com/mongoid/mongoid/blob/master/CHANGELOG.md">
   <code>CHANGELOG</code></a> for bug fixes, new features, and major changes
   between versions.
 
@@ -18,7 +18,7 @@
       %td.achtung= image_tag "/images/achtung.png"
       %td.note
         Mongoid follows versioning guidelines as outlined by the
-        <a href="http://semver.org/">Semantic Versioning Specification</a>, so
+        <a href="https://semver.org/">Semantic Versioning Specification</a>, so
         you can expect only backwards incompatible changes in major versions.
 
 %h2 Upgrading to 3.0
@@ -100,7 +100,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1865">#1865</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1865">#1865</a>
     <code>count</code> on the memory and mongo contexts now behave exactly the
     same as Ruby's <code>count</code> on enumerable, and can take an object or a block.
     This is optimized on the mongo context not to load everything in memory
@@ -181,7 +181,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1734">#1734</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1734">#1734</a>
     When searching for documents via <code>Model.find</code> with multiple ids,
     Mongoid will raise an error if not <i>all</i> ids are found, and tell you
     what the missing ones were. Previously the error only got raised if
@@ -189,7 +189,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1675">#1675</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1675">#1675</a>
     Adding presence validation on a relation now enables autosave.
     This is to ensure that when a new parent object is saved with a new
     child and marked is valid, both are persisted to ensure a correct
@@ -197,23 +197,23 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1484">#1484</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1484">#1484</a>
     <code>Model#has_attribute?</code> now behaves the same as Active Record.
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1475">#1475</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1475">#1475</a>
     Active Support's time zone is now used by default in time
     serialization if it is defined.
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1471">#1471</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1471">#1471</a>
     Mongoid no longer strips any level of precision off of times.
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1342">#1342</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1342">#1342</a>
     <code>Model.find</code> and <code>model.relation.find</code> now only
     take a single or multiple ids. <code>Model.first</code>, <code>Model.last</code>
     also no longer take arguments. For these use <code>Model.find_by</code>
@@ -221,7 +221,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1291">#1291</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1291">#1291</a>
     The <code>mongoid.yml</code> has been revamped completely, and upgrading
     existing applications will greet you with some lovely Mongoid specific
     configuration errors. You can re-generate a new mongoid.yml via the
@@ -230,7 +230,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1291">#1291</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1291">#1291</a>
     The <code>persist_in_safe_mode</code> configuration option has been removed.
     You must now tell a database session in the mongoid.yml whether or not
     it should persist in safe mode by default.
@@ -250,7 +250,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1291">#1291</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1291">#1291</a>
     <code>safely</code> and <code>unsafely</code> have been removed.
     Please now use <code>with</code> to provide safe mode options at runtime.
 
@@ -262,7 +262,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1270">#1270</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1270">#1270</a>
     Relation macros have been changed to match their AR counterparts:
     only <code>:has_one</code>, <code>:has_many</code>,
     <code>:has_and_belongs_to_many</code>, and <code>:belongs_to</code>
@@ -270,13 +270,13 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1268">#1268</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1268">#1268</a>
     <code>Model#new?</code> has been removed, developers must now always use
     <code>Model#new_record?</code>.
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1182">#1182</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1182">#1182</a>
     A reload is no longer required to refresh a relation after setting
     the value of the foreign key field for it. Note this behaves exactly as
     Active Record.
@@ -295,7 +295,7 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/1093">#1093</a>
+    <a href="https://github.com/mongoid/mongoid/issues/1093">#1093</a>
     Field serialization strategies have changed on Array, Hash, Integer
     and Boolean to be more consistent and match AR where appropriate.
 
@@ -313,13 +313,13 @@
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/933">#933</a>
+    <a href="https://github.com/mongoid/mongoid/issues/933">#933</a>
     <code>:field.size</code> has been renamed to <code>:field.with_size</code>
     in criteria for $size not to conflict with Symbol's size method.
 
   %li
     %i.icon-warning-sign
-    <a href="http://github.com/mongoid/mongoid/issues/797">#797</a>
+    <a href="https://github.com/mongoid/mongoid/issues/797">#797</a>
     Mongoid scoping code has been completely rewritten, and now
     matches the Active Record API. With this backwards incompatible change,
     some methods have been removed or renamed.
